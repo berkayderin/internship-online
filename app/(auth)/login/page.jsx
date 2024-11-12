@@ -27,6 +27,7 @@ import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 import { useLogin } from '@/queries/useAuth'
 import { useRouter } from 'next/navigation'
+import { toast } from '@/hooks/use-toast'
 
 export default function LoginPage() {
 	const router = useRouter()
@@ -45,6 +46,10 @@ export default function LoginPage() {
 	const onSubmit = async (data) => {
 		try {
 			await login.mutateAsync(data)
+			toast({
+				title: 'Giriş başarılı',
+				description: 'Panel sayfasına yönlendiriliyorsunuz.'
+			})
 			router.push('/panel')
 			router.refresh()
 		} catch (error) {

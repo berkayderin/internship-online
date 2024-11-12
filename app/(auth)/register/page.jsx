@@ -27,6 +27,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import registerSchema from '@/lib/schemas/RegisterSchema'
 import { useRouter } from 'next/navigation'
 import { useRegister } from '@/queries/useAuth'
+import { toast } from '@/hooks/use-toast'
 
 export default function RegisterPage() {
 	const router = useRouter()
@@ -46,6 +47,10 @@ export default function RegisterPage() {
 	const onSubmit = async (data) => {
 		try {
 			await register.mutateAsync(data)
+			toast({
+				title: 'Kayıt başarılı',
+				description: 'Giriş sayfasına yönlendiriliyorsunuz.'
+			})
 			router.push('/login')
 		} catch (error) {
 			console.error('Kayıt hatası:', error)
