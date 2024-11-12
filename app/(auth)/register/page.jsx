@@ -1,3 +1,4 @@
+// app/reigster/page.jsx
 'use client'
 
 import { useState } from 'react'
@@ -24,8 +25,13 @@ import {
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 import registerSchema from '@/lib/schemas/RegisterSchema'
+import { useRouter } from 'next/navigation'
+import { useRegister } from '@/queries/useAuth'
 
 export default function RegisterPage() {
+	const router = useRouter()
+	const register = useRegister()
+
 	const [showPassword, setShowPassword] = useState(false)
 
 	const form = useForm({
@@ -37,16 +43,21 @@ export default function RegisterPage() {
 		}
 	})
 
-	const onSubmit = (data) => {
-		console.log('data:', data)
+	const onSubmit = async (data) => {
+		try {
+			await register.mutateAsync(data)
+			router.push('/login')
+		} catch (error) {
+			console.error('Kayıt hatası:', error)
+		}
 	}
 
 	return (
 		<div className="min-h-screen flex flex-col items-center justify-center">
 			<Card className="w-[350px]">
 				<CardHeader>
-					<CardTitle>Giriş Yap</CardTitle>
-					<CardDescription>Hesabınıza giriş yapın</CardDescription>
+					<CardTitle>Kayıt Ol</CardTitle>
+					<CardDescription>Hesabınızı oluşturun</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<Form {...form}>
@@ -120,19 +131,13 @@ export default function RegisterPage() {
 						</form>
 					</Form>
 				</CardContent>
-				<CardFooter className="flex flex-col justify-center gap-2">
+				<CardFooter className="flex flex-col justify-center">
 					<Link
 						href="/register"
 						className="text-sm text-black hover:underline"
 					>
 						Hesabınız yok mu?{' '}
 						<span className="font-semibold"> Kayıt olun </span>
-					</Link>
-					<Link
-						href="/"
-						className="text-sm text-black hover:underline"
-					>
-						Geri dön
 					</Link>
 				</CardFooter>
 			</Card>

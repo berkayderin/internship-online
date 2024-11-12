@@ -1,3 +1,4 @@
+// app/login/page.jsx
 'use client'
 
 import { useState } from 'react'
@@ -24,8 +25,13 @@ import {
 import loginSchema from '@/lib/schemas/LoginSchema'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
+import { useLogin } from '@/queries/useAuth'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
+	const router = useRouter()
+	const login = useLogin()
+
 	const [showPassword, setShowPassword] = useState(false)
 
 	const form = useForm({
@@ -36,8 +42,14 @@ export default function LoginPage() {
 		}
 	})
 
-	const onSubmit = (data) => {
-		console.log('data:', data)
+	const onSubmit = async (data) => {
+		try {
+			await login.mutateAsync(data)
+			router.push('/panel')
+			router.refresh()
+		} catch (error) {
+			console.error('Giriş hatası:', error)
+		}
 	}
 
 	return (
@@ -113,12 +125,6 @@ export default function LoginPage() {
 					>
 						Hesabınız yok mu?{' '}
 						<span className="font-semibold"> Kayıt olun </span>
-					</Link>
-					<Link
-						href="/"
-						className="text-sm text-black hover:underline"
-					>
-						Geri dön
 					</Link>
 				</CardFooter>
 			</Card>
