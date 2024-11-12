@@ -63,7 +63,7 @@ export default function LoginPage() {
 					<Form {...form}>
 						<form
 							onSubmit={form.handleSubmit(onSubmit)}
-							className="space-y-4"
+							className="space-y-2"
 						>
 							<FormField
 								control={form.control}
@@ -118,13 +118,13 @@ export default function LoginPage() {
 						</form>
 					</Form>
 				</CardContent>
-				<CardFooter className="flex flex-col justify-center gap-2">
+				<CardFooter className="flex flex-col justify-center">
 					<Link
 						href="/register"
 						className="text-sm text-black hover:underline"
 					>
 						Hesabınız yok mu?{' '}
-						<span className="font-semibold"> Kayıt olun </span>
+						<span className="font-semibold">Kayıt olun</span>
 					</Link>
 				</CardFooter>
 			</Card>

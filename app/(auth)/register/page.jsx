@@ -63,7 +63,7 @@ export default function RegisterPage() {
 					<Form {...form}>
 						<form
 							onSubmit={form.handleSubmit(onSubmit)}
-							className="space-y-4"
+							className="space-y-2"
 						>
 							<FormField
 								control={form.control}
@@ -133,11 +133,11 @@ export default function RegisterPage() {
 				</CardContent>
 				<CardFooter className="flex flex-col justify-center">
 					<Link
-						href="/register"
+						href="/login"
 						className="text-sm text-black hover:underline"
 					>
-						Hesabınız yok mu?{' '}
-						<span className="font-semibold"> Kayıt olun </span>
+						Zaten bir hesabınız var mı?{' '}
+						<span className="font-semibold">Giriş Yap</span>
 					</Link>
 				</CardFooter>
 			</Card>
