@@ -15,7 +15,14 @@ const config = {
 					const { email, password } = validated.data
 
 					const user = await prisma.user.findUnique({
-						where: { email }
+						where: { email },
+						select: {
+							id: true,
+							email: true,
+							fullname: true,
+							role: true,
+							passwordHash: true
+						}
 					})
 
 					if (
@@ -38,6 +45,7 @@ const config = {
 			if (user) {
 				token.role = user.role
 				token.id = user.id
+				token.fullname = user.fullname
 			}
 			return token
 		},
@@ -45,6 +53,7 @@ const config = {
 			if (token) {
 				session.user.role = token.role
 				session.user.id = token.id
+				session.user.fullname = token.fullname
 			}
 			return session
 		}
