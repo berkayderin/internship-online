@@ -146,7 +146,7 @@ const getMenusByRole = (role) => {
 		}
 	]
 
-	return role === 'admin'
+	return role === 'ADMIN'
 		? [...commonMenus, ...adminMenus]
 		: [...commonMenus, ...userMenus]
 }
