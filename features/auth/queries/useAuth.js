@@ -1,6 +1,6 @@
 // queries/useAuth.js
 import { useMutation } from '@tanstack/react-query'
-import { registerUser } from '@/services/auth'
+import { registerUser } from '@/features/auth/services/auth'
 import { signIn } from 'next-auth/react'
 
 export const useLogin = () => {

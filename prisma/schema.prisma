@@ -8,13 +8,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id           String  @id @default(cuid()) @map("_id")
-  fullname     String?
-  email        String  @unique
-  passwordHash String
-  role         String
+enum UserRole {
+  USER // Öğrenci
+  ADMIN // Öğretmen
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum ActivityStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String    @id @default(cuid()) @map("_id")
+  email        String    @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  department   String
+  role         UserRole  @default(USER)
+  startDate    DateTime? // Staj başlangıç tarihi (sadece öğrenciler için)
+  endDate      DateTime? // Staj bitiş tarihi (sadece öğrenciler için)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  dailyActivities DailyActivity[]
+}
+
+model DailyActivity {
+  id        String         @id @default(cuid()) @map("_id")
+  date      DateTime
+  content   String
+  status    ActivityStatus @default(PENDING)
+  feedback  String?
+  userId    String
+  adminId   String?
+  user      User           @relation(fields: [userId], references: [id])
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 }

@@ -1,4 +1,3 @@
-// services/auth.js
 export const loginUser = async (credentials) => {
 	const response = await fetch('/api/auth/callback/credentials', {
 		method: 'POST',

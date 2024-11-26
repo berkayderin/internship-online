@@ -1,8 +1,8 @@
-// auth.config.js
 import Credentials from 'next-auth/providers/credentials'
-import loginSchema from './lib/schemas/LoginSchema'
+
 import { compare } from 'bcryptjs'
 import prisma from './lib/prisma'
+import loginSchema from './zod/LoginSchema'
 
 const config = {
 	providers: [
@@ -19,7 +19,9 @@ const config = {
 						select: {
 							id: true,
 							email: true,
-							fullname: true,
+							firstName: true,
+							lastName: true,
+							department: true,
 							role: true,
 							passwordHash: true
 						}
@@ -45,7 +47,9 @@ const config = {
 			if (user) {
 				token.role = user.role
 				token.id = user.id
-				token.fullname = user.fullname
+				token.firstName = user.firstName
+				token.lastName = user.lastName
+				token.department = user.department
 			}
 			return token
 		},
@@ -53,7 +57,9 @@ const config = {
 			if (token) {
 				session.user.role = token.role
 				session.user.id = token.id
-				session.user.fullname = token.fullname
+				session.user.firstName = token.firstName
+				session.user.lastName = token.lastName
+				session.user.department = token.department
 			}
 			return session
 		}
