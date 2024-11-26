@@ -2,21 +2,21 @@
 
 import * as React from 'react'
 import {
-	AudioWaveform,
 	BookOpen,
-	Bot,
-	Command,
-	Frame,
-	GalleryVerticalEnd,
-	Map,
-	PieChart,
-	Settings2,
-	SquareTerminal
+	ClipboardList,
+	FileText,
+	Users,
+	Settings,
+	BarChart,
+	CalendarDays,
+	UserCircle,
+	Building,
+	CheckSquare,
+	BookOpenCheck
 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 
 import { NavMain } from '@/components/nav-main'
-import { NavProjects } from '@/components/nav-projects'
 import { NavUser } from '@/components/nav-user'
 import { TeamSwitcher } from '@/components/team-switcher'
 import {
@@ -27,122 +27,133 @@ import {
 	SidebarRail
 } from '@/components/ui/sidebar'
 
-const staticData = {
-	teams: [
+const getMenusByRole = (role) => {
+	const commonMenus = [
 		{
-			name: 'Staj Defterim',
-			logo: GalleryVerticalEnd,
-			plan: 'Öğrenci'
-		}
-	],
-	navMain: [
-		{
-			title: 'Playground',
-			url: '#',
-			icon: SquareTerminal,
-			isActive: true,
-			items: [
-				{
-					title: 'History',
-					url: '#'
-				},
-				{
-					title: 'Starred',
-					url: '#'
-				},
-				{
-					title: 'Settings',
-					url: '#'
-				}
-			]
-		},
-		{
-			title: 'Models',
-			url: '#',
-			icon: Bot,
-			items: [
-				{
-					title: 'Genesis',
-					url: '#'
-				},
-				{
-					title: 'Explorer',
-					url: '#'
-				},
-				{
-					title: 'Quantum',
-					url: '#'
-				}
-			]
-		},
-		{
-			title: 'Documentation',
-			url: '#',
+			title: 'Staj Defteri',
+			url: '/internship-diary',
 			icon: BookOpen,
 			items: [
 				{
-					title: 'Introduction',
-					url: '#'
+					title: 'Günlük Aktiviteler',
+					url: '/daily-activities'
 				},
 				{
-					title: 'Get Started',
-					url: '#'
-				},
-				{
-					title: 'Tutorials',
-					url: '#'
-				},
-				{
-					title: 'Changelog',
-					url: '#'
+					title: 'Haftalık Rapor',
+					url: '/weekly-report'
 				}
 			]
 		},
 		{
-			title: 'Settings',
-			url: '#',
-			icon: Settings2,
+			title: 'Profilim',
+			url: '/profile',
+			icon: UserCircle,
 			items: [
 				{
-					title: 'General',
-					url: '#'
+					title: 'Bilgilerim',
+					url: '/my-info'
 				},
 				{
-					title: 'Team',
-					url: '#'
-				},
-				{
-					title: 'Billing',
-					url: '#'
-				},
-				{
-					title: 'Limits',
-					url: '#'
+					title: 'Ayarlar',
+					url: '/settings'
 				}
 			]
 		}
-	],
-	projects: [
+	]
+
+	const adminMenus = [
 		{
-			name: 'Design Engineering',
-			url: '#',
-			icon: Frame
+			title: 'Yönetim',
+			url: '/management',
+			icon: Settings,
+			items: [
+				{
+					title: 'Öğrenci Listesi',
+					url: '/students'
+				},
+				{
+					title: 'Danışman Listesi',
+					url: '/advisors'
+				},
+				{
+					title: 'Kurum Listesi',
+					url: '/companies'
+				}
+			]
 		},
 		{
-			name: 'Sales & Marketing',
-			url: '#',
-			icon: PieChart
+			title: 'Onay İşlemleri',
+			url: '/approvals',
+			icon: CheckSquare,
+			items: [
+				{
+					title: 'Bekleyen Onaylar',
+					url: '/pending'
+				},
+				{
+					title: 'Onay Geçmişi',
+					url: '/history'
+				}
+			]
 		},
 		{
-			name: 'Travel',
-			url: '#',
-			icon: Map
+			title: 'Raporlar',
+			url: '/reports',
+			icon: BarChart,
+			items: [
+				{
+					title: 'Staj İstatistikleri',
+					url: '/statistics'
+				},
+				{
+					title: 'Değerlendirmeler',
+					url: '/evaluations'
+				}
+			]
 		}
 	]
+
+	const userMenus = [
+		{
+			title: 'Staj Bilgileri',
+			url: '/internship-info',
+			icon: ClipboardList,
+			items: [
+				{
+					title: 'Staj Durumu',
+					url: '/status'
+				},
+				{
+					title: 'Belgelerim',
+					url: '/documents'
+				}
+			]
+		},
+		{
+			title: 'Kurum',
+			url: '/company',
+			icon: Building,
+			items: [
+				{
+					title: 'Kurum Bilgileri',
+					url: '/info'
+				},
+				{
+					title: 'Değerlendirme',
+					url: '/evaluation'
+				}
+			]
+		}
+	]
+
+	return role === 'admin'
+		? [...commonMenus, ...adminMenus]
+		: [...commonMenus, ...userMenus]
 }
 
 export function AppSidebar({ ...props }) {
 	const { data: session } = useSession()
+	const role = session?.user?.role || 'user'
 
 	const userData = {
 		name: session?.user?.fullname,
@@ -150,14 +161,23 @@ export function AppSidebar({ ...props }) {
 		avatar: '/avatars/default.jpg'
 	}
 
+	const teams = [
+		{
+			name: 'Staj Defteri',
+			logo: BookOpenCheck,
+			plan: role === 'admin' ? 'Yönetici' : 'Öğrenci'
+		}
+	]
+
+	const menuItems = getMenusByRole(role)
+
 	return (
 		<Sidebar collapsible="icon" {...props}>
 			<SidebarHeader>
-				<TeamSwitcher teams={staticData.teams} />
+				<TeamSwitcher teams={teams} />
 			</SidebarHeader>
 			<SidebarContent>
-				<NavMain items={staticData.navMain} />
-				<NavProjects projects={staticData.projects} />
+				<NavMain items={menuItems} />
 			</SidebarContent>
 			<SidebarFooter>
 				<NavUser user={userData} />
