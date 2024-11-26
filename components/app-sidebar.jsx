@@ -35,27 +35,8 @@ const getMenusByRole = (role) => {
 			icon: BookOpen,
 			items: [
 				{
-					title: 'Günlük Aktiviteler',
+					title: 'Aktiviteler',
 					url: '/panel/daily-activities'
-				},
-				{
-					title: 'Tüm Aktiviteler',
-					url: '/panel/all-activities'
-				}
-			]
-		},
-		{
-			title: 'Profilim',
-			url: '/profile',
-			icon: UserCircle,
-			items: [
-				{
-					title: 'Bilgilerim',
-					url: '/my-info'
-				},
-				{
-					title: 'Ayarlar',
-					url: '/settings'
 				}
 			]
 		}

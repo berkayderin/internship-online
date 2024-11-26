@@ -1,4 +1,3 @@
-// features/daily-activities/pages/DailyActivitiesPage.jsx
 'use client'
 
 import { useState } from 'react'
@@ -9,23 +8,16 @@ import {
 	useUpdateActivity,
 	useSubmitFeedback
 } from '@/features/daily-activities/queries/useDailyActivity'
-import { Button } from '@/components/ui/button'
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle
 } from '@/components/ui/dialog'
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue
-} from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
 import { ActivityForm } from '@/features/daily-activities/components/ActivityForm'
-import { ActivityList } from '@/features/daily-activities/components/ActivityList'
+import { DailyActivitiesTable } from '@/features/daily-activities/components/DailyActivitiesTable'
 
 const DailyActivitiesPage = () => {
 	const { data: session } = useSession()
@@ -34,12 +26,17 @@ const DailyActivitiesPage = () => {
 	const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false)
 	const [feedback, setFeedback] = useState('')
 	const [selectedActivityId, setSelectedActivityId] = useState(null)
-	const [feedbackType, setFeedbackType] = useState('') // Yeni state
+	const [feedbackType, setFeedbackType] = useState('')
+
+	const [page, setPage] = useState(1)
+	const [limit, setLimit] = useState(10)
 	const [filterStatus, setFilterStatus] = useState('all')
 
 	const isAdmin = session?.user?.role === 'ADMIN'
 
 	const { data: activitiesData, isLoading } = useGetActivities({
+		page,
+		limit,
 		status: filterStatus !== 'all' ? filterStatus : undefined
 	})
 
@@ -69,16 +66,16 @@ const DailyActivitiesPage = () => {
 		setIsFormOpen(true)
 	}
 
-	const handleApprove = async (activityId) => {
+	const handleApprove = (activityId) => {
 		setSelectedActivityId(activityId)
-		setFeedbackType('APPROVED') // Feedback tipini ayarla
+		setFeedbackType('APPROVED')
 		setFeedback('')
 		setFeedbackDialogOpen(true)
 	}
 
-	const handleReject = async (activityId) => {
+	const handleReject = (activityId) => {
 		setSelectedActivityId(activityId)
-		setFeedbackType('REJECTED') // Feedback tipini ayarla
+		setFeedbackType('REJECTED')
 		setFeedback('')
 		setFeedbackDialogOpen(true)
 	}
@@ -88,53 +85,51 @@ const DailyActivitiesPage = () => {
 			await submitFeedback.mutateAsync({
 				id: selectedActivityId,
 				data: {
-					status: feedbackType, // feedbackDialogOpen yerine feedbackType kullan
+					status: feedbackType,
 					feedback
 				}
 			})
 			setFeedbackDialogOpen(false)
-			setFeedbackType('') // Reset feedback type
-			setFeedback('') // Reset feedback
+			setFeedbackType('')
+			setFeedback('')
 		} catch (error) {
 			console.error('Error submitting feedback:', error)
 		}
 	}
 
 	return (
-		<div className="max-w-5xl w-full mx-auto p-6 space-y-6">
+		<div className="max-w-7xl w-full mx-auto p-6 space-y-6">
 			<div className="flex justify-between items-center">
 				<h1 className="text-2xl font-bold">
 					{isAdmin ? 'Öğrenci Aktiviteleri' : 'Staj Günlüğü'}
 				</h1>
-				<div className="flex items-center gap-4">
-					<Select
-						value={filterStatus}
-						onValueChange={setFilterStatus}
-					>
-						<SelectTrigger className="w-[180px]">
-							<SelectValue placeholder="Duruma göre filtrele" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="all">Tümü</SelectItem>
-							<SelectItem value="PENDING">Bekleyenler</SelectItem>
-							<SelectItem value="APPROVED">Onaylananlar</SelectItem>
-							<SelectItem value="REJECTED">Reddedilenler</SelectItem>
-						</SelectContent>
-					</Select>
-					{!isAdmin && (
-						<Button onClick={() => setIsFormOpen(true)}>
-							Yeni Aktivite
-						</Button>
-					)}
-				</div>
+				{!isAdmin && (
+					<Button onClick={() => setIsFormOpen(true)}>
+						Yeni Aktivite
+					</Button>
+				)}
 			</div>
 
-			<ActivityList
-				activities={activitiesData?.data || []}
-				onEdit={handleEdit}
-				isAdmin={isAdmin}
+			<DailyActivitiesTable
+				data={activitiesData?.data || []}
+				pagination={
+					activitiesData?.pagination || {
+						page: 1,
+						limit: 10,
+						total: 0,
+						pageCount: 1
+					}
+				}
+				onPageChange={setPage}
+				onLimitChange={(newLimit) => {
+					setLimit(Number(newLimit))
+					setPage(1)
+				}}
+				onStatusFilter={setFilterStatus}
 				onApprove={handleApprove}
 				onReject={handleReject}
+				onEdit={handleEdit}
+				isAdmin={isAdmin}
 			/>
 
 			<Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
