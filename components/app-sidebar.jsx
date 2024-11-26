@@ -36,11 +36,11 @@ const getMenusByRole = (role) => {
 			items: [
 				{
 					title: 'Günlük Aktiviteler',
-					url: '/daily-activities'
+					url: '/panel/daily-activities'
 				},
 				{
-					title: 'Haftalık Rapor',
-					url: '/weekly-report'
+					title: 'Tüm Aktiviteler',
+					url: '/panel/all-activities'
 				}
 			]
 		},
