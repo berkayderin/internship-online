@@ -16,29 +16,72 @@ export async function GET(req, { params }) {
 		}
 
 		const { id } = params
+		const { searchParams } = new URL(req.url)
+		const page = parseInt(searchParams.get('page') || '1')
+		const limit = parseInt(searchParams.get('limit') || '10')
+		const status = searchParams.get('status')
+		const search = searchParams.get('search')
+		const startDate = searchParams.get('startDate')
+		const endDate = searchParams.get('endDate')
 
-		const activities = await prisma.dailyActivity.findMany({
-			where: {
-				userId: id
-			},
-			include: {
-				user: {
-					select: {
-						firstName: true,
-						lastName: true,
-						department: true
+		const where = {
+			userId: id,
+			...(status && status !== 'all'
+				? {
+						status: {
+							equals: status.toUpperCase()
+						}
+				  }
+				: {}),
+			...(search
+				? {
+						OR: [
+							{
+								content: {
+									contains: search,
+									mode: 'insensitive'
+								}
+							}
+						]
+				  }
+				: {}),
+			...(startDate &&
+				endDate && {
+					date: {
+						gte: new Date(startDate),
+						lte: new Date(endDate)
 					}
+				})
+		}
+
+		const [activities, total] = await Promise.all([
+			prisma.dailyActivity.findMany({
+				where,
+				skip: (page - 1) * limit,
+				take: limit,
+				include: {
+					user: {
+						select: {
+							firstName: true,
+							lastName: true,
+							department: true
+						}
+					}
+				},
+				orderBy: {
+					date: 'desc'
 				}
-			},
-			orderBy: {
-				date: 'desc'
-			}
-		})
+			}),
+			prisma.dailyActivity.count({ where })
+		])
 
 		return NextResponse.json({
 			data: activities,
 			pagination: {
-				total: activities.length
+				page,
+				limit,
+				total,
+				pageCount: Math.ceil(total / limit)
 			}
 		})
 	} catch (error) {
