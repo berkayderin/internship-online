@@ -40,6 +40,7 @@ export function NavUser({ user }) {
 			callbackUrl: '/'
 		})
 	}
+	console.log('user:', user)
 
 	return (
 		<SidebarMenu>
@@ -51,14 +52,15 @@ export function NavUser({ user }) {
 							className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						>
 							<Avatar className="h-8 w-8 rounded-lg">
-								<AvatarImage src={user.avatar} alt={user.name} />
-								<AvatarFallback className="rounded-lg">
-									SD
+								<AvatarImage src={user.avatar} alt={user.firstName} />
+								<AvatarFallback className="rounded-lg font-semibold">
+									{user?.firstName?.charAt(0).toUpperCase()}
+									{user?.lastName?.charAt(0).toUpperCase()}
 								</AvatarFallback>
 							</Avatar>
 							<div className="grid flex-1 text-left text-sm leading-tight">
 								<span className="truncate font-semibold">
-									{user.name}
+									{user.firstName} {user.lastName}
 								</span>
 								<span className="truncate text-xs">{user.email}</span>
 							</div>
@@ -71,35 +73,15 @@ export function NavUser({ user }) {
 						align="end"
 						sideOffset={4}
 					>
-						<DropdownMenuLabel className="p-0 font-normal">
-							<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-								<Avatar className="h-8 w-8 rounded-lg">
-									<AvatarImage src={user.avatar} alt={user.name} />
-									<AvatarFallback className="rounded-lg">
-										SD
-									</AvatarFallback>
-								</Avatar>
-								<div className="grid flex-1 text-left text-sm leading-tight">
-									<span className="truncate font-semibold">
-										{user.name}
-									</span>
-									<span className="truncate text-xs">
-										{user.email}
-									</span>
-								</div>
-							</div>
-						</DropdownMenuLabel>
-
-						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<DropdownMenuItem>
 								<BadgeCheck className="mr-2 size-4" />
 								Hesabım
 							</DropdownMenuItem>
-							<DropdownMenuItem>
+							{/* <DropdownMenuItem>
 								<Bell className="mr-2 size-4" />
 								Bildirimlerim
-							</DropdownMenuItem>
+							</DropdownMenuItem> */}
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem onClick={handleSignOut}>

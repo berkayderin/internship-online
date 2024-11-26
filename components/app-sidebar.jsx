@@ -153,10 +153,13 @@ const getMenusByRole = (role) => {
 
 export function AppSidebar({ ...props }) {
 	const { data: session } = useSession()
-	const role = session?.user?.role || 'user'
+	const role = session?.user?.role || 'USER'
+
+	console.log('session:', session)
 
 	const userData = {
-		name: session?.user?.fullname,
+		firstName: session?.user?.firstName,
+		lastName: session?.user?.lastName,
 		email: session?.user?.email,
 		avatar: '/avatars/default.jpg'
 	}
