@@ -1,5 +1,4 @@
 // features/daily-activities/components/ActivityForm.jsx
-import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { format } from 'date-fns'
@@ -41,23 +40,27 @@ export function ActivityForm({
 
 	const handleSubmit = async (values) => {
 		try {
-			console.log('Form values:', values) // Gönderilen veriyi kontrol et
 			const formData = {
 				...values,
 				date: new Date(values.date)
 			}
-			console.log('Processed form data:', formData) // İşlenmiş veriyi kontrol et
 			await onSubmit(formData)
 		} catch (error) {
 			console.error('Form submission error:', error)
 		}
 	}
 
+	const now = new Date()
+	const threeDaysAgo = new Date(now)
+	threeDaysAgo.setDate(now.getDate() - 3)
+	const threeDaysLater = new Date(now)
+	threeDaysLater.setDate(now.getDate() + 3)
+
 	return (
 		<Form {...form}>
 			<form
 				onSubmit={form.handleSubmit(handleSubmit)}
-				className="space-y-8"
+				className="space-y-4"
 			>
 				<FormField
 					control={form.control}
@@ -92,13 +95,17 @@ export function ActivityForm({
 										selected={new Date(field.value)}
 										onSelect={field.onChange}
 										disabled={(date) =>
-											date > new Date() ||
-											date < new Date('1900-01-01')
+											date < threeDaysAgo || date > threeDaysLater
 										}
 										initialFocus
+										locale={tr}
 									/>
 								</PopoverContent>
 							</Popover>
+							<FormDescription>
+								Aktivite tarihi en fazla 3 gün öncesi veya 3 gün
+								sonrası için seçilebilir.
+							</FormDescription>
 							<FormMessage />
 						</FormItem>
 					)}
@@ -124,7 +131,7 @@ export function ActivityForm({
 
 				<div className="flex justify-end">
 					<Button type="submit" disabled={isSubmitting}>
-						{isSubmitting ? 'Kaydediliyor...' : 'Kaydet'}
+						{isSubmitting ? 'Gönderiliyor...' : 'Gönder'}
 					</Button>
 				</div>
 			</form>

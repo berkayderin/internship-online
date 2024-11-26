@@ -67,6 +67,11 @@ const DailyActivitiesPage = () => {
 		setIsFormOpen(true)
 	}
 
+	const handleOpenNewForm = () => {
+		setSelectedActivity(null) // Formu resetle
+		setIsFormOpen(true)
+	}
+
 	const handleApprove = (activityId) => {
 		setSelectedActivityId(activityId)
 		setFeedbackType('APPROVED')
@@ -98,16 +103,19 @@ const DailyActivitiesPage = () => {
 		}
 	}
 
+	const handleModalClose = () => {
+		setIsFormOpen(false)
+		setSelectedActivity(null) // Modal kapandığında seçili aktiviteyi temizle
+	}
+
 	return (
-		<div className="max-w-7xl w-full mx-auto p-6 space-y-6">
+		<div className="max-w-7xl w-full space-y-6">
 			<div className="flex justify-between items-center">
 				<h1 className="text-2xl font-bold">
 					{isAdmin ? 'Öğrenci Aktiviteleri' : 'Staj Günlüğü'}
 				</h1>
 				{!isAdmin && (
-					<Button onClick={() => setIsFormOpen(true)}>
-						Yeni Aktivite
-					</Button>
+					<Button onClick={handleOpenNewForm}>Ekle</Button>
 				)}
 			</div>
 
@@ -133,13 +141,13 @@ const DailyActivitiesPage = () => {
 				isAdmin={isAdmin}
 			/>
 
-			<Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-				<DialogContent className="max-w-3xl">
+			<Dialog open={isFormOpen} onOpenChange={handleModalClose}>
+				<DialogContent className="max-w-4xl">
 					<DialogHeader>
 						<DialogTitle>
 							{selectedActivity
-								? 'Aktivite Düzenle'
-								: 'Yeni Aktivite'}
+								? 'Staj Günlüğü Düzenle'
+								: 'Staj Günlüğü Ekle'}
 						</DialogTitle>
 					</DialogHeader>
 					<ActivityForm
