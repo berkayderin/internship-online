@@ -1,3 +1,4 @@
+// features/daily-activities/pages/DailyActivitiesPage.jsx
 'use client'
 
 import { useState } from 'react'
@@ -22,10 +23,9 @@ import {
 	SelectTrigger,
 	SelectValue
 } from '@/components/ui/select'
-
 import { Textarea } from '@/components/ui/textarea'
-import { ActivityList } from '../../../features/daily-activities/components/ActivityList'
-import { ActivityForm } from '../../../features/daily-activities/components/ActivityForm'
+import { ActivityForm } from '@/features/daily-activities/components/ActivityForm'
+import { ActivityList } from '@/features/daily-activities/components/ActivityList'
 
 const DailyActivitiesPage = () => {
 	const { data: session } = useSession()
@@ -34,6 +34,7 @@ const DailyActivitiesPage = () => {
 	const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false)
 	const [feedback, setFeedback] = useState('')
 	const [selectedActivityId, setSelectedActivityId] = useState(null)
+	const [feedbackType, setFeedbackType] = useState('') // Yeni state
 	const [filterStatus, setFilterStatus] = useState('all')
 
 	const isAdmin = session?.user?.role === 'ADMIN'
@@ -70,12 +71,14 @@ const DailyActivitiesPage = () => {
 
 	const handleApprove = async (activityId) => {
 		setSelectedActivityId(activityId)
+		setFeedbackType('APPROVED') // Feedback tipini ayarla
 		setFeedback('')
 		setFeedbackDialogOpen(true)
 	}
 
 	const handleReject = async (activityId) => {
 		setSelectedActivityId(activityId)
+		setFeedbackType('REJECTED') // Feedback tipini ayarla
 		setFeedback('')
 		setFeedbackDialogOpen(true)
 	}
@@ -85,11 +88,13 @@ const DailyActivitiesPage = () => {
 			await submitFeedback.mutateAsync({
 				id: selectedActivityId,
 				data: {
-					status: feedbackDialogOpen ? 'APPROVED' : 'REJECTED',
+					status: feedbackType, // feedbackDialogOpen yerine feedbackType kullan
 					feedback
 				}
 			})
 			setFeedbackDialogOpen(false)
+			setFeedbackType('') // Reset feedback type
+			setFeedback('') // Reset feedback
 		} catch (error) {
 			console.error('Error submitting feedback:', error)
 		}
@@ -157,7 +162,11 @@ const DailyActivitiesPage = () => {
 			>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Geri Bildirim</DialogTitle>
+						<DialogTitle>
+							{feedbackType === 'APPROVED'
+								? 'Aktivite Onaylama'
+								: 'Aktivite Reddetme'}
+						</DialogTitle>
 					</DialogHeader>
 					<div className="space-y-4">
 						<Textarea
@@ -166,7 +175,9 @@ const DailyActivitiesPage = () => {
 							onChange={(e) => setFeedback(e.target.value)}
 						/>
 						<div className="flex justify-end">
-							<Button onClick={handleFeedbackSubmit}>Gönder</Button>
+							<Button onClick={handleFeedbackSubmit}>
+								{feedbackType === 'APPROVED' ? 'Onayla' : 'Reddet'}
+							</Button>
 						</div>
 					</div>
 				</DialogContent>

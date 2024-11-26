@@ -12,9 +12,9 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 
 const statusColors = {
-	PENDING: 'bg-yellow-500',
-	APPROVED: 'bg-green-500',
-	REJECTED: 'bg-red-500'
+	PENDING: 'bg-yellow-500 hover:bg-yellow-500', // hover rengi eklendi
+	APPROVED: 'bg-green-500 hover:bg-green-500', // hover rengi eklendi
+	REJECTED: 'bg-red-500 hover:bg-red-500' // hover rengi eklendi
 }
 
 const statusText = {
@@ -31,8 +31,10 @@ export function ActivityList({
 	onReject
 }) {
 	const handleContentLength = (content) => {
-		return content.length > 300
-			? `${content.slice(0, 300)}...`
+		// HTML taglerini temizleyerek karakter sayısını kontrol et
+		const plainText = content.replace(/<[^>]*>/g, '')
+		return plainText.length > 300
+			? `${plainText.slice(0, 300)}...`
 			: content
 	}
 
@@ -49,7 +51,12 @@ export function ActivityList({
 									{ locale: tr }
 								)}
 							</CardTitle>
-							<Badge className={statusColors[activity.status]}>
+							<Badge
+								className={`${
+									statusColors[activity.status]
+								} text-white font-medium px-3 py-1`}
+								variant="secondary"
+							>
 								{statusText[activity.status]}
 							</Badge>
 						</div>
@@ -62,6 +69,7 @@ export function ActivityList({
 					</CardHeader>
 					<CardContent>
 						<div
+							className="prose max-w-none"
 							dangerouslySetInnerHTML={{
 								__html: handleContentLength(activity.content)
 							}}

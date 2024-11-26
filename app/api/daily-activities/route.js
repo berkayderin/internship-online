@@ -61,7 +61,7 @@ export async function POST(req) {
 
 export async function GET(req) {
 	try {
-		const session = await auth() // Burada da değişiklik
+		const session = await auth()
 		if (!session) {
 			return NextResponse.json(
 				{ error: 'Unauthorized' },
@@ -76,6 +76,7 @@ export async function GET(req) {
 		const endDate = searchParams.get('endDate')
 		const status = searchParams.get('status')
 
+		// Filtreleme koşulları düzeltildi
 		const where = {
 			...(session.user.role === 'USER'
 				? { userId: session.user.id }
@@ -87,7 +88,14 @@ export async function GET(req) {
 						lte: new Date(endDate)
 					}
 				}),
-			...(status && status !== 'all' ? { status } : {})
+			// Status filtrelemesi düzeltildi
+			...(status && status !== 'all'
+				? {
+						status: {
+							equals: status.toUpperCase() // Status değerini büyük harfe çevir
+						}
+				  }
+				: {})
 		}
 
 		const [activities, total] = await Promise.all([
@@ -123,7 +131,7 @@ export async function GET(req) {
 	} catch (error) {
 		console.error('Error fetching daily activities:', error)
 		return NextResponse.json(
-			{ error: 'Bir hata oluştu', details: error.message },
+			{ error: 'Bir hata oluştu' },
 			{ status: 500 }
 		)
 	}
