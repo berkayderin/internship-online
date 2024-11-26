@@ -1,4 +1,3 @@
-// app/api/register/route.js
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import prisma from '@/lib/prisma'
@@ -6,7 +5,7 @@ import prisma from '@/lib/prisma'
 export async function POST(request) {
 	try {
 		const body = await request.json()
-		const { email, password, fullname } = body
+		const { email, password, firstName, lastName, department } = body
 
 		// Email kontrolü
 		const existingUser = await prisma.user.findUnique({
@@ -28,17 +27,26 @@ export async function POST(request) {
 			data: {
 				email,
 				passwordHash: hashedPassword,
-				fullname,
-				role: 'user'
+				firstName,
+				lastName,
+				department,
+				role: 'USER'
+			},
+			select: {
+				id: true,
+				email: true,
+				firstName: true,
+				lastName: true,
+				department: true,
+				role: true
 			}
 		})
 
-		const { passwordHash: _, ...userWithoutPassword } = user
-
-		return NextResponse.json(userWithoutPassword)
+		return NextResponse.json(user)
 	} catch (error) {
+		console.error('Registration error:', error)
 		return NextResponse.json(
-			{ message: 'Bir hata oluştu' },
+			{ message: 'Kayıt işlemi sırasında bir hata oluştu' },
 			{ status: 500 }
 		)
 	}
