@@ -72,10 +72,13 @@ export async function GET(req) {
 		const startDate = searchParams.get('startDate')
 		const endDate = searchParams.get('endDate')
 		const status = searchParams.get('status')
+		const userId = searchParams.get('userId')
 
 		const where = {
 			...(session.user.role === 'USER'
 				? { userId: session.user.id }
+				: userId
+				? { userId }
 				: {}),
 			...(startDate &&
 				endDate && {

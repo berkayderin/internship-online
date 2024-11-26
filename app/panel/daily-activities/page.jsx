@@ -68,7 +68,7 @@ const DailyActivitiesPage = () => {
 	}
 
 	const handleOpenNewForm = () => {
-		setSelectedActivity(null) // Formu resetle
+		setSelectedActivity(null)
 		setIsFormOpen(true)
 	}
 
@@ -105,14 +105,14 @@ const DailyActivitiesPage = () => {
 
 	const handleModalClose = () => {
 		setIsFormOpen(false)
-		setSelectedActivity(null) // Modal kapandığında seçili aktiviteyi temizle
+		setSelectedActivity(null)
 	}
 
 	return (
 		<div className="max-w-7xl w-full space-y-6">
 			<div className="flex justify-between items-center">
 				<h1 className="text-2xl font-bold">
-					{isAdmin ? 'Öğrenci Aktiviteleri' : 'Staj Günlüğü'}
+					{isAdmin ? 'Tüm Aktiviteler' : 'Staj Günlüğü'}
 				</h1>
 				{!isAdmin && (
 					<Button onClick={handleOpenNewForm}>Ekle</Button>

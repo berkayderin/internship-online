@@ -35,48 +35,21 @@ const getMenusByRole = (role) => {
 			icon: BookOpen,
 			items: [
 				{
-					title: 'Aktiviteler',
+					title: 'Tüm Aktiviteler',
 					url: '/panel/daily-activities'
 				}
 			]
 		}
 	]
 
+	if (role === 'ADMIN') {
+		commonMenus[0].items.push({
+			title: 'Öğrenci Aktiviteleri',
+			url: '/panel/student-activities'
+		})
+	}
+
 	const adminMenus = [
-		{
-			title: 'Yönetim',
-			url: '/management',
-			icon: Settings,
-			items: [
-				{
-					title: 'Öğrenci Listesi',
-					url: '/students'
-				},
-				{
-					title: 'Danışman Listesi',
-					url: '/advisors'
-				},
-				{
-					title: 'Kurum Listesi',
-					url: '/companies'
-				}
-			]
-		},
-		{
-			title: 'Onay İşlemleri',
-			url: '/approvals',
-			icon: CheckSquare,
-			items: [
-				{
-					title: 'Bekleyen Onaylar',
-					url: '/pending'
-				},
-				{
-					title: 'Onay Geçmişi',
-					url: '/history'
-				}
-			]
-		},
 		{
 			title: 'Raporlar',
 			url: '/reports',
