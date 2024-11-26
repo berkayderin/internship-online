@@ -3,11 +3,11 @@
 import { useRouter } from 'next/navigation'
 
 import { toast } from '@/hooks/use-toast'
-import loginSchema from '@/zod/LoginSchema'
+import loginSchema from '@/features/auth/zod/LoginSchema'
 import { AuthForm } from '@/features/auth/components/AuthForm'
 import { useLogin } from '@/features/auth/queries/useAuth'
 
-export default function LoginPage() {
+const LoginPage = () => {
 	const router = useRouter()
 	const login = useLogin()
 
@@ -40,3 +40,5 @@ export default function LoginPage() {
 		</div>
 	)
 }
+
+export default LoginPage

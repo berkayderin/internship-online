@@ -1,3 +1,4 @@
+// features/daily-activities/components/DailyActivitiesTable.jsx
 import React, { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'

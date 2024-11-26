@@ -1,4 +1,4 @@
-// zod/DailyActivitySchema.js
+// features/daily-activities/zod/DailyActivitySchema.js
 import * as z from 'zod'
 
 const dailyActivitySchema = z.object({

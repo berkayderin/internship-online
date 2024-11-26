@@ -2,7 +2,7 @@ import Credentials from 'next-auth/providers/credentials'
 
 import { compare } from 'bcryptjs'
 import prisma from './lib/prisma'
-import loginSchema from './zod/LoginSchema'
+import loginSchema from './features/auth/zod/LoginSchema'
 
 const config = {
 	providers: [

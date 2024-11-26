@@ -4,9 +4,9 @@ import { useRouter } from 'next/navigation'
 import { AuthForm } from '@/features/auth/components/AuthForm'
 import { useRegister } from '@/features/auth/queries/useAuth'
 import { toast } from '@/hooks/use-toast'
-import registerSchema from '@/zod/RegisterSchema'
+import registerSchema from '@/features/auth/zod/RegisterSchema'
 
-export default function RegisterPage() {
+const RegisterPage = () => {
 	const router = useRouter()
 	const register = useRegister()
 
@@ -38,3 +38,5 @@ export default function RegisterPage() {
 		</div>
 	)
 }
+
+export default RegisterPage

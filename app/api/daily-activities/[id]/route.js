@@ -2,12 +2,12 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth' // Değişiklik burada
 import prisma from '@/lib/prisma'
-import activityFeedbackSchema from '@/zod/ActivityFeedbackSchema'
-import dailyActivitySchema from '@/zod/DailyActivitySchema'
+import activityFeedbackSchema from '@/features/daily-activities/zod/ActivityFeedbackSchema'
+import dailyActivitySchema from '@/features/daily-activities/zod/DailyActivitySchema'
 
 export async function PATCH(req, { params }) {
 	try {
-		const session = await auth() // getServerSession yerine auth() kullanıyoruz
+		const session = await auth()
 		if (!session) {
 			return NextResponse.json(
 				{ error: 'Giriş yapmanız gerekiyor' },
@@ -18,7 +18,6 @@ export async function PATCH(req, { params }) {
 		const { id } = params
 		const data = await req.json()
 
-		// Admin (öğretmen) onaylama/reddetme işlemi yapıyor
 		if (session.user.role === 'ADMIN') {
 			const validationResult = activityFeedbackSchema.safeParse(data)
 			if (!validationResult.success) {
@@ -52,7 +51,6 @@ export async function PATCH(req, { params }) {
 			return NextResponse.json(activity)
 		}
 
-		// Öğrenci sadece kendi aktivitesini güncelleyebilir ve sadece PENDING durumunda
 		const activity = await prisma.dailyActivity.findUnique({
 			where: { id },
 			include: {
@@ -84,7 +82,7 @@ export async function PATCH(req, { params }) {
 
 		const validationResult = dailyActivitySchema.safeParse({
 			...data,
-			date: new Date(data.date) // Tarihi Date nesnesine çevir
+			date: new Date(data.date)
 		})
 
 		if (!validationResult.success) {

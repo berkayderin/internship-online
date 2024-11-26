@@ -1,15 +1,13 @@
 // app/api/daily-activities/route.js
 import { NextResponse } from 'next/server'
-import { auth } from '@/auth' // Değişiklik burada
+import { auth } from '@/auth'
 import prisma from '@/lib/prisma'
-import dailyActivitySchema from '@/zod/DailyActivitySchema'
+import dailyActivitySchema from '@/features/daily-activities/zod/DailyActivitySchema'
 
 export async function POST(req) {
 	try {
-		// getServerSession yerine auth() kullanıyoruz
 		const session = await auth()
 
-		// Session kontrolü
 		if (!session) {
 			return NextResponse.json(
 				{ error: 'Unauthorized' },
@@ -30,7 +28,6 @@ export async function POST(req) {
 			)
 		}
 
-		// Aktiviteyi oluştur
 		const activity = await prisma.dailyActivity.create({
 			data: {
 				date: validationResult.data.date,
@@ -76,7 +73,6 @@ export async function GET(req) {
 		const endDate = searchParams.get('endDate')
 		const status = searchParams.get('status')
 
-		// Filtreleme koşulları düzeltildi
 		const where = {
 			...(session.user.role === 'USER'
 				? { userId: session.user.id }
@@ -88,11 +84,10 @@ export async function GET(req) {
 						lte: new Date(endDate)
 					}
 				}),
-			// Status filtrelemesi düzeltildi
 			...(status && status !== 'all'
 				? {
 						status: {
-							equals: status.toUpperCase() // Status değerini büyük harfe çevir
+							equals: status.toUpperCase()
 						}
 				  }
 				: {})

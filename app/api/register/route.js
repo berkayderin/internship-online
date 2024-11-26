@@ -1,3 +1,4 @@
+// app/api/register/route.js
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
 import prisma from '@/lib/prisma'
@@ -7,7 +8,6 @@ export async function POST(request) {
 		const body = await request.json()
 		const { email, password, firstName, lastName, department } = body
 
-		// Email kontrolü
 		const existingUser = await prisma.user.findUnique({
 			where: { email }
 		})
@@ -19,10 +19,8 @@ export async function POST(request) {
 			)
 		}
 
-		// Şifre hashleme
 		const hashedPassword = await bcrypt.hash(password, 10)
 
-		// Kullanıcı oluşturma
 		const user = await prisma.user.create({
 			data: {
 				email,

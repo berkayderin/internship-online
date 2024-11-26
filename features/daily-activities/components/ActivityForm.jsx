@@ -24,7 +24,7 @@ import {
 	PopoverTrigger
 } from '@/components/ui/popover'
 import RichTextEditor from '@/components/text-editor'
-import dailyActivitySchema from '@/zod/DailyActivitySchema'
+import dailyActivitySchema from '@/features/daily-activities/zod/DailyActivitySchema'
 
 export function ActivityForm({
 	defaultValues,

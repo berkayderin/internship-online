@@ -1,4 +1,4 @@
-// queries/dailyActivityQueries.js
+// features/daily-activities/queries/useDailyActivity.js
 import { toast } from '@/hooks/use-toast'
 import { dailyActivityService } from '@/features/daily-activities/services/dailyActivity'
 import {

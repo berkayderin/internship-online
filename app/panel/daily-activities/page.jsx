@@ -1,3 +1,4 @@
+// app/panel/daily-activities/page.jsx
 'use client'
 
 import { useState } from 'react'
