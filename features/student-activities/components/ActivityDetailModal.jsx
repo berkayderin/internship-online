@@ -8,9 +8,20 @@ import {
 	DialogHeader,
 	DialogTitle
 } from '@/components/ui/dialog'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { Card, CardContent } from '@/components/ui/card'
+import {
+	CalendarIcon,
+	CheckCircleIcon,
+	XCircleIcon,
+	ClockIcon,
+	BookOpenIcon,
+	UserIcon,
+	BuildingIcon
+} from 'lucide-react'
 
 export const statusText = {
-	PENDING: 'Bekliyor',
+	PENDING: 'Değerlendiriliyor',
 	APPROVED: 'Onaylandı',
 	REJECTED: 'Reddedildi'
 }
@@ -28,41 +39,67 @@ export function ActivityDetailModal({
 }) {
 	if (!activity) return null
 
+	const statusIcons = {
+		PENDING: <ClockIcon className="h-4 w-4" />,
+		APPROVED: <CheckCircleIcon className="h-4 w-4" />,
+		REJECTED: <XCircleIcon className="h-4 w-4" />
+	}
+
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-4xl">
+			<DialogContent className="max-w-4xl max-h-[90vh] bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-indigo-950">
 				<DialogHeader>
 					<DialogTitle>Aktivite Detayı</DialogTitle>
 				</DialogHeader>
-				<div className="space-y-4">
-					<div>
-						<h3 className="font-medium">Tarih</h3>
-						<p>
-							{format(new Date(activity.date), 'd MMMM yyyy', {
-								locale: tr
-							})}
-						</p>
+				<ScrollArea className="max-h-[70vh] pr-4">
+					<div className="space-y-6">
+						<Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+							<CardContent className="pt-6 flex items-center justify-between">
+								<div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
+									<CalendarIcon className="h-5 w-5" />
+									{format(new Date(activity.date), 'd MMMM yyyy', {
+										locale: tr
+									})}
+								</div>
+								<Badge
+									variant={statusVariants[activity.status]}
+									className="flex items-center gap-1 text-sm px-3 py-1"
+								>
+									{statusIcons[activity.status]}
+									{statusText[activity.status]}
+								</Badge>
+							</CardContent>
+						</Card>
+
+						<Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+							<CardContent className="pt-6">
+								<h3 className="font-semibold text-lg mb-3 text-indigo-700 dark:text-indigo-300 flex items-center gap-2">
+									<BookOpenIcon className="h-5 w-5" />
+									Aktivite İçeriği
+								</h3>
+								<div
+									className="prose max-w-none dark:prose-invert"
+									dangerouslySetInnerHTML={{
+										__html: activity.content
+									}}
+								/>
+							</CardContent>
+						</Card>
+
+						{activity.feedback && (
+							<Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+								<CardContent className="pt-6">
+									<h3 className="font-semibold text-lg mb-3 text-indigo-700 dark:text-indigo-300">
+										Geri Bildirim
+									</h3>
+									<p className="text-gray-700 dark:text-gray-300 italic">
+										"{activity.feedback}"
+									</p>
+								</CardContent>
+							</Card>
+						)}
 					</div>
-					<div>
-						<h3 className="font-medium">İçerik</h3>
-						<div
-							className="prose max-w-none"
-							dangerouslySetInnerHTML={{ __html: activity.content }}
-						/>
-					</div>
-					<div>
-						<h3 className="font-medium">Durum</h3>
-						<Badge variant={statusVariants[activity.status]}>
-							{statusText[activity.status]}
-						</Badge>
-					</div>
-					{activity.feedback && (
-						<div>
-							<h3 className="font-medium">Geri Bildirim</h3>
-							<p>{activity.feedback}</p>
-						</div>
-					)}
-				</div>
+				</ScrollArea>
 			</DialogContent>
 		</Dialog>
 	)
