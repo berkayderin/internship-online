@@ -1,33 +1,26 @@
 // features/student-activities/components/ActivityDetailModal.jsx
-import { format } from 'date-fns'
-import { tr } from 'date-fns/locale'
-import { Badge } from '@/components/ui/badge'
+import { useState } from 'react'
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
-	DialogTitle
+	DialogTitle,
+	DialogFooter
 } from '@/components/ui/dialog'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Card, CardContent } from '@/components/ui/card'
-import {
-	CalendarIcon,
-	CheckCircleIcon,
-	XCircleIcon,
-	ClockIcon,
-	BookOpenIcon,
-	UserIcon,
-	BuildingIcon
-} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Textarea } from '@/components/ui/textarea'
+import { format } from 'date-fns'
+import { tr } from 'date-fns/locale'
 
 export const statusText = {
-	PENDING: 'Değerlendiriliyor',
+	PENDING: 'Bekliyor',
 	APPROVED: 'Onaylandı',
 	REJECTED: 'Reddedildi'
 }
 
 export const statusVariants = {
-	PENDING: 'warning',
+	PENDING: 'default',
 	APPROVED: 'success',
 	REJECTED: 'destructive'
 }
@@ -35,71 +28,101 @@ export const statusVariants = {
 export function ActivityDetailModal({
 	activity,
 	open,
-	onOpenChange
+	onOpenChange,
+	onApprove,
+	onReject
 }) {
-	if (!activity) return null
+	const [feedback, setFeedback] = useState('')
+	const [showFeedback, setShowFeedback] = useState(false)
 
-	const statusIcons = {
-		PENDING: <ClockIcon className="h-4 w-4" />,
-		APPROVED: <CheckCircleIcon className="h-4 w-4" />,
-		REJECTED: <XCircleIcon className="h-4 w-4" />
+	const handleApprove = () => {
+		onApprove(activity.id)
+		onOpenChange(false)
 	}
 
+	const handleReject = () => {
+		if (!showFeedback) {
+			setShowFeedback(true)
+			return
+		}
+
+		onReject(activity.id, feedback)
+		setFeedback('')
+		setShowFeedback(false)
+		onOpenChange(false)
+	}
+
+	const handleClose = () => {
+		setFeedback('')
+		setShowFeedback(false)
+		onOpenChange(false)
+	}
+
+	if (!activity) return null
+
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-4xl max-h-[90vh] bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-indigo-950">
+		<Dialog open={open} onOpenChange={handleClose}>
+			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Aktivite Detayı</DialogTitle>
 				</DialogHeader>
-				<ScrollArea className="max-h-[70vh] pr-4">
-					<div className="space-y-6">
-						<Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-							<CardContent className="pt-6 flex items-center justify-between">
-								<div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-									<CalendarIcon className="h-5 w-5" />
-									{format(new Date(activity.date), 'd MMMM yyyy', {
-										locale: tr
-									})}
-								</div>
-								<Badge
-									variant={statusVariants[activity.status]}
-									className="flex items-center gap-1 text-sm px-3 py-1"
-								>
-									{statusIcons[activity.status]}
-									{statusText[activity.status]}
-								</Badge>
-							</CardContent>
-						</Card>
 
-						<Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-							<CardContent className="pt-6">
-								<h3 className="font-semibold text-lg mb-3 text-indigo-700 dark:text-indigo-300 flex items-center gap-2">
-									<BookOpenIcon className="h-5 w-5" />
-									Aktivite İçeriği
-								</h3>
-								<div
-									className="prose max-w-none dark:prose-invert"
-									dangerouslySetInnerHTML={{
-										__html: activity.content
-									}}
-								/>
-							</CardContent>
-						</Card>
-
-						{activity.feedback && (
-							<Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
-								<CardContent className="pt-6">
-									<h3 className="font-semibold text-lg mb-3 text-indigo-700 dark:text-indigo-300">
-										Geri Bildirim
-									</h3>
-									<p className="text-gray-700 dark:text-gray-300 italic">
-										"{activity.feedback}"
-									</p>
-								</CardContent>
-							</Card>
-						)}
+				<div className="space-y-4">
+					<div>
+						<div className="text-sm font-medium mb-1">Tarih</div>
+						<div>
+							{format(new Date(activity.date), 'dd MMMM yyyy', {
+								locale: tr
+							})}
+						</div>
 					</div>
-				</ScrollArea>
+
+					<div>
+						<div className="text-sm font-medium mb-1">İçerik</div>
+						<div>{activity.content}</div>
+					</div>
+
+					<div>
+						<div className="text-sm font-medium mb-1">Durum</div>
+						<Badge variant={statusVariants[activity.status]}>
+							{statusText[activity.status]}
+						</Badge>
+					</div>
+
+					{activity.feedback && (
+						<div>
+							<div className="text-sm font-medium mb-1">
+								Geri Bildirim
+							</div>
+							<div>{activity.feedback}</div>
+						</div>
+					)}
+
+					{showFeedback && (
+						<div>
+							<div className="text-sm font-medium mb-1">
+								Geri Bildirim
+							</div>
+							<Textarea
+								value={feedback}
+								onChange={(e) => setFeedback(e.target.value)}
+								placeholder="Reddetme sebebini yazın..."
+								className="resize-none"
+							/>
+						</div>
+					)}
+				</div>
+
+				<DialogFooter>
+					{activity.status === 'PENDING' && (
+						<div className="flex gap-2">
+							<Button onClick={handleApprove}>Onayla</Button>
+							<Button variant="destructive" onClick={handleReject}>
+								{showFeedback ? 'Reddet' : 'Reddetme Sebebi'}
+							</Button>
+						</div>
+					)}
+				</DialogFooter>
 			</DialogContent>
 		</Dialog>
 	)

@@ -40,7 +40,6 @@ export function NavUser({ user }) {
 			callbackUrl: '/'
 		})
 	}
-	console.log('user:', user)
 
 	return (
 		<SidebarMenu>

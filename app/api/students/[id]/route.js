@@ -1,7 +1,6 @@
-// app/api/students/[id]/activities/route.js
+// app/api/students/[id]/route.js
 import { NextResponse } from 'next/server'
 import { auth } from '@/auth'
-
 import prisma from '@/lib/prisma'
 
 export async function GET(req, { params }) {
@@ -16,76 +15,31 @@ export async function GET(req, { params }) {
 		}
 
 		const { id } = params
-		const { searchParams } = new URL(req.url)
-		const page = parseInt(searchParams.get('page') || '1')
-		const limit = parseInt(searchParams.get('limit') || '10')
-		const status = searchParams.get('status')
-		const search = searchParams.get('search')
-		const startDate = searchParams.get('startDate')
-		const endDate = searchParams.get('endDate')
 
-		const where = {
-			userId: id,
-			...(status && status !== 'all'
-				? {
-						status: {
-							equals: status.toUpperCase()
-						}
-				  }
-				: {}),
-			...(search
-				? {
-						OR: [
-							{
-								content: {
-									contains: search,
-									mode: 'insensitive'
-								}
-							}
-						]
-				  }
-				: {}),
-			...(startDate &&
-				endDate && {
-					date: {
-						gte: new Date(startDate),
-						lte: new Date(endDate)
-					}
-				})
-		}
-
-		const [activities, total] = await Promise.all([
-			prisma.dailyActivity.findMany({
-				where,
-				skip: (page - 1) * limit,
-				take: limit,
-				include: {
-					user: {
-						select: {
-							firstName: true,
-							lastName: true,
-							department: true
-						}
-					}
-				},
-				orderBy: {
-					date: 'desc'
-				}
-			}),
-			prisma.dailyActivity.count({ where })
-		])
-
-		return NextResponse.json({
-			data: activities,
-			pagination: {
-				page,
-				limit,
-				total,
-				pageCount: Math.ceil(total / limit)
+		const student = await prisma.user.findUnique({
+			where: {
+				id,
+				role: 'USER'
+			},
+			select: {
+				id: true,
+				firstName: true,
+				lastName: true,
+				email: true,
+				department: true
 			}
 		})
+
+		if (!student) {
+			return NextResponse.json(
+				{ error: 'Öğrenci bulunamadı' },
+				{ status: 404 }
+			)
+		}
+
+		return NextResponse.json(student)
 	} catch (error) {
-		console.error('Error fetching student activities:', error)
+		console.error('Error fetching student:', error)
 		return NextResponse.json(
 			{ error: 'Bir hata oluştu' },
 			{ status: 500 }

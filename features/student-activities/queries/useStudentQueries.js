@@ -5,57 +5,32 @@ import {
 	useQueryClient
 } from '@tanstack/react-query'
 import { studentService } from '../services/student'
-import { toast } from '@/hooks/use-toast'
 
-export const useStudents = () => {
+export function useStudents() {
 	return useQuery({
 		queryKey: ['students'],
-		queryFn: studentService.getStudents,
-		onError: () => {
-			toast({
-				title: 'Hata',
-				description: 'Öğrenci listesi alınamadı.',
-				variant: 'destructive'
-			})
-		}
+		queryFn: () => studentService.getStudents()
 	})
 }
 
-export const useStudentActivities = (studentId, params) => {
+export function useStudentActivities(studentId, params) {
 	return useQuery({
-		queryKey: ['studentActivities', studentId, params],
+		queryKey: ['student-activities', studentId, params],
 		queryFn: () =>
 			studentService.getStudentActivities(studentId, params),
-		enabled: !!studentId,
-		keepPreviousData: true,
-		onError: () => {
-			toast({
-				title: 'Hata',
-				description: 'Aktivite listesi alınamadı.',
-				variant: 'destructive'
-			})
-		}
+		enabled: true
 	})
 }
 
-export const useSubmitFeedback = () => {
+export function useSubmitFeedback() {
 	const queryClient = useQueryClient()
 
 	return useMutation({
 		mutationFn: ({ id, data }) =>
 			studentService.submitFeedback(id, data),
 		onSuccess: () => {
-			queryClient.invalidateQueries(['studentActivities'])
-			toast({
-				title: 'Başarılı',
-				description: 'Geri bildirim kaydedildi.'
-			})
-		},
-		onError: () => {
-			toast({
-				title: 'Hata',
-				description: 'Geri bildirim kaydedilemedi.',
-				variant: 'destructive'
+			queryClient.invalidateQueries({
+				queryKey: ['student-activities']
 			})
 		}
 	})

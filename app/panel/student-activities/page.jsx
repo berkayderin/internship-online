@@ -1,56 +1,52 @@
 // app/panel/student-activities/page.jsx
 'use client'
 import { useState } from 'react'
-
-import {
-	Dialog,
-	DialogContent,
-	DialogHeader,
-	DialogTitle
-} from '@/components/ui/dialog'
-import { Textarea } from '@/components/ui/textarea'
-import { Button } from '@/components/ui/button'
-import {
-	useStudentActivities,
-	useStudents,
-	useSubmitFeedback
-} from '@/features/student-activities/queries/useStudentQueries'
-import { StudentList } from '@/features/student-activities/components/StudentList'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { StudentActivities } from '@/features/student-activities/components/StudentActivities'
 import { ActivityDetailModal } from '@/features/student-activities/components/ActivityDetailModal'
+import {
+	useStudentActivities,
+	useSubmitFeedback
+} from '@/features/student-activities/queries/useStudentQueries'
 
 export default function StudentActivitiesPage() {
-	const [selectedStudent, setSelectedStudent] = useState(null)
-	const [detailsOpen, setDetailsOpen] = useState(false)
-	const [selectedActivity, setSelectedActivity] = useState(null)
-	const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false)
-	const [feedback, setFeedback] = useState('')
-	const [selectedActivityId, setSelectedActivityId] = useState(null)
-	const [feedbackType, setFeedbackType] = useState('')
+	const router = useRouter()
+	const searchParams = useSearchParams()
+	const studentId = searchParams.get('studentId')
 
-	// Pagination and filter states
 	const [page, setPage] = useState(1)
 	const [limit, setLimit] = useState(10)
 	const [status, setStatus] = useState('all')
 	const [search, setSearch] = useState('')
+	const [detailsOpen, setDetailsOpen] = useState(false)
+	const [selectedActivity, setSelectedActivity] = useState(null)
 
-	const { data: students } = useStudents()
-	const { data: activitiesData } = useStudentActivities(
-		selectedStudent?.id,
-		{ page, limit, status, search }
-	)
+	const {
+		data: activitiesData,
+		isLoading,
+		error
+	} = useStudentActivities(studentId, {
+		page,
+		limit,
+		status,
+		search
+	})
+
 	const submitFeedback = useSubmitFeedback()
 
-	const handleStudentSelect = (student) => {
-		setSelectedStudent(student)
-		setPage(1)
-	}
+	console.log('Query params:', {
+		studentId,
+		page,
+		limit,
+		status,
+		search
+	})
+	console.log('Activities data:', activitiesData)
+	console.log('Loading:', isLoading)
+	console.log('Error:', error)
 
 	const handleBack = () => {
-		setSelectedStudent(null)
-		setPage(1)
-		setStatus('all')
-		setSearch('')
+		router.push('/panel/students')
 	}
 
 	const handleViewDetails = (activity) => {
@@ -58,110 +54,75 @@ export default function StudentActivitiesPage() {
 		setDetailsOpen(true)
 	}
 
-	const handleApprove = (activityId) => {
-		setSelectedActivityId(activityId)
-		setFeedbackType('APPROVED')
-		setFeedback('')
-		setFeedbackDialogOpen(true)
+	const handleStatusFilter = (status) => {
+		setStatus(status)
+		setPage(1)
 	}
 
-	const handleReject = (activityId) => {
-		setSelectedActivityId(activityId)
-		setFeedbackType('REJECTED')
-		setFeedback('')
-		setFeedbackDialogOpen(true)
+	const handleSearch = (value) => {
+		setSearch(value)
+		setPage(1)
 	}
 
-	const handleFeedbackSubmit = async () => {
+	const handleApprove = async (activityId) => {
 		try {
 			await submitFeedback.mutateAsync({
-				id: selectedActivityId,
+				id: activityId,
 				data: {
-					status: feedbackType,
-					feedback
+					status: 'APPROVED',
+					feedback: ''
 				}
 			})
-			setFeedbackDialogOpen(false)
-			setFeedbackType('')
-			setFeedback('')
 		} catch (error) {
-			console.error('Error submitting feedback:', error)
+			console.error('Error approving activity:', error)
 		}
 	}
 
-	if (!selectedStudent) {
-		return (
-			<StudentList
-				students={students}
-				onStudentSelect={handleStudentSelect}
-			/>
-		)
+	const handleReject = async (activityId, feedback) => {
+		try {
+			await submitFeedback.mutateAsync({
+				id: activityId,
+				data: {
+					status: 'REJECTED',
+					feedback: feedback
+				}
+			})
+		} catch (error) {
+			console.error('Error rejecting activity:', error)
+		}
+	}
+
+	if (isLoading) {
+		return <div>Yükleniyor...</div>
+	}
+
+	if (error) {
+		return <div>Hata: {error.message}</div>
 	}
 
 	return (
-		<>
+		<div className="max-w-7xl w-full space-y-6">
 			<StudentActivities
-				student={selectedStudent}
+				student={activitiesData?.student}
 				activities={activitiesData?.data || []}
-				pagination={
-					activitiesData?.pagination || {
-						page: 1,
-						limit: 10,
-						total: 0,
-						pageCount: 1
-					}
-				}
+				pagination={activitiesData?.pagination}
 				onBack={handleBack}
 				onViewDetails={handleViewDetails}
+				onPageChange={setPage}
+				onLimitChange={(value) => setLimit(parseInt(value))}
+				onStatusFilter={handleStatusFilter}
+				onSearch={handleSearch}
 				onApprove={handleApprove}
 				onReject={handleReject}
-				onPageChange={setPage}
-				onLimitChange={(newLimit) => {
-					setLimit(Number(newLimit))
-					setPage(1)
-				}}
-				onStatusFilter={(newStatus) => {
-					setStatus(newStatus)
-					setPage(1)
-				}}
-				onSearch={(newSearch) => {
-					setSearch(newSearch)
-					setPage(1)
-				}}
 			/>
 
 			<ActivityDetailModal
 				activity={selectedActivity}
 				open={detailsOpen}
 				onOpenChange={setDetailsOpen}
+				onApprove={handleApprove}
+				onReject={handleReject}
 			/>
-
-			<Dialog
-				open={feedbackDialogOpen}
-				onOpenChange={setFeedbackDialogOpen}
-			>
-				<DialogContent>
-					<DialogHeader>
-						<DialogTitle>
-							{feedbackType === 'APPROVED'
-								? 'Aktivite Onaylama'
-								: 'Aktivite Reddetme'}
-						</DialogTitle>
-					</DialogHeader>
-					<div className="space-y-4">
-						<Textarea
-							placeholder="Geri bildiriminizi yazın..."
-							value={feedback}
-							onChange={(e) => setFeedback(e.target.value)}
-						/>
-						<div className="flex justify-end">
-							<Button onClick={handleFeedbackSubmit}>
-								{feedbackType === 'APPROVED' ? 'Onayla' : 'Reddet'}
-							</Button>
-						</div>
-					</div>
-				</DialogContent>
-			</Dialog>
-		</>
+		</div>
 	)
 }

@@ -59,6 +59,7 @@ export async function POST(req) {
 export async function GET(req) {
 	try {
 		const session = await auth()
+
 		if (!session) {
 			return NextResponse.json(
 				{ error: 'Unauthorized' },
@@ -67,55 +68,49 @@ export async function GET(req) {
 		}
 
 		const { searchParams } = new URL(req.url)
+
 		const page = parseInt(searchParams.get('page') || '1')
 		const limit = parseInt(searchParams.get('limit') || '10')
-		const startDate = searchParams.get('startDate')
-		const endDate = searchParams.get('endDate')
 		const status = searchParams.get('status')
-		const userId = searchParams.get('userId')
+		const search = searchParams.get('search')
 
+		// Filtreleme koşullarını oluştur
 		const where = {
-			...(session.user.role === 'USER'
-				? { userId: session.user.id }
-				: userId
-				? { userId }
-				: {}),
-			...(startDate &&
-				endDate && {
-					date: {
-						gte: new Date(startDate),
-						lte: new Date(endDate)
-					}
-				}),
-			...(status && status !== 'all'
-				? {
-						status: {
-							equals: status.toUpperCase()
-						}
-				  }
-				: {})
-		}
-
-		const [activities, total] = await Promise.all([
-			prisma.dailyActivity.findMany({
-				where,
-				skip: (page - 1) * limit,
-				take: limit,
-				include: {
-					user: {
-						select: {
-							firstName: true,
-							lastName: true,
-							department: true
-						}
-					}
-				},
-				orderBy: {
-					date: 'desc'
+			...(status && status !== 'all' && { status }),
+			...(search && {
+				content: {
+					contains: search,
+					mode: 'insensitive'
 				}
 			}),
-			prisma.dailyActivity.count({ where })
-		])
+			// Admin olmayan kullanıcılar için sadece kendi aktivitelerini göster
+			...(session.user.role !== 'ADMIN' && {
+				userId: session.user.id
+			})
+		}
+
+		// Toplam kayıt sayısını al
+		const total = await prisma.dailyActivity.count({ where })
+
+		// Aktiviteleri getir
+		const activities = await prisma.dailyActivity.findMany({
+			where,
+			include: {
+				user: {
+					select: {
+						id: true,
+						firstName: true,
+						lastName: true,
+						department: true
+					}
+				}
+			},
+			orderBy: {
+				date: 'desc'
+			},
+			skip: (page - 1) * limit,
+			take: limit
+		})
 
 		return NextResponse.json({
 			data: activities,
@@ -127,7 +122,7 @@ export async function GET(req) {
 			}
 		})
 	} catch (error) {
-		console.error('Error fetching daily activities:', error)
+		console.error('Error fetching activities:', error)
 		return NextResponse.json(
 			{ error: 'Bir hata oluştu' },
 			{ status: 500 }

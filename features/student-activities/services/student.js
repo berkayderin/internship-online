@@ -2,7 +2,6 @@
 import axios from 'axios'
 
 const STUDENTS_API_URL = '/api/students'
-const DAILY_ACTIVITIES_API_URL = '/api/daily-activities'
 
 export const studentService = {
 	getStudents: async () => {
@@ -20,24 +19,38 @@ export const studentService = {
 
 	getStudentActivities: async (studentId, params = {}) => {
 		try {
-			if (!studentId) return null
+			const queryParams = {
+				page: params.page,
+				limit: params.limit,
+				status: params.status,
+				search: params.search
+			}
 
-			const queryString = new URLSearchParams({
-				...(params.page && { page: params.page }),
-				...(params.limit && { limit: params.limit }),
-				...(params.status &&
-					params.status !== 'all' && { status: params.status }),
-				...(params.search && { search: params.search }),
-				...(params.startDate && { startDate: params.startDate }),
-				...(params.endDate && { endDate: params.endDate })
-			}).toString()
+			if (studentId) {
+				const [studentResponse, activitiesResponse] =
+					await Promise.all([
+						axios.get(`${STUDENTS_API_URL}/${studentId}`),
+						axios.get(`${STUDENTS_API_URL}/${studentId}/activities`, {
+							params: queryParams
+						})
+					])
 
-			const response = await axios.get(
-				`${STUDENTS_API_URL}/${studentId}${
-					queryString ? `?${queryString}` : ''
-				}`
-			)
-			return response.data
+				return {
+					student: studentResponse.data,
+					...activitiesResponse.data
+				}
+			} else {
+				const response = await axios.get('/api/daily-activities', {
+					params: queryParams
+				})
+
+				console.log('Tüm aktiviteler response:', response.data)
+
+				return {
+					student: null,
+					...response.data
+				}
+			}
 		} catch (error) {
 			console.error(
 				'Service error:',
@@ -50,7 +63,7 @@ export const studentService = {
 	submitFeedback: async (id, data) => {
 		try {
 			const response = await axios.patch(
-				`${DAILY_ACTIVITIES_API_URL}/${id}`,
+				`/api/daily-activities/${id}`,
 				{
 					status: data.status,
 					feedback: data.feedback

@@ -37,10 +37,17 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { statusText, statusVariants } from './ActivityDetailModal'
 
+const defaultPagination = {
+	page: 1,
+	limit: 10,
+	total: 0,
+	pageCount: 1
+}
+
 export function StudentActivities({
 	student,
-	activities,
-	pagination,
+	activities = [],
+	pagination = defaultPagination,
 	onBack,
 	onViewDetails,
 	onApprove,
@@ -53,6 +60,7 @@ export function StudentActivities({
 	const [search, setSearch] = useState('')
 	const [debouncedSearch, setDebouncedSearch] = useState('')
 
+	console.log('student', student)
 	useEffect(() => {
 		const timer = setTimeout(() => {
 			setDebouncedSearch(search)
@@ -68,12 +76,16 @@ export function StudentActivities({
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center gap-4">
-				<Button variant="ghost" onClick={onBack}>
-					<ArrowLeft className="w-4 h-4 mr-2" />
-					Geri
-				</Button>
+				{student && (
+					<Button variant="ghost" onClick={onBack}>
+						<ArrowLeft className="w-4 h-4 mr-2" />
+						Geri
+					</Button>
+				)}
 				<h1 className="text-2xl font-bold">
-					{student.firstName} {student.lastName} - Staj Aktiviteleri
+					{student
+						? `${student.firstName} ${student.lastName} - Staj Aktiviteleri`
+						: 'Tüm Öğrenci Aktiviteleri'}
 				</h1>
 			</div>
 

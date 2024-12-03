@@ -1,0 +1,37 @@
+// features/internship-periods/queries/useInternshipPeriod.js
+import {
+	useQuery,
+	useMutation,
+	useQueryClient
+} from '@tanstack/react-query'
+import { internshipPeriodService } from '../services/internshipPeriod'
+import { toast } from '@/hooks/use-toast'
+
+export const useInternshipPeriods = () => {
+	return useQuery({
+		queryKey: ['internshipPeriods'],
+		queryFn: internshipPeriodService.getPeriods
+	})
+}
+
+export const useCreateInternshipPeriod = () => {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: internshipPeriodService.createPeriod,
+		onSuccess: () => {
+			queryClient.invalidateQueries(['internshipPeriods'])
+			toast({
+				title: 'Başarılı',
+				description: 'Staj dönemi oluşturuldu.'
+			})
+		},
+		onError: () => {
+			toast({
+				title: 'Hata',
+				description: 'Staj dönemi oluşturulamadı.',
+				variant: 'destructive'
+			})
+		}
+	})
+}

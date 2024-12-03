@@ -12,9 +12,12 @@ import {
 	UserCircle,
 	Building,
 	CheckSquare,
-	BookOpenCheck
+	BookOpenCheck,
+	LayoutDashboard
 } from 'lucide-react'
 import { useSession } from 'next-auth/react'
+import { useQuery } from '@tanstack/react-query'
+import { usePathname } from 'next/navigation'
 
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
@@ -28,73 +31,120 @@ import {
 } from '@/components/ui/sidebar'
 
 const getMenusByRole = (role) => {
+	const pathname = usePathname()
+
 	const commonMenus = [
 		{
-			title: 'Staj Defteri',
-			url: '/internship-diary',
-			icon: BookOpen,
+			title: 'Panel',
+			url: '/panel',
+			icon: LayoutDashboard,
+			isActive:
+				pathname === '/panel' || pathname.startsWith('/panel/'),
 			items: [
 				{
-					title: 'Tüm Aktiviteler',
-					url: '/panel/daily-activities'
+					title: 'Genel Bakış',
+					url: '/panel',
+					icon: LayoutDashboard,
+					isActive: pathname === '/panel'
 				}
 			]
 		}
 	]
 
-	if (role === 'ADMIN') {
-		commonMenus[0].items.push({
-			title: 'Öğrenci Aktiviteleri',
-			url: '/panel/student-activities'
-		})
-	}
+	// Kullanıcının onaylı başvurusu varsa Staj Günlüğü menüsünü ekle
+	const { data: applications } = useQuery({
+		queryKey: ['applications'],
+		queryFn: () =>
+			fetch('/api/applications').then((res) => res.json())
+	})
 
-	const adminMenus = [
-		{
-			title: 'Raporlar',
-			url: '/reports',
-			icon: BarChart,
-			items: [
-				{
-					title: 'Staj İstatistikleri',
-					url: '/statistics'
-				},
-				{
-					title: 'Değerlendirmeler',
-					url: '/evaluations'
-				}
-			]
-		}
-	]
+	const hasApprovedApplication = applications?.some(
+		(app) => app.status === 'APPROVED'
+	)
 
 	const userMenus = [
 		{
-			title: 'Staj Bilgileri',
-			url: '/internship-info',
-			icon: ClipboardList,
+			title: 'Staj İşlemleri',
+			icon: BookOpen,
+			isActive:
+				pathname.startsWith('/panel/applications') ||
+				pathname.startsWith('/panel/daily-activities'),
 			items: [
 				{
-					title: 'Staj Durumu',
-					url: '/status'
+					title: 'Başvurularım',
+					url: '/panel/applications',
+					icon: ClipboardList,
+					isActive: pathname.startsWith('/panel/applications')
+				},
+				...(hasApprovedApplication
+					? [
+							{
+								title: 'Günlük Aktiviteler',
+								url: '/panel/daily-activities',
+								icon: CalendarDays,
+								isActive: pathname.startsWith(
+									'/panel/daily-activities'
+								)
+							}
+					  ]
+					: [])
+			]
+		}
+	]
+
+	const adminMenus = [
+		{
+			title: 'Staj Yönetimi',
+			icon: BookOpen,
+			isActive:
+				pathname.startsWith('/panel/internship-periods') ||
+				pathname.startsWith('/panel/applications'),
+			items: [
+				{
+					title: 'Staj Dönemleri',
+					url: '/panel/internship-periods',
+					icon: CalendarDays,
+					isActive: pathname.startsWith('/panel/internship-periods')
 				},
 				{
-					title: 'Belgelerim',
-					url: '/documents'
+					title: 'Başvurular',
+					url: '/panel/applications',
+					icon: ClipboardList,
+					isActive: pathname.startsWith('/panel/applications')
 				}
 			]
 		},
 		{
-			title: 'Kurum',
-			url: '/company',
-			icon: Building,
+			title: 'Öğrenci İşlemleri',
+			icon: Users,
+			isActive:
+				pathname.startsWith('/panel/students') ||
+				pathname.startsWith('/panel/student-activities'),
 			items: [
 				{
-					title: 'Kurum Bilgileri',
-					url: '/info'
+					title: 'Öğrenci Listesi',
+					url: '/panel/students',
+					icon: UserCircle,
+					isActive: pathname.startsWith('/panel/students')
 				},
 				{
-					title: 'Değerlendirme',
-					url: '/evaluation'
+					title: 'Öğrenci Aktiviteleri',
+					url: '/panel/student-activities',
+					icon: FileText,
+					isActive: pathname.startsWith('/panel/student-activities')
+				}
+			]
+		},
+		{
+			title: 'Ayarlar',
+			icon: Settings,
+			isActive: pathname.startsWith('/panel/settings'),
+			items: [
+				{
+					title: 'Sistem Ayarları',
+					url: '/panel/settings',
+					icon: Settings,
+					isActive: pathname.startsWith('/panel/settings')
 				}
 			]
 		}
@@ -108,8 +158,6 @@ const getMenusByRole = (role) => {
 export function AppSidebar({ ...props }) {
 	const { data: session } = useSession()
 	const role = session?.user?.role || 'USER'
-
-	console.log('session:', session)
 
 	const userData = {
 		firstName: session?.user?.firstName,
