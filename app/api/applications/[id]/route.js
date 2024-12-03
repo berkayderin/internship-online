@@ -8,7 +8,7 @@ export async function PATCH(req, { params }) {
 
 		if (!session || session.user.role !== 'ADMIN') {
 			return NextResponse.json(
-				{ error: 'Unauthorized' },
+				{ error: 'Yetkisiz erişim' },
 				{ status: 401 }
 			)
 		}
@@ -16,7 +16,19 @@ export async function PATCH(req, { params }) {
 		const { id } = params
 		const { status, feedback } = await req.json()
 
-		const application = await prisma.application.update({
+		const application = await prisma.application.findUnique({
+			where: { id },
+			select: { userId: true }
+		})
+
+		if (application.userId === session.user.id) {
+			return NextResponse.json(
+				{ error: 'Kendi başvurunuzu onaylayamazsınız' },
+				{ status: 403 }
+			)
+		}
+
+		const updatedApplication = await prisma.application.update({
 			where: { id },
 			data: {
 				status,
@@ -34,7 +46,7 @@ export async function PATCH(req, { params }) {
 			}
 		})
 
-		return NextResponse.json(application)
+		return NextResponse.json(updatedApplication)
 	} catch (error) {
 		console.error('Error:', error)
 		return NextResponse.json(

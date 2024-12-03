@@ -42,5 +42,20 @@ export const applicationService = {
 			)
 			throw error
 		}
+	},
+	updateApplicationsBulk: async (ids, data) => {
+		try {
+			const response = await axios.patch('/api/applications/bulk', {
+				ids,
+				...data
+			})
+			return response.data
+		} catch (error) {
+			console.error(
+				'Service error:',
+				error.response?.data || error.message
+			)
+			throw error
+		}
 	}
 }

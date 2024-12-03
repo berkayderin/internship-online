@@ -58,3 +58,26 @@ export const useUpdateApplication = () => {
 		}
 	})
 }
+
+export const useBulkUpdateApplications = () => {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: ({ ids, data }) =>
+			applicationService.updateApplicationsBulk(ids, data),
+		onSuccess: () => {
+			queryClient.invalidateQueries(['applications'])
+			toast({
+				title: 'Başarılı',
+				description: 'Seçili başvurular güncellendi.'
+			})
+		},
+		onError: () => {
+			toast({
+				title: 'Hata',
+				description: 'Başvurular güncellenirken hata oluştu.',
+				variant: 'destructive'
+			})
+		}
+	})
+}
