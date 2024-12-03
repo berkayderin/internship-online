@@ -9,6 +9,7 @@ import { CreatePeriodDialog } from '@/features/internship-periods/components/Cre
 import { ApplicationDialog } from '@/features/applications/components/ApplicationDialog'
 import { useInternshipPeriods } from '@/features/internship-periods/queries/useInternshipPeriod'
 import { useApplications } from '@/features/applications/queries/useApplication'
+import { PlusIcon } from 'lucide-react'
 
 const statusText = {
 	PENDING: 'Beklemede',
@@ -50,52 +51,94 @@ export default function PanelPage() {
 	}
 
 	return (
-		<div className="space-y-6 w-full">
-			<div className="flex items-center justify-between">
-				<h1 className="text-3xl font-bold">Hoş Geldiniz</h1>
+		<div className="max-w-4xl">
+			<div className="flex items-center justify-between pb-4">
+				<h1 className="text-3xl font-bold text-gray-800">
+					Hoş Geldiniz, {session?.user?.firstName}
+				</h1>
 				{isAdmin && (
 					<Button onClick={() => setCreatePeriodOpen(true)}>
-						Yeni Staj Dönemi Oluştur
+						<span className="flex items-center gap-2">
+							<PlusIcon className="w-4 h-4" />
+							Yeni Staj Dönemi Oluştur
+						</span>
 					</Button>
 				)}
 			</div>
 
 			{!isAdmin && activePeriod && (
-				<div className="bg-blue-50 dark:bg-blue-950 p-6 rounded-lg shadow-sm">
-					<h2 className="text-xl font-semibold mb-4">
+				<div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200">
+					<h2 className="text-2xl font-semibold mb-4 text-gray-800 ">
 						Aktif Staj Dönemi
 					</h2>
-					<p className="mb-4">{activePeriod.name}</p>
-					{currentApplication ? (
-						<div className="space-y-3">
-							<div className="flex items-center gap-2">
-								<span className="font-medium">Başvuru Durumu:</span>
-								<Badge
-									variant={statusVariants[currentApplication.status]}
-								>
-									{statusText[currentApplication.status]}
-								</Badge>
-							</div>
-							{currentApplication.feedback && (
-								<div className="bg-white dark:bg-gray-800 p-4 rounded-md">
-									<p className="font-medium mb-1">Geri Bildirim:</p>
-									<p className="text-gray-600 dark:text-gray-300 italic">
-										"{currentApplication.feedback}"
-									</p>
-								</div>
-							)}
+
+					<div className="space-y-4">
+						<div className="flex flex-col gap-2">
+							<span className="text-gray-600 dark:text-gray-400">
+								Dönem Adı:
+							</span>
+							<p className="text-lg font-medium">
+								{activePeriod.name}
+							</p>
 						</div>
-					) : (
-						<Button onClick={() => handleApplyClick(activePeriod.id)}>
-							Staja Başvur
-						</Button>
-					)}
+
+						<div className="flex flex-col gap-2">
+							<span className="text-gray-600 dark:text-gray-400">
+								Tarih Aralığı:
+							</span>
+							<p className="text-lg font-medium">
+								{new Date(activePeriod.startDate).toLocaleDateString(
+									'tr-TR'
+								)}{' '}
+								-
+								{new Date(activePeriod.endDate).toLocaleDateString(
+									'tr-TR'
+								)}
+							</p>
+						</div>
+
+						{currentApplication ? (
+							<div className="mt-6 space-y-4">
+								<div className="flex items-center gap-3">
+									<span className="font-medium text-gray-700 dark:text-gray-300">
+										Başvuru Durumu:
+									</span>
+									<Badge
+										variant={
+											statusVariants[currentApplication.status]
+										}
+									>
+										{statusText[currentApplication.status]}
+									</Badge>
+								</div>
+
+								{currentApplication.feedback && (
+									<div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 ">
+										<p className="font-medium text-gray-800 dark:text-gray-200 mb-2">
+											Geri Bildirim:
+										</p>
+										<p className="text-gray-600 dark:text-gray-400 italic">
+											"{currentApplication.feedback}"
+										</p>
+									</div>
+								)}
+							</div>
+						) : (
+							<Button
+								onClick={() => handleApplyClick(activePeriod.id)}
+								className="w-full mt-4"
+							>
+								Staja Başvur
+							</Button>
+						)}
+					</div>
 				</div>
 			)}
 
 			<CreatePeriodDialog
 				open={createPeriodOpen}
 				onOpenChange={setCreatePeriodOpen}
+				periodId={selectedPeriodId}
 			/>
 
 			<ApplicationDialog
