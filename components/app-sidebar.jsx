@@ -168,9 +168,8 @@ export function AppSidebar({ ...props }) {
 
 	const teams = [
 		{
-			name: 'Staj Defteri',
 			logo: BookOpenCheck,
-			plan: role === 'admin' ? 'Yönetici' : 'Öğrenci'
+			role: role === 'ADMIN' ? 'Yönetici' : 'Öğrenci'
 		}
 	]
 

@@ -52,12 +52,12 @@ export default function PanelPage() {
 
 	return (
 		<div className="max-w-4xl">
-			<div className="flex items-center justify-between pb-4">
+			<div className="flex flex-col justify-start items-start gap-4">
 				<h1 className="text-3xl font-bold text-gray-800">
 					Hoş Geldiniz, {session?.user?.firstName}
 				</h1>
 				{isAdmin && (
-					<Button onClick={() => setCreatePeriodOpen(true)}>
+					<Button onClick={() => setCreatePeriodOpen(true)} size="sm">
 						<span className="flex items-center gap-2">
 							<PlusIcon className="w-4 h-4" />
 							Yeni Staj Dönemi Oluştur
@@ -67,7 +67,7 @@ export default function PanelPage() {
 			</div>
 
 			{!isAdmin && activePeriod && (
-				<div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200">
+				<div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 mt-4">
 					<h2 className="text-2xl font-semibold mb-4 text-gray-800 ">
 						Aktif Staj Dönemi
 					</h2>
