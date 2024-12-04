@@ -35,3 +35,48 @@ export const useCreateInternshipPeriod = () => {
 		}
 	})
 }
+
+export const useDeleteInternshipPeriod = () => {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: (id) => internshipPeriodService.deletePeriod(id),
+		onSuccess: () => {
+			queryClient.invalidateQueries(['internshipPeriods'])
+			toast({
+				title: 'Başarılı',
+				description: 'Staj dönemi silindi.'
+			})
+		},
+		onError: () => {
+			toast({
+				title: 'Hata',
+				description: 'Staj dönemi silinemedi.',
+				variant: 'destructive'
+			})
+		}
+	})
+}
+
+export const useUpdateInternshipPeriod = () => {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: ({ id, data }) =>
+			internshipPeriodService.updatePeriod(id, data),
+		onSuccess: () => {
+			queryClient.invalidateQueries(['internshipPeriods'])
+			toast({
+				title: 'Başarılı',
+				description: 'Staj dönemi güncellendi.'
+			})
+		},
+		onError: () => {
+			toast({
+				title: 'Hata',
+				description: 'Staj dönemi güncellenemedi.',
+				variant: 'destructive'
+			})
+		}
+	})
+}
