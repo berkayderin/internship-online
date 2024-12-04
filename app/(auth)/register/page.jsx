@@ -28,13 +28,15 @@ const RegisterPage = () => {
 	}
 
 	return (
-		<div className="min-h-screen flex items-center justify-center">
-			<AuthForm
-				type="register"
-				onSubmit={handleRegister}
-				isSubmitting={register.isLoading}
-				schema={registerSchema}
-			/>
+		<div className="min-h-screen flex items-center justify-center px-4">
+			<div className="w-full max-w-[520px]">
+				<AuthForm
+					type="register"
+					onSubmit={handleRegister}
+					isSubmitting={register.isLoading}
+					schema={registerSchema}
+				/>
+			</div>
 		</div>
 	)
 }

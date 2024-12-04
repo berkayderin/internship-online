@@ -30,13 +30,15 @@ const LoginPage = () => {
 	}
 
 	return (
-		<div className="min-h-screen flex items-center justify-center">
-			<AuthForm
-				type="login"
-				onSubmit={handleLogin}
-				isSubmitting={login.isLoading}
-				schema={loginSchema}
-			/>
+		<div className="min-h-screen flex items-center justify-center px-4">
+			<div className="w-full max-w-[520px]">
+				<AuthForm
+					type="login"
+					onSubmit={handleLogin}
+					isSubmitting={login.isLoading}
+					schema={loginSchema}
+				/>
+			</div>
 		</div>
 	)
 }

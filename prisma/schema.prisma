@@ -25,19 +25,19 @@ enum ApplicationStatus {
 }
 
 model User {
-  id              String          @id @default(cuid()) @map("_id")
-  email           String          @unique
-  passwordHash    String
-  firstName       String
-  lastName        String
-  department      String // Bölüm bilgisi
-  role            UserRole        @default(USER) // Kullanıcı rolü (varsayılan: öğrenci)
-  startDate       DateTime? // Staj başlangıç tarihi (sadece öğrenciler için)
-  endDate         DateTime? // Staj bitiş tarihi (sadece öğrenciler için)
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  dailyActivities DailyActivity[] // Günlük aktivite kayıtları
-  applications    Application[] // Staj başvuruları
+  id                  String          @id @default(cuid()) @map("_id")
+  email               String          @unique
+  passwordHash        String
+  firstName           String
+  lastName            String
+  department          String // Bölüm bilgisi
+  role                UserRole        @default(USER) // Kullanıcı rolü (varsayılan: öğrenci)
+  internshipStartDate DateTime? // Staj başlangıç tarihi (sadece öğrenciler için)
+  internshipEndDate   DateTime? // Staj bitiş tarihi (sadece öğrenciler için)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  dailyActivities     DailyActivity[] // Günlük aktivite kayıtları
+  applications        Application[] // Staj başvuruları
 }
 
 model InternshipPeriod {

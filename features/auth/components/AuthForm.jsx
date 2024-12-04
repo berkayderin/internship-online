@@ -53,7 +53,7 @@ export function AuthForm({
 	}
 
 	return (
-		<Card className="w-[450px]">
+		<Card>
 			<CardHeader>
 				<CardTitle>
 					{type === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}

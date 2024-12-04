@@ -38,7 +38,13 @@ const applicationSchema = z
 			.string({
 				required_error: 'İşyeri adresi zorunludur'
 			})
-			.min(10, 'Geçerli bir adres giriniz')
+			.min(10, 'Geçerli bir adres giriniz'),
+		internshipStartDate: z.date({
+			required_error: 'Staj başlangıç tarihi zorunludur'
+		}),
+		internshipEndDate: z.date({
+			required_error: 'Staj bitiş tarihi zorunludur'
+		})
 	})
 	.refine(
 		(data) => data.companyEngineerCount <= data.companyEmployeeCount,
@@ -46,6 +52,13 @@ const applicationSchema = z
 			message:
 				'Mühendis sayısı toplam çalışan sayısından fazla olamaz',
 			path: ['companyEngineerCount']
+		}
+	)
+	.refine(
+		(data) => data.internshipEndDate > data.internshipStartDate,
+		{
+			message: 'Bitiş tarihi başlangıç tarihinden sonra olmalıdır',
+			path: ['internshipEndDate']
 		}
 	)
 

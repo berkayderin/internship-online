@@ -84,6 +84,14 @@ export async function POST(req) {
 			)
 		}
 
+		const user = await prisma.user.update({
+			where: { id: session.user.id },
+			data: {
+				internshipStartDate: data.internshipStartDate,
+				internshipEndDate: data.internshipEndDate
+			}
+		})
+
 		const application = await prisma.application.create({
 			data: {
 				...validationResult.data,

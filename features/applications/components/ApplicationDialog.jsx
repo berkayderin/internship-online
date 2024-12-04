@@ -22,6 +22,16 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import applicationSchema from '../zod/ApplicationSchema'
 import { useCreateApplication } from '../queries/useApplication'
+import { Calendar } from '@/components/ui/calendar'
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger
+} from '@/components/ui/popover'
+import { CalendarIcon } from 'lucide-react'
+import { format } from 'date-fns'
+import { tr } from 'date-fns/locale'
+import { cn } from '@/lib/utils'
 
 export function ApplicationDialog({ open, onOpenChange, periodId }) {
 	const form = useForm({
@@ -33,7 +43,9 @@ export function ApplicationDialog({ open, onOpenChange, periodId }) {
 			companyWebsite: '',
 			companyEmployeeCount: 0,
 			companyEngineerCount: 0,
-			companyAddress: ''
+			companyAddress: '',
+			internshipStartDate: null,
+			internshipEndDate: null
 		}
 	})
 
@@ -169,6 +181,89 @@ export function ApplicationDialog({ open, onOpenChange, periodId }) {
 								</FormItem>
 							)}
 						/>
+						<div className="grid grid-cols-2 gap-4">
+							<FormField
+								control={form.control}
+								name="internshipStartDate"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Staj Başlangıç Tarihi</FormLabel>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant="outline"
+														className={cn(
+															'w-full pl-3 text-left font-normal',
+															!field.value && 'text-muted-foreground'
+														)}
+													>
+														{field.value ? (
+															format(field.value, 'd MMMM yyyy', {
+																locale: tr
+															})
+														) : (
+															<span>Tarih seçin</span>
+														)}
+														<CalendarIcon className="ml-auto h-4 w-4" />
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+											<PopoverContent className="w-auto p-0">
+												<Calendar
+													mode="single"
+													selected={field.value}
+													onSelect={field.onChange}
+													locale={tr}
+												/>
+											</PopoverContent>
+										</Popover>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="internshipEndDate"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Staj Bitiş Tarihi</FormLabel>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant="outline"
+														className={cn(
+															'w-full pl-3 text-left font-normal',
+															!field.value && 'text-muted-foreground'
+														)}
+													>
+														{field.value ? (
+															format(field.value, 'd MMMM yyyy', {
+																locale: tr
+															})
+														) : (
+															<span>Tarih seçin</span>
+														)}
+														<CalendarIcon className="ml-auto h-4 w-4" />
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+											<PopoverContent className="w-auto p-0">
+												<Calendar
+													mode="single"
+													selected={field.value}
+													onSelect={field.onChange}
+													locale={tr}
+												/>
+											</PopoverContent>
+										</Popover>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
 						<div className="flex justify-end">
 							<Button
 								type="submit"
