@@ -53,8 +53,9 @@ export default function PanelPage() {
 	return (
 		<div className="max-w-4xl">
 			<div className="flex flex-col justify-start items-start gap-4">
-				<h1 className="text-3xl font-bold text-gray-800">
-					Hoş Geldiniz, {session?.user?.firstName}
+				<h1 className="text-2xl font-semibold ">
+					Hoş Geldiniz, {session?.user?.firstName}{' '}
+					{session?.user?.lastName}
 				</h1>
 				{isAdmin && (
 					<Button onClick={() => setCreatePeriodOpen(true)} size="sm">
@@ -68,7 +69,7 @@ export default function PanelPage() {
 
 			{!isAdmin && activePeriod && (
 				<div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 mt-4">
-					<h2 className="text-2xl font-semibold mb-4 text-gray-800 ">
+					<h2 className="text-2xl font-semibold mb-4  ">
 						Aktif Staj Dönemi
 					</h2>
 
@@ -114,7 +115,7 @@ export default function PanelPage() {
 
 								{currentApplication.feedback && (
 									<div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 ">
-										<p className="font-medium text-gray-800 dark:text-gray-200 mb-2">
+										<p className="font-medium  dark:text-gray-200 mb-2">
 											Geri Bildirim:
 										</p>
 										<p className="text-gray-600 dark:text-gray-400 italic">

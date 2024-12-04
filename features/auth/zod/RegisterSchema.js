@@ -15,20 +15,25 @@ const registerSchema = z.object({
 		.min(2, {
 			message: 'Soyad en az 2 karakter olmalıdır'
 		}),
-	department: z
-		.string({
-			required_error: 'Bölüm gereklidir'
-		})
-		.min(2, {
-			message: 'Bölüm en az 2 karakter olmalıdır'
-		}),
+	department: z.string({
+		required_error: 'Bölüm seçiniz'
+	}),
 	email: z
 		.string({
 			required_error: 'E-posta adresi gereklidir'
 		})
 		.email({
 			message: 'Geçerli bir e-posta adresi giriniz'
-		}),
+		})
+		.refine(
+			(email) =>
+				email.endsWith('@ogr.mehmetakif.edu.tr') ||
+				email.endsWith('@mehmetakif.edu.tr'),
+			{
+				message:
+					'Sadece Mehmet Akif Ersoy Üniversitesi mail adresleri kabul edilmektedir'
+			}
+		),
 	password: z
 		.string({
 			required_error: 'Şifre gereklidir'
