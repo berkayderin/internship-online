@@ -37,7 +37,9 @@ export function CreatePeriodDialog({ open, onOpenChange }) {
 		defaultValues: {
 			name: '',
 			startDate: new Date(),
-			endDate: new Date()
+			endDate: new Date(),
+			internshipStartDate: new Date(),
+			internshipEndDate: new Date()
 		}
 	})
 
@@ -149,6 +151,86 @@ export function CreatePeriodDialog({ open, onOpenChange }) {
 												onSelect={field.onChange}
 												disabled={(date) => date < new Date()}
 												initialFocus
+												locale={tr}
+											/>
+										</PopoverContent>
+									</Popover>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="internshipStartDate"
+							render={({ field }) => (
+								<FormItem className="flex flex-col">
+									<FormLabel>Staj Başlangıç Tarihi</FormLabel>
+									<Popover>
+										<PopoverTrigger asChild>
+											<FormControl>
+												<Button
+													variant="outline"
+													className={cn('pl-3 text-left font-normal')}
+												>
+													{field.value ? (
+														format(field.value, 'd MMMM yyyy', {
+															locale: tr
+														})
+													) : (
+														<span>Tarih seçin</span>
+													)}
+													<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+												</Button>
+											</FormControl>
+										</PopoverTrigger>
+										<PopoverContent
+											className="w-auto p-0"
+											align="start"
+										>
+											<Calendar
+												mode="single"
+												selected={field.value}
+												onSelect={field.onChange}
+												locale={tr}
+											/>
+										</PopoverContent>
+									</Popover>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="internshipEndDate"
+							render={({ field }) => (
+								<FormItem className="flex flex-col">
+									<FormLabel>Staj Bitiş Tarihi</FormLabel>
+									<Popover>
+										<PopoverTrigger asChild>
+											<FormControl>
+												<Button
+													variant="outline"
+													className={cn('pl-3 text-left font-normal')}
+												>
+													{field.value ? (
+														format(field.value, 'd MMMM yyyy', {
+															locale: tr
+														})
+													) : (
+														<span>Tarih seçin</span>
+													)}
+													<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+												</Button>
+											</FormControl>
+										</PopoverTrigger>
+										<PopoverContent
+											className="w-auto p-0"
+											align="start"
+										>
+											<Calendar
+												mode="single"
+												selected={field.value}
+												onSelect={field.onChange}
 												locale={tr}
 											/>
 										</PopoverContent>

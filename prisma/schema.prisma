@@ -41,13 +41,15 @@ model User {
 }
 
 model InternshipPeriod {
-  id           String        @id @default(cuid()) @map("_id")
-  name         String
-  startDate    DateTime
-  endDate      DateTime
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  applications Application[] // Döneme ait başvurular
+  id                  String        @id @default(cuid()) @map("_id")
+  name                String
+  startDate           DateTime // Başvuru başlangıç tarihi
+  endDate             DateTime // Başvuru bitiş tarihi
+  internshipStartDate DateTime // Staj başlangıç tarihi
+  internshipEndDate   DateTime // Staj bitiş tarihi
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  applications        Application[]
 }
 
 model Application {
