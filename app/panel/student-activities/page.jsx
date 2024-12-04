@@ -1,6 +1,5 @@
-// app/panel/student-activities/page.jsx
 'use client'
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { StudentActivities } from '@/features/student-activities/components/StudentActivities'
 import { ActivityDetailModal } from '@/features/student-activities/components/ActivityDetailModal'
@@ -9,7 +8,7 @@ import {
 	useSubmitFeedback
 } from '@/features/student-activities/queries/useStudentQueries'
 
-export default function StudentActivitiesPage() {
+function StudentActivitiesContent() {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const studentId = searchParams.get('studentId')
@@ -33,17 +32,6 @@ export default function StudentActivitiesPage() {
 	})
 
 	const submitFeedback = useSubmitFeedback()
-
-	console.log('Query params:', {
-		studentId,
-		page,
-		limit,
-		status,
-		search
-	})
-	console.log('Activities data:', activitiesData)
-	console.log('Loading:', isLoading)
-	console.log('Error:', error)
 
 	const handleBack = () => {
 		router.push('/panel/students')
@@ -124,5 +112,14 @@ export default function StudentActivitiesPage() {
 				onReject={handleReject}
 			/>
 		</div>
+	)
+}
+
+// Ana sayfa bileşeni
+export default function StudentActivitiesPage() {
+	return (
+		<Suspense fallback={<div>Sayfa yükleniyor...</div>}>
+			<StudentActivitiesContent />
+		</Suspense>
 	)
 }
