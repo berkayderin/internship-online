@@ -27,11 +27,11 @@ export default function PanelLayout({ children }) {
 						<header className="flex h-16 w-full shrink-0 items-center gap-2 border-b">
 							<div className="flex w-full items-center gap-2 px-4">
 								<SidebarTrigger className="-ml-1" />
-								<Separator
+								{/* <Separator
 									orientation="vertical"
 									className="mr-2 h-4"
-								/>
-								<Breadcrumb className="w-full">
+								/> */}
+								{/* <Breadcrumb className="w-full">
 									<BreadcrumbList>
 										<BreadcrumbItem>
 											<BreadcrumbLink href="/panel">
@@ -43,7 +43,7 @@ export default function PanelLayout({ children }) {
 											<BreadcrumbPage>Genel Bakış</BreadcrumbPage>
 										</BreadcrumbItem>
 									</BreadcrumbList>
-								</Breadcrumb>
+								</Breadcrumb> */}
 							</div>
 						</header>
 						<main className="flex p-6">{children}</main>
