@@ -101,7 +101,7 @@ export default function StudentActivitiesPage() {
 	}
 
 	return (
-		<div className="max-w-7xl w-full space-y-6">
+		<div className="space-y-6">
 			<StudentActivities
 				student={activitiesData?.student}
 				activities={activitiesData?.data || []}

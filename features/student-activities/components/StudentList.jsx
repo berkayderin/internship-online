@@ -13,7 +13,7 @@ export function StudentList({ students = [], onStudentSelect }) {
 		<div className="space-y-6">
 			<h1 className="text-2xl font-bold">Öğrenci Listesi</h1>
 			<div className="rounded-md border">
-				<Table>
+				<Table className="w-[1400px]">
 					<TableHeader>
 						<TableRow>
 							<TableHead>Ad Soyad</TableHead>
@@ -22,19 +22,30 @@ export function StudentList({ students = [], onStudentSelect }) {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{students.map((student) => (
-							<TableRow
-								key={student.id}
-								className="cursor-pointer hover:bg-muted/50"
-								onClick={() => onStudentSelect(student.id)}
-							>
-								<TableCell>
-									{student.firstName} {student.lastName}
+						{!students.length ? (
+							<TableRow>
+								<TableCell
+									colSpan={3}
+									className="h-24 text-center text-muted-foreground"
+								>
+									Henüz hiç öğrenci bulunmuyor.
 								</TableCell>
-								<TableCell>{student.email}</TableCell>
-								<TableCell>{student.department}</TableCell>
 							</TableRow>
-						))}
+						) : (
+							students.map((student) => (
+								<TableRow
+									key={student.id}
+									className="cursor-pointer hover:bg-muted/50"
+									onClick={() => onStudentSelect(student.id)}
+								>
+									<TableCell>
+										{student.firstName} {student.lastName}
+									</TableCell>
+									<TableCell>{student.email}</TableCell>
+									<TableCell>{student.department}</TableCell>
+								</TableRow>
+							))
+						)}
 					</TableBody>
 				</Table>
 			</div>

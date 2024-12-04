@@ -34,23 +34,42 @@ import {
 	useUpdateInternshipPeriod
 } from '../queries/useInternshipPeriod'
 import { cn } from '@/lib/utils'
+import { useEffect } from 'react'
 
 export function PeriodDialog({ open, onOpenChange, period }) {
 	const isEditing = !!period
 	const form = useForm({
 		resolver: zodResolver(internshipPeriodSchema),
 		defaultValues: {
-			name: period?.name || '',
-			startDate: period ? new Date(period.startDate) : new Date(),
-			endDate: period ? new Date(period.endDate) : new Date(),
-			internshipStartDate: period
-				? new Date(period.internshipStartDate)
-				: new Date(),
-			internshipEndDate: period
-				? new Date(period.internshipEndDate)
-				: new Date()
+			name: '',
+			startDate: new Date(),
+			endDate: new Date(),
+			internshipStartDate: new Date(),
+			internshipEndDate: new Date()
 		}
 	})
+
+	useEffect(() => {
+		if (period) {
+			form.reset({
+				name: period.name,
+				startDate: new Date(period.startDate),
+				endDate: new Date(period.endDate),
+				internshipStartDate: new Date(period.internshipStartDate),
+				internshipEndDate: new Date(period.internshipEndDate)
+			})
+		} else {
+			form.reset({
+				name: '',
+				startDate: new Date(),
+				endDate: new Date(),
+				internshipStartDate: new Date(),
+				internshipEndDate: new Date()
+			})
+		}
+	}, [period, form])
+
+	console.log('period', period)
 
 	const createPeriod = useCreateInternshipPeriod()
 	const updatePeriod = useUpdateInternshipPeriod()

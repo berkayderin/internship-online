@@ -159,7 +159,7 @@ export default function ApplicationsPage() {
 				)}
 			</div>
 
-			<Table className="border">
+			<Table className="border w-[1400px]">
 				<TableHeader>
 					<TableRow>
 						{isAdmin && (
@@ -194,148 +194,162 @@ export default function ApplicationsPage() {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{(isAdmin ? manageableApplications : applications).map(
-						(application) => (
-							<TableRow key={application.id}>
-								{isAdmin && (
-									<TableCell>
-										{application.status === 'PENDING' && (
-											<Checkbox
-												checked={selectedIds.includes(application.id)}
-												onCheckedChange={(checked) => {
-													if (checked) {
-														setSelectedIds([
-															...selectedIds,
-															application.id
-														])
-													} else {
-														setSelectedIds(
-															selectedIds.filter(
-																(id) => id !== application.id
-															)
-														)
-													}
-												}}
-											/>
-										)}
-									</TableCell>
-								)}
-								<TableCell>
-									{application.user?.firstName}{' '}
-									{application.user?.lastName}
-								</TableCell>
-								<TableCell>
-									<div className="space-y-1">
-										<div className="font-medium flex items-center gap-1">
-											<Building className="h-4 w-4" />
-											{application.companyName}
-										</div>
-										<div className="text-sm text-muted-foreground flex items-center gap-1">
-											<Users2 className="h-4 w-4" />
-											{application.companyEmployeeCount} Çalışan (
-											{application.companyEngineerCount} Mühendis)
-										</div>
-										{application.companyWebsite && (
-											<div className="text-sm text-blue-600">
-												<a
-													href={application.companyWebsite}
-													target="_blank"
-													rel="noopener noreferrer"
-													className="hover:underline"
-												>
-													Website
-												</a>
-											</div>
-										)}
-									</div>
-								</TableCell>
-								<TableCell>
-									<div className="space-y-1">
-										<div className="font-medium">
-											{application.period.name}
-										</div>
-										<div className="text-sm text-muted-foreground flex items-center gap-1">
-											<Calendar className="h-4 w-4" />
-											{format(
-												new Date(application.period.startDate),
-												'd MMM',
-												{ locale: tr }
-											)}{' '}
-											-{' '}
-											{format(
-												new Date(application.period.endDate),
-												'd MMM yyyy',
-												{ locale: tr }
-											)}
-										</div>
-									</div>
-								</TableCell>
-								<TableCell>
-									{format(
-										new Date(application.createdAt),
-										'd MMMM yyyy',
-										{
-											locale: tr
-										}
-									)}
-								</TableCell>
-								<TableCell>
-									<div className="flex items-center gap-2">
-										<Badge
-											variant={statusVariants[application.status]}
-										>
-											{statusText[application.status]}
-										</Badge>
-										{application.status === 'REJECTED' &&
-											application.feedback && (
-												<TooltipProvider>
-													<Tooltip>
-														<TooltipTrigger>
-															<Info className="h-4 w-4 text-muted-foreground" />
-														</TooltipTrigger>
-														<TooltipContent>
-															<p className="max-w-xs">
-																{application.feedback}
-															</p>
-														</TooltipContent>
-													</Tooltip>
-												</TooltipProvider>
-											)}
-									</div>
-								</TableCell>
-								{isAdmin && (
-									<TableCell>
-										<div className="flex gap-2">
+					{(isAdmin ? manageableApplications : applications)
+						.length === 0 ? (
+						<TableRow>
+							<TableCell
+								colSpan={isAdmin ? 7 : 5}
+								className="h-24 text-center text-muted-foreground"
+							>
+								Henüz hiç başvuru bulunmuyor.
+							</TableCell>
+						</TableRow>
+					) : (
+						(isAdmin ? manageableApplications : applications).map(
+							(application) => (
+								<TableRow key={application.id}>
+									{isAdmin && (
+										<TableCell>
 											{application.status === 'PENDING' && (
-												<>
-													<Button
-														size="sm"
-														variant="outline"
-														className="text-green-600 hover:text-green-700"
-														onClick={() =>
-															handleAction(application, 'approve')
+												<Checkbox
+													checked={selectedIds.includes(
+														application.id
+													)}
+													onCheckedChange={(checked) => {
+														if (checked) {
+															setSelectedIds([
+																...selectedIds,
+																application.id
+															])
+														} else {
+															setSelectedIds(
+																selectedIds.filter(
+																	(id) => id !== application.id
+																)
+															)
 														}
+													}}
+												/>
+											)}
+										</TableCell>
+									)}
+									<TableCell>
+										{application.user?.firstName}{' '}
+										{application.user?.lastName}
+									</TableCell>
+									<TableCell>
+										<div className="space-y-1">
+											<div className="font-medium flex items-center gap-1">
+												<Building className="h-4 w-4" />
+												{application.companyName}
+											</div>
+											<div className="text-sm text-muted-foreground flex items-center gap-1">
+												<Users2 className="h-4 w-4" />
+												{application.companyEmployeeCount} Çalışan (
+												{application.companyEngineerCount} Mühendis)
+											</div>
+											{application.companyWebsite && (
+												<div className="text-sm text-blue-600">
+													<a
+														href={application.companyWebsite}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="hover:underline"
 													>
-														<CheckCircle className="h-4 w-4 mr-1" />
-														Onayla
-													</Button>
-													<Button
-														size="sm"
-														variant="outline"
-														className="text-red-600 hover:text-red-700"
-														onClick={() =>
-															handleAction(application, 'reject')
-														}
-													>
-														<XCircle className="h-4 w-4 mr-1" />
-														Reddet
-													</Button>
-												</>
+														Website
+													</a>
+												</div>
 											)}
 										</div>
 									</TableCell>
-								)}
-							</TableRow>
+									<TableCell>
+										<div className="space-y-1">
+											<div className="font-medium">
+												{application.period.name}
+											</div>
+											<div className="text-sm text-muted-foreground flex items-center gap-1">
+												<Calendar className="h-4 w-4" />
+												{format(
+													new Date(application.period.startDate),
+													'd MMM',
+													{ locale: tr }
+												)}{' '}
+												-{' '}
+												{format(
+													new Date(application.period.endDate),
+													'd MMM yyyy',
+													{ locale: tr }
+												)}
+											</div>
+										</div>
+									</TableCell>
+									<TableCell>
+										{format(
+											new Date(application.createdAt),
+											'd MMMM yyyy',
+											{
+												locale: tr
+											}
+										)}
+									</TableCell>
+									<TableCell>
+										<div className="flex items-center gap-2">
+											<Badge
+												variant={statusVariants[application.status]}
+											>
+												{statusText[application.status]}
+											</Badge>
+											{application.status === 'REJECTED' &&
+												application.feedback && (
+													<TooltipProvider>
+														<Tooltip>
+															<TooltipTrigger>
+																<Info className="h-4 w-4 text-muted-foreground" />
+															</TooltipTrigger>
+															<TooltipContent>
+																<p className="max-w-xs">
+																	{application.feedback}
+																</p>
+															</TooltipContent>
+														</Tooltip>
+													</TooltipProvider>
+												)}
+										</div>
+									</TableCell>
+									{isAdmin && (
+										<TableCell>
+											<div className="flex gap-2">
+												{application.status === 'PENDING' && (
+													<>
+														<Button
+															size="sm"
+															variant="outline"
+															className="text-green-600 hover:text-green-700"
+															onClick={() =>
+																handleAction(application, 'approve')
+															}
+														>
+															<CheckCircle className="h-4 w-4 mr-1" />
+															Onayla
+														</Button>
+														<Button
+															size="sm"
+															variant="outline"
+															className="text-red-600 hover:text-red-700"
+															onClick={() =>
+																handleAction(application, 'reject')
+															}
+														>
+															<XCircle className="h-4 w-4 mr-1" />
+															Reddet
+														</Button>
+													</>
+												)}
+											</div>
+										</TableCell>
+									)}
+								</TableRow>
+							)
 						)
 					)}
 				</TableBody>

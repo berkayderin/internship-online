@@ -17,7 +17,7 @@ export default function StudentsPage() {
 	}
 
 	return (
-		<div className="max-w-7xl w-full space-y-6">
+		<div className="space-y-6">
 			<StudentList
 				students={students || []}
 				onStudentSelect={handleStudentSelect}

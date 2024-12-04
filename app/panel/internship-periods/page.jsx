@@ -68,7 +68,7 @@ export default function InternshipPeriodsPage() {
 			</div>
 
 			<div className="rounded-md border">
-				<Table>
+				<Table className="w-[1400px]">
 					<TableHeader>
 						<TableRow>
 							<TableHead>Dönem Adı</TableHead>
@@ -80,55 +80,70 @@ export default function InternshipPeriodsPage() {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{periods?.map((period) => (
-							<TableRow key={period.id}>
-								<TableCell>{period.name}</TableCell>
-								<TableCell>
-									{format(new Date(period.startDate), 'd MMMM yyyy', {
-										locale: tr
-									})}
-								</TableCell>
-								<TableCell>
-									{format(new Date(period.endDate), 'd MMMM yyyy', {
-										locale: tr
-									})}
-								</TableCell>
-								<TableCell>
-									{format(
-										new Date(period.internshipStartDate),
-										'd MMMM yyyy',
-										{
-											locale: tr
-										}
-									)}
-								</TableCell>
-								<TableCell>
-									{format(
-										new Date(period.internshipEndDate),
-										'd MMMM yyyy',
-										{
-											locale: tr
-										}
-									)}
-								</TableCell>
-								<TableCell className="text-right space-x-2">
-									<Button
-										variant="ghost"
-										size="icon"
-										onClick={() => handleEdit(period)}
-									>
-										<Edit className="h-4 w-4" />
-									</Button>
-									<Button
-										variant="ghost"
-										size="icon"
-										onClick={() => handleDelete(period)}
-									>
-										<Trash2 className="h-4 w-4 text-destructive" />
-									</Button>
+						{!periods?.length ? (
+							<TableRow>
+								<TableCell
+									colSpan={6}
+									className="h-24 text-center text-muted-foreground"
+								>
+									Henüz hiç staj dönemi bulunmuyor.
 								</TableCell>
 							</TableRow>
-						))}
+						) : (
+							periods?.map((period) => (
+								<TableRow key={period.id}>
+									<TableCell>{period.name}</TableCell>
+									<TableCell>
+										{format(
+											new Date(period.startDate),
+											'd MMMM yyyy',
+											{
+												locale: tr
+											}
+										)}
+									</TableCell>
+									<TableCell>
+										{format(new Date(period.endDate), 'd MMMM yyyy', {
+											locale: tr
+										})}
+									</TableCell>
+									<TableCell>
+										{format(
+											new Date(period.internshipStartDate),
+											'd MMMM yyyy',
+											{
+												locale: tr
+											}
+										)}
+									</TableCell>
+									<TableCell>
+										{format(
+											new Date(period.internshipEndDate),
+											'd MMMM yyyy',
+											{
+												locale: tr
+											}
+										)}
+									</TableCell>
+									<TableCell className="text-right space-x-2">
+										<Button
+											variant="ghost"
+											size="icon"
+											onClick={() => handleEdit(period)}
+										>
+											<Edit className="h-4 w-4" />
+										</Button>
+										<Button
+											variant="ghost"
+											size="icon"
+											onClick={() => handleDelete(period)}
+										>
+											<Trash2 className="h-4 w-4 text-destructive" />
+										</Button>
+									</TableCell>
+								</TableRow>
+							))
+						)}
 					</TableBody>
 				</Table>
 			</div>

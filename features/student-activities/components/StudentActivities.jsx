@@ -112,7 +112,7 @@ export function StudentActivities({
 			</div>
 
 			<div className="rounded-md border">
-				<Table>
+				<Table className="w-[1400px]">
 					<TableHeader>
 						<TableRow>
 							<TableHead>Tarih</TableHead>
@@ -125,69 +125,80 @@ export function StudentActivities({
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{activities?.map((activity) => (
-							<TableRow key={activity.id}>
-								<TableCell className="whitespace-nowrap">
-									{format(new Date(activity.date), 'd MMMM yyyy', {
-										locale: tr
-									})}
-								</TableCell>
-								<TableCell>
-									{activity.user.firstName} {activity.user.lastName}
-									<div className="text-sm text-muted-foreground">
-										{activity.user.department}
-									</div>
-								</TableCell>
-								<TableCell className="max-w-md truncate">
-									{activity.content
-										.replace(/<[^>]*>/g, '')
-										.substring(0, 100)}
-									...
-								</TableCell>
-								<TableCell>
-									<Badge variant={statusVariants[activity.status]}>
-										{statusText[activity.status]}
-									</Badge>
-								</TableCell>
-								<TableCell>
-									{activity.feedback || (
-										<span className="text-muted-foreground">-</span>
-									)}
-								</TableCell>
-								<TableCell>
-									<Button
-										variant="ghost"
-										size="sm"
-										onClick={() => onViewDetails(activity)}
-									>
-										<Eye className="w-4 h-4" />
-									</Button>
-								</TableCell>
-								<TableCell>
-									{activity.status === 'PENDING' && (
-										<DropdownMenu>
-											<DropdownMenuTrigger asChild>
-												<Button variant="ghost" size="sm">
-													<ChevronDown className="h-4 w-4" />
-												</Button>
-											</DropdownMenuTrigger>
-											<DropdownMenuContent align="end">
-												<DropdownMenuItem
-													onClick={() => onApprove(activity.id)}
-												>
-													Onayla
-												</DropdownMenuItem>
-												<DropdownMenuItem
-													onClick={() => onReject(activity.id)}
-												>
-													Reddet
-												</DropdownMenuItem>
-											</DropdownMenuContent>
-										</DropdownMenu>
-									)}
+						{!activities?.length ? (
+							<TableRow>
+								<TableCell
+									colSpan={7}
+									className="h-24 text-center text-muted-foreground"
+								>
+									Henüz hiç aktivite bulunmuyor.
 								</TableCell>
 							</TableRow>
-						))}
+						) : (
+							activities?.map((activity) => (
+								<TableRow key={activity.id}>
+									<TableCell className="whitespace-nowrap">
+										{format(new Date(activity.date), 'd MMMM yyyy', {
+											locale: tr
+										})}
+									</TableCell>
+									<TableCell>
+										{activity.user.firstName} {activity.user.lastName}
+										<div className="text-sm text-muted-foreground">
+											{activity.user.department}
+										</div>
+									</TableCell>
+									<TableCell className="max-w-md truncate">
+										{activity.content
+											.replace(/<[^>]*>/g, '')
+											.substring(0, 100)}
+										...
+									</TableCell>
+									<TableCell>
+										<Badge variant={statusVariants[activity.status]}>
+											{statusText[activity.status]}
+										</Badge>
+									</TableCell>
+									<TableCell>
+										{activity.feedback || (
+											<span className="text-muted-foreground">-</span>
+										)}
+									</TableCell>
+									<TableCell>
+										<Button
+											variant="ghost"
+											size="sm"
+											onClick={() => onViewDetails(activity)}
+										>
+											<Eye className="w-4 h-4" />
+										</Button>
+									</TableCell>
+									<TableCell>
+										{activity.status === 'PENDING' && (
+											<DropdownMenu>
+												<DropdownMenuTrigger asChild>
+													<Button variant="ghost" size="sm">
+														<ChevronDown className="h-4 w-4" />
+													</Button>
+												</DropdownMenuTrigger>
+												<DropdownMenuContent align="end">
+													<DropdownMenuItem
+														onClick={() => onApprove(activity.id)}
+													>
+														Onayla
+													</DropdownMenuItem>
+													<DropdownMenuItem
+														onClick={() => onReject(activity.id)}
+													>
+														Reddet
+													</DropdownMenuItem>
+												</DropdownMenuContent>
+											</DropdownMenu>
+										)}
+									</TableCell>
+								</TableRow>
+							))
+						)}
 					</TableBody>
 				</Table>
 			</div>
