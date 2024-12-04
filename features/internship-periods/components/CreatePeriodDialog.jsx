@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/popover'
 import internshipPeriodSchema from '../zod/InternshipPeriodSchema'
 import { useCreateInternshipPeriod } from '../queries/useInternshipPeriod'
+import { cn } from '@/lib/utils'
 
 export function CreatePeriodDialog({ open, onOpenChange }) {
 	const form = useForm({
@@ -79,167 +80,186 @@ export function CreatePeriodDialog({ open, onOpenChange }) {
 								</FormItem>
 							)}
 						/>
-						<FormField
-							control={form.control}
-							name="startDate"
-							render={({ field }) => (
-								<FormItem className="flex flex-col">
-									<FormLabel>Başvuru Başlangıç Tarihi</FormLabel>
-									<Popover>
-										<PopoverTrigger asChild>
-											<FormControl>
-												<Button
-													variant="outline"
-													className="pl-3 text-left font-normal"
-												>
-													{field.value ? (
-														format(field.value, 'PPP', { locale: tr })
-													) : (
-														<span>Tarih seçiniz</span>
-													)}
-													<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-												</Button>
-											</FormControl>
-										</PopoverTrigger>
-										<PopoverContent
-											className="w-auto p-0"
-											align="start"
-										>
-											<Calendar
-												mode="single"
-												selected={field.value}
-												onSelect={field.onChange}
-												disabled={(date) => date < new Date()}
-												initialFocus
-												locale={tr}
-											/>
-										</PopoverContent>
-									</Popover>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="endDate"
-							render={({ field }) => (
-								<FormItem className="flex flex-col">
-									<FormLabel>Başvuru Bitiş Tarihi</FormLabel>
-									<Popover>
-										<PopoverTrigger asChild>
-											<FormControl>
-												<Button
-													variant="outline"
-													className="pl-3 text-left font-normal"
-												>
-													{field.value ? (
-														format(field.value, 'PPP', { locale: tr })
-													) : (
-														<span>Tarih seçiniz</span>
-													)}
-													<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-												</Button>
-											</FormControl>
-										</PopoverTrigger>
-										<PopoverContent
-											className="w-auto p-0"
-											align="start"
-										>
-											<Calendar
-												mode="single"
-												selected={field.value}
-												onSelect={field.onChange}
-												disabled={(date) => date < new Date()}
-												initialFocus
-												locale={tr}
-											/>
-										</PopoverContent>
-									</Popover>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="internshipStartDate"
-							render={({ field }) => (
-								<FormItem className="flex flex-col">
-									<FormLabel>Staj Başlangıç Tarihi</FormLabel>
-									<Popover>
-										<PopoverTrigger asChild>
-											<FormControl>
-												<Button
-													variant="outline"
-													className={cn('pl-3 text-left font-normal')}
-												>
-													{field.value ? (
-														format(field.value, 'd MMMM yyyy', {
-															locale: tr
-														})
-													) : (
-														<span>Tarih seçin</span>
-													)}
-													<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-												</Button>
-											</FormControl>
-										</PopoverTrigger>
-										<PopoverContent
-											className="w-auto p-0"
-											align="start"
-										>
-											<Calendar
-												mode="single"
-												selected={field.value}
-												onSelect={field.onChange}
-												locale={tr}
-											/>
-										</PopoverContent>
-									</Popover>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="internshipEndDate"
-							render={({ field }) => (
-								<FormItem className="flex flex-col">
-									<FormLabel>Staj Bitiş Tarihi</FormLabel>
-									<Popover>
-										<PopoverTrigger asChild>
-											<FormControl>
-												<Button
-													variant="outline"
-													className={cn('pl-3 text-left font-normal')}
-												>
-													{field.value ? (
-														format(field.value, 'd MMMM yyyy', {
-															locale: tr
-														})
-													) : (
-														<span>Tarih seçin</span>
-													)}
-													<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-												</Button>
-											</FormControl>
-										</PopoverTrigger>
-										<PopoverContent
-											className="w-auto p-0"
-											align="start"
-										>
-											<Calendar
-												mode="single"
-												selected={field.value}
-												onSelect={field.onChange}
-												locale={tr}
-											/>
-										</PopoverContent>
-									</Popover>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<div className="flex justify-end">
+						<div className="flex gap-4">
+							<FormField
+								control={form.control}
+								name="startDate"
+								render={({ field }) => (
+									<FormItem className="flex flex-col flex-1">
+										<FormLabel>Başvuru Başlangıç Tarihi</FormLabel>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant="outline"
+														className="pl-3 text-left font-normal"
+													>
+														{field.value ? (
+															format(field.value, 'PPP', {
+																locale: tr
+															})
+														) : (
+															<span>Tarih seçiniz</span>
+														)}
+														<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+											<PopoverContent
+												className="w-auto p-0"
+												align="start"
+											>
+												<Calendar
+													mode="single"
+													selected={field.value}
+													onSelect={field.onChange}
+													disabled={(date) => date < new Date()}
+													initialFocus
+													locale={tr}
+												/>
+											</PopoverContent>
+										</Popover>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="endDate"
+								render={({ field }) => (
+									<FormItem className="flex flex-col flex-1">
+										<FormLabel>Başvuru Bitiş Tarihi</FormLabel>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant="outline"
+														className="pl-3 text-left font-normal"
+													>
+														{field.value ? (
+															format(field.value, 'PPP', {
+																locale: tr
+															})
+														) : (
+															<span>Tarih seçiniz</span>
+														)}
+														<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+											<PopoverContent
+												className="w-auto p-0"
+												align="start"
+											>
+												<Calendar
+													mode="single"
+													selected={field.value}
+													onSelect={field.onChange}
+													disabled={(date) => date < new Date()}
+													initialFocus
+													locale={tr}
+												/>
+											</PopoverContent>
+										</Popover>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+						<div className="flex gap-4">
+							<FormField
+								control={form.control}
+								name="internshipStartDate"
+								render={({ field }) => (
+									<FormItem className="flex flex-col flex-1">
+										<FormLabel>Staj Başlangıç Tarihi</FormLabel>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant="outline"
+														className={cn(
+															'pl-3 text-left font-normal'
+														)}
+													>
+														{field.value ? (
+															format(field.value, 'd MMMM yyyy', {
+																locale: tr
+															})
+														) : (
+															<span>Tarih seçin</span>
+														)}
+														<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+											<PopoverContent
+												className="w-auto p-0"
+												align="start"
+											>
+												<Calendar
+													mode="single"
+													selected={field.value}
+													onSelect={field.onChange}
+													locale={tr}
+												/>
+											</PopoverContent>
+										</Popover>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+							<FormField
+								control={form.control}
+								name="internshipEndDate"
+								render={({ field }) => (
+									<FormItem className="flex flex-col flex-1">
+										<FormLabel>Staj Bitiş Tarihi</FormLabel>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant="outline"
+														className={cn(
+															'pl-3 text-left font-normal'
+														)}
+													>
+														{field.value ? (
+															format(field.value, 'd MMMM yyyy', {
+																locale: tr
+															})
+														) : (
+															<span>Tarih seçin</span>
+														)}
+														<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+											<PopoverContent
+												className="w-auto p-0"
+												align="start"
+											>
+												<Calendar
+													mode="single"
+													selected={field.value}
+													onSelect={field.onChange}
+													locale={tr}
+												/>
+											</PopoverContent>
+										</Popover>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
+						<div className="flex justify-end gap-2">
+							<Button
+								variant="outline"
+								type="button"
+								onClick={() => onOpenChange(false)}
+							>
+								İptal
+							</Button>
 							<Button type="submit" disabled={createPeriod.isLoading}>
 								{createPeriod.isLoading
 									? 'Oluşturuluyor...'
