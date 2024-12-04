@@ -22,6 +22,18 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
+import {
+	Select,
+	SelectTrigger,
+	SelectValue,
+	SelectContent,
+	SelectItem
+} from '@/components/ui/select'
+
+const departments = [
+	'Yazılım Mühendisliği',
+	'Bilişim Sistemleri Mühendisliği'
+]
 
 export function AuthForm({
 	type = 'login',
@@ -104,9 +116,24 @@ export function AuthForm({
 									render={({ field }) => (
 										<FormItem>
 											<FormLabel>Bölüm</FormLabel>
-											<FormControl>
-												<Input {...field} />
-											</FormControl>
+											<Select
+												onValueChange={field.onChange}
+												defaultValue={field.value}
+											>
+												<SelectTrigger>
+													<SelectValue placeholder="Bölüm seçiniz" />
+												</SelectTrigger>
+												<SelectContent>
+													{departments.map((department) => (
+														<SelectItem
+															key={department}
+															value={department}
+														>
+															{department}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
 											<FormMessage />
 										</FormItem>
 									)}
