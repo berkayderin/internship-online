@@ -30,28 +30,11 @@ import {
 	SidebarRail
 } from '@/components/ui/sidebar'
 
-const getMenusByRole = (role) => {
+export function AppSidebar({ ...props }) {
+	const { data: session } = useSession()
+	const role = session?.user?.role || 'USER'
 	const pathname = usePathname()
 
-	const commonMenus = [
-		{
-			title: 'Panel',
-			url: '/panel',
-			icon: LayoutDashboard,
-			isActive:
-				pathname === '/panel' || pathname.startsWith('/panel/'),
-			items: [
-				{
-					title: 'Genel Bakış',
-					url: '/panel',
-					icon: LayoutDashboard,
-					isActive: pathname === '/panel'
-				}
-			]
-		}
-	]
-
-	// Kullanıcının onaylı başvurusu varsa Staj Günlüğü menüsünü ekle
 	const { data: applications } = useQuery({
 		queryKey: ['applications'],
 		queryFn: () =>
@@ -62,102 +45,117 @@ const getMenusByRole = (role) => {
 		(app) => app.status === 'APPROVED'
 	)
 
-	const userMenus = [
-		{
-			title: 'Staj İşlemleri',
-			icon: BookOpen,
-			isActive:
-				pathname.startsWith('/panel/applications') ||
-				pathname.startsWith('/panel/daily-activities'),
-			items: [
-				{
-					title: 'Başvurularım',
-					url: '/panel/applications',
-					icon: ClipboardList,
-					isActive: pathname.startsWith('/panel/applications')
-				},
-				...(hasApprovedApplication
-					? [
-							{
-								title: 'Günlük Aktiviteler',
-								url: '/panel/daily-activities',
-								icon: CalendarDays,
-								isActive: pathname.startsWith(
-									'/panel/daily-activities'
-								)
-							}
-					  ]
-					: [])
-			]
-		}
-	]
+	const getMenusByRole = (role, pathname, hasApprovedApplication) => {
+		const commonMenus = [
+			{
+				title: 'Panel',
+				url: '/panel',
+				icon: LayoutDashboard,
+				isActive:
+					pathname === '/panel' || pathname.startsWith('/panel/'),
+				items: [
+					{
+						title: 'Genel Bakış',
+						url: '/panel',
+						icon: LayoutDashboard,
+						isActive: pathname === '/panel'
+					}
+				]
+			}
+		]
 
-	const adminMenus = [
-		{
-			title: 'Staj Yönetimi',
-			icon: BookOpen,
-			isActive:
-				pathname.startsWith('/panel/internship-periods') ||
-				pathname.startsWith('/panel/applications'),
-			items: [
-				{
-					title: 'Staj Dönemleri',
-					url: '/panel/internship-periods',
-					icon: CalendarDays,
-					isActive: pathname.startsWith('/panel/internship-periods')
-				},
-				{
-					title: 'Başvurular',
-					url: '/panel/applications',
-					icon: ClipboardList,
-					isActive: pathname.startsWith('/panel/applications')
-				}
-			]
-		},
-		{
-			title: 'Öğrenci İşlemleri',
-			icon: Users,
-			isActive:
-				pathname.startsWith('/panel/students') ||
-				pathname.startsWith('/panel/student-activities'),
-			items: [
-				{
-					title: 'Öğrenci Listesi',
-					url: '/panel/students',
-					icon: UserCircle,
-					isActive: pathname.startsWith('/panel/students')
-				},
-				{
-					title: 'Öğrenci Aktiviteleri',
-					url: '/panel/student-activities',
-					icon: FileText,
-					isActive: pathname.startsWith('/panel/student-activities')
-				}
-			]
-		},
-		{
-			title: 'Ayarlar',
-			icon: Settings,
-			isActive: pathname.startsWith('/panel/settings'),
-			items: [
-				{
-					title: 'Sistem Ayarları',
-					url: '/panel/settings',
-					icon: Settings,
-					isActive: pathname.startsWith('/panel/settings')
-				}
-			]
-		}
-	]
+		const userMenus = [
+			{
+				title: 'Staj İşlemleri',
+				icon: BookOpen,
+				isActive:
+					pathname.startsWith('/panel/applications') ||
+					pathname.startsWith('/panel/daily-activities'),
+				items: [
+					{
+						title: 'Başvurularım',
+						url: '/panel/applications',
+						icon: ClipboardList,
+						isActive: pathname.startsWith('/panel/applications')
+					},
+					...(hasApprovedApplication
+						? [
+								{
+									title: 'Günlük Aktiviteler',
+									url: '/panel/daily-activities',
+									icon: CalendarDays,
+									isActive: pathname.startsWith(
+										'/panel/daily-activities'
+									)
+								}
+						  ]
+						: [])
+				]
+			}
+		]
 
-	return role === 'ADMIN'
-		? [...commonMenus, ...adminMenus]
-		: [...commonMenus, ...userMenus]
-}
+		const adminMenus = [
+			{
+				title: 'Staj Yönetimi',
+				icon: BookOpen,
+				isActive:
+					pathname.startsWith('/panel/internship-periods') ||
+					pathname.startsWith('/panel/applications'),
+				items: [
+					{
+						title: 'Staj Dönemleri',
+						url: '/panel/internship-periods',
+						icon: CalendarDays,
+						isActive: pathname.startsWith('/panel/internship-periods')
+					},
+					{
+						title: 'Başvurular',
+						url: '/panel/applications',
+						icon: ClipboardList,
+						isActive: pathname.startsWith('/panel/applications')
+					}
+				]
+			},
+			{
+				title: 'Öğrenci İşlemleri',
+				icon: Users,
+				isActive:
+					pathname.startsWith('/panel/students') ||
+					pathname.startsWith('/panel/student-activities'),
+				items: [
+					{
+						title: 'Öğrenci Listesi',
+						url: '/panel/students',
+						icon: UserCircle,
+						isActive: pathname.startsWith('/panel/students')
+					},
+					{
+						title: 'Öğrenci Aktiviteleri',
+						url: '/panel/student-activities',
+						icon: FileText,
+						isActive: pathname.startsWith('/panel/student-activities')
+					}
+				]
+			},
+			{
+				title: 'Ayarlar',
+				icon: Settings,
+				isActive: pathname.startsWith('/panel/settings'),
+				items: [
+					{
+						title: 'Sistem Ayarları',
+						url: '/panel/settings',
+						icon: Settings,
+						isActive: pathname.startsWith('/panel/settings')
+					}
+				]
+			}
+		]
 
-export function AppSidebar({ ...props }) {
-	const { data: session } = useSession()
-	const role = session?.user?.role || 'USER'
+		return role === 'ADMIN'
+			? [...commonMenus, ...adminMenus]
+			: [...commonMenus, ...userMenus]
+	}
 
 	const userData = {
 		firstName: session?.user?.firstName,
@@ -173,7 +171,11 @@ export function AppSidebar({ ...props }) {
 		}
 	]
 
-	const menuItems = getMenusByRole(role)
+	const menuItems = getMenusByRole(
+		role,
+		pathname,
+		hasApprovedApplication
+	)
 
 	return (
 		<Sidebar collapsible="icon" {...props}>
