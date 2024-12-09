@@ -167,7 +167,8 @@ export function AppSidebar({ ...props }) {
 	const teams = [
 		{
 			logo: BookOpenCheck,
-			role: role === 'ADMIN' ? 'Yönetici' : 'Öğrenci'
+			role: session?.user?.role === 'ADMIN' ? 'Yönetici' : 'Öğrenci',
+			title: 'Staj Defteri'
 		}
 	]
 
