@@ -44,8 +44,8 @@ export function ApplicationDialog({ open, onOpenChange, periodId }) {
 			companyEmployeeCount: 0,
 			companyEngineerCount: 0,
 			companyAddress: '',
-			internshipStartDate: null,
-			internshipEndDate: null
+			internshipStartDate: new Date(),
+			internshipEndDate: new Date()
 		}
 	})
 
@@ -55,18 +55,17 @@ export function ApplicationDialog({ open, onOpenChange, periodId }) {
 
 	const createApplication = useCreateApplication()
 
-	const onSubmit = async (values) => {
+	const onSubmit = async (data) => {
 		try {
-			await createApplication.mutateAsync({
-				...values,
-				companyWebsite: values.companyWebsite || '',
-				companyEmployeeCount: Number(values.companyEmployeeCount),
-				companyEngineerCount: Number(values.companyEngineerCount)
-			})
-			form.reset()
+			const formattedData = {
+				...data,
+				internshipStartDate: data.internshipStartDate.toISOString(),
+				internshipEndDate: data.internshipEndDate.toISOString()
+			}
+			await createApplication.mutateAsync(formattedData)
 			onOpenChange(false)
 		} catch (error) {
-			console.error('Error submitting application:', error)
+			console.error('Form submission error:', error)
 		}
 	}
 
@@ -83,186 +82,201 @@ export function ApplicationDialog({ open, onOpenChange, periodId }) {
 						})}
 						className="space-y-4"
 					>
-						<FormField
-							control={form.control}
-							name="companyName"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>İşyeri Adı</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="companyPhone"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>İşyeri Telefonu</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name="companyWebsite"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>İşyeri Web Adresi (Opsiyonel)</FormLabel>
-									<FormControl>
-										<Input
-											{...field}
-											value={field.value || ''}
-											placeholder="https://example.com"
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<div className="grid grid-cols-2 gap-4">
-							<FormField
-								control={form.control}
-								name="companyEmployeeCount"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Toplam Çalışan Sayısı</FormLabel>
-										<FormControl>
-											<Input
-												type="number"
-												min="1"
-												{...field}
-												onChange={(e) =>
-													field.onChange(Number(e.target.value))
-												}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="companyEngineerCount"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Toplam Mühendis Sayısı</FormLabel>
-										<FormControl>
-											<Input
-												type="number"
-												min="1"
-												{...field}
-												onChange={(e) =>
-													field.onChange(Number(e.target.value))
-												}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						</div>
-						<FormField
-							control={form.control}
-							name="companyAddress"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>İşyeri Adresi</FormLabel>
-									<FormControl>
-										<Textarea {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<div className="grid grid-cols-2 gap-4">
-							<FormField
-								control={form.control}
-								name="internshipStartDate"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Staj Başlangıç Tarihi</FormLabel>
-										<Popover>
-											<PopoverTrigger asChild>
-												<FormControl>
-													<Button
-														variant="outline"
-														className={cn(
-															'w-full pl-3 text-left font-normal',
-															!field.value && 'text-muted-foreground'
-														)}
-													>
-														{field.value ? (
-															format(field.value, 'd MMMM yyyy', {
-																locale: tr
-															})
-														) : (
-															<span>Tarih seçin</span>
-														)}
-														<CalendarIcon className="ml-auto h-4 w-4" />
-													</Button>
-												</FormControl>
-											</PopoverTrigger>
-											<PopoverContent className="w-auto p-0">
-												<Calendar
-													mode="single"
-													selected={field.value}
-													onSelect={field.onChange}
-													locale={tr}
+						<div className="flex gap-4">
+							<div className="flex-1 space-y-4">
+								<FormField
+									control={form.control}
+									name="companyName"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>İşyeri Adı</FormLabel>
+											<FormControl>
+												<Input {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="companyPhone"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>İşyeri Telefonu</FormLabel>
+											<FormControl>
+												<Input {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="companyWebsite"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>
+												İşyeri Web Adresi (Opsiyonel)
+											</FormLabel>
+											<FormControl>
+												<Input
+													{...field}
+													value={field.value || ''}
+													placeholder="https://example.com"
 												/>
-											</PopoverContent>
-										</Popover>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="companyAddress"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>İşyeri Adresi</FormLabel>
+											<FormControl>
+												<Textarea {...field} />
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
 
-							<FormField
-								control={form.control}
-								name="internshipEndDate"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Staj Bitiş Tarihi</FormLabel>
-										<Popover>
-											<PopoverTrigger asChild>
-												<FormControl>
-													<Button
-														variant="outline"
-														className={cn(
-															'w-full pl-3 text-left font-normal',
-															!field.value && 'text-muted-foreground'
-														)}
-													>
-														{field.value ? (
-															format(field.value, 'd MMMM yyyy', {
-																locale: tr
-															})
-														) : (
-															<span>Tarih seçin</span>
-														)}
-														<CalendarIcon className="ml-auto h-4 w-4" />
-													</Button>
-												</FormControl>
-											</PopoverTrigger>
-											<PopoverContent className="w-auto p-0">
-												<Calendar
-													mode="single"
-													selected={field.value}
-													onSelect={field.onChange}
-													locale={tr}
+							<div className="flex-1 space-y-4">
+								<FormField
+									control={form.control}
+									name="companyEmployeeCount"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Toplam Çalışan Sayısı</FormLabel>
+											<FormControl>
+												<Input
+													type="number"
+													min="1"
+													{...field}
+													onChange={(e) =>
+														field.onChange(Number(e.target.value))
+													}
 												/>
-											</PopoverContent>
-										</Popover>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="companyEngineerCount"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Toplam Mühendis Sayısı</FormLabel>
+											<FormControl>
+												<Input
+													type="number"
+													min="1"
+													{...field}
+													onChange={(e) =>
+														field.onChange(Number(e.target.value))
+													}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="internshipStartDate"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Staj Başlangıç Tarihi</FormLabel>
+											<Popover>
+												<PopoverTrigger asChild>
+													<FormControl>
+														<Button
+															variant="outline"
+															className={cn(
+																'w-full pl-3 text-left font-normal',
+																!field.value &&
+																	'text-muted-foreground'
+															)}
+														>
+															{field.value ? (
+																format(field.value, 'PPP', {
+																	locale: tr
+																})
+															) : (
+																<span>Tarih seçin</span>
+															)}
+															<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+														</Button>
+													</FormControl>
+												</PopoverTrigger>
+												<PopoverContent
+													className="w-auto p-0"
+													align="start"
+												>
+													<Calendar
+														mode="single"
+														selected={field.value}
+														onSelect={field.onChange}
+														disabled={(date) =>
+															date < new Date() ||
+															date >
+																new Date(date.getFullYear() + 1, 0, 1)
+														}
+														initialFocus
+														locale={tr}
+													/>
+												</PopoverContent>
+											</Popover>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={form.control}
+									name="internshipEndDate"
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Staj Bitiş Tarihi</FormLabel>
+											<Popover>
+												<PopoverTrigger asChild>
+													<FormControl>
+														<Button
+															variant="outline"
+															className={cn(
+																'w-full pl-3 text-left font-normal',
+																!field.value &&
+																	'text-muted-foreground'
+															)}
+														>
+															{field.value ? (
+																format(field.value, 'd MMMM yyyy', {
+																	locale: tr
+																})
+															) : (
+																<span>Tarih seçin</span>
+															)}
+															<CalendarIcon className="ml-auto h-4 w-4" />
+														</Button>
+													</FormControl>
+												</PopoverTrigger>
+												<PopoverContent className="w-auto p-0">
+													<Calendar
+														mode="single"
+														selected={field.value}
+														onSelect={field.onChange}
+														locale={tr}
+													/>
+												</PopoverContent>
+											</Popover>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+							</div>
 						</div>
 						<div className="flex justify-end">
 							<Button

@@ -39,11 +39,13 @@ const applicationSchema = z
 				required_error: 'İşyeri adresi zorunludur'
 			})
 			.min(10, 'Geçerli bir adres giriniz'),
-		internshipStartDate: z.date({
-			required_error: 'Staj başlangıç tarihi zorunludur'
+		internshipStartDate: z.coerce.date({
+			required_error: 'Staj başlangıç tarihi seçilmelidir',
+			invalid_type_error: 'Geçerli bir tarih seçiniz'
 		}),
-		internshipEndDate: z.date({
-			required_error: 'Staj bitiş tarihi zorunludur'
+		internshipEndDate: z.coerce.date({
+			required_error: 'Staj bitiş tarihi seçilmelidir',
+			invalid_type_error: 'Geçerli bir tarih seçiniz'
 		})
 	})
 	.refine(

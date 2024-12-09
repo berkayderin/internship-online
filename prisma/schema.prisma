@@ -60,6 +60,8 @@ model Application {
   companyEmployeeCount Int // Toplam çalışan sayısı
   companyEngineerCount Int // Mühendis sayısı
   companyAddress       String // Şirket adresi
+  internshipStartDate  DateTime // Yeni eklenen alan
+  internshipEndDate    DateTime // Yeni eklenen alan
   status               ApplicationStatus @default(PENDING) // Başvuru durumu
   feedback             String? // Geri bildirim (opsiyonel)
   userId               String // Başvuru sahibi kullanıcı kimliği

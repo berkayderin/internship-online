@@ -46,7 +46,7 @@ export const useUpdateApplication = () => {
 			queryClient.invalidateQueries(['applications'])
 			toast({
 				title: 'Başarılı',
-				description: 'Başvuru durumu güncellendi.'
+				description: 'Başvurunuz başarıyla güncellendi.'
 			})
 		},
 		onError: () => {

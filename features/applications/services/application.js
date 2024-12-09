@@ -30,10 +30,7 @@ export const applicationService = {
 	},
 	updateApplication: async (id, data) => {
 		try {
-			const response = await axios.patch(
-				`/api/applications/${id}`,
-				data
-			)
+			const response = await axios.patch(`${API_URL}/${id}`, data)
 			return response.data
 		} catch (error) {
 			console.error(
