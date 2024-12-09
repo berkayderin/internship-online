@@ -40,6 +40,7 @@
 		"mongodb": "^6.10.0",
 		"next": "^14.2.17",
 		"next-auth": "^5.0.0-beta.25",
+		"pdfmake": "^0.2.15",
 		"react": "^18",
 		"react-day-picker": "^8.10.1",
 		"react-dom": "^18",

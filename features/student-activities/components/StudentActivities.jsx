@@ -9,7 +9,8 @@ import {
 	ChevronLeft,
 	ChevronRight,
 	ChevronsLeft,
-	ChevronsRight
+	ChevronsRight,
+	FileDown
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -55,7 +56,8 @@ export function StudentActivities({
 	onPageChange,
 	onLimitChange,
 	onStatusFilter,
-	onSearch
+	onSearch,
+	onGenerateReport
 }) {
 	const [search, setSearch] = useState('')
 	const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -75,18 +77,27 @@ export function StudentActivities({
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center gap-4">
+			<div className="flex items-center justify-between">
+				<div className="flex items-center gap-4">
+					{student && (
+						<Button variant="ghost" onClick={onBack}>
+							<ArrowLeft className="w-4 h-4 mr-2" />
+							Geri
+						</Button>
+					)}
+					<h1 className="text-2xl font-bold">
+						{student
+							? `${student.firstName} ${student.lastName} - Staj Aktiviteleri`
+							: 'Tüm Öğrenci Aktiviteleri'}
+					</h1>
+				</div>
+
 				{student && (
-					<Button variant="ghost" onClick={onBack}>
-						<ArrowLeft className="w-4 h-4 mr-2" />
-						Geri
+					<Button onClick={onGenerateReport}>
+						<FileDown className="w-4 h-4 mr-2" />
+						Rapor Oluştur
 					</Button>
 				)}
-				<h1 className="text-2xl font-bold">
-					{student
-						? `${student.firstName} ${student.lastName} - Staj Aktiviteleri`
-						: 'Tüm Öğrenci Aktiviteleri'}
-				</h1>
 			</div>
 
 			<div className="flex items-center justify-between">

@@ -7,6 +7,7 @@ import {
 	useStudentActivities,
 	useSubmitFeedback
 } from '@/features/student-activities/queries/useStudentQueries'
+import { generateActivityReport } from '@/features/student-activities/services/pdf'
 
 function StudentActivitiesContent() {
 	const router = useRouter()
@@ -80,6 +81,25 @@ function StudentActivitiesContent() {
 		}
 	}
 
+	const handleGenerateReport = async () => {
+		if (!activitiesData?.student || !activitiesData?.data) return
+
+		try {
+			const pdfDoc = generateActivityReport(
+				activitiesData.student,
+				activitiesData.data
+			)
+
+			// PDF'i indir
+			pdfDoc.download(
+				`${activitiesData.student.firstName}_${activitiesData.student.lastName}_staj_raporu.pdf`
+			)
+		} catch (error) {
+			console.error('PDF oluşturma hatası:', error)
+			// Burada bir hata bildirimi gösterebilirsiniz
+		}
+	}
+
 	if (isLoading) {
 		return <div>Yükleniyor...</div>
 	}
@@ -102,6 +122,7 @@ function StudentActivitiesContent() {
 				onSearch={handleSearch}
 				onApprove={handleApprove}
 				onReject={handleReject}
+				onGenerateReport={handleGenerateReport}
 			/>
 
 			<ActivityDetailModal
