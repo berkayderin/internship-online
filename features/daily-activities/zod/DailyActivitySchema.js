@@ -1,5 +1,11 @@
 // features/daily-activities/zod/DailyActivitySchema.js
 import * as z from 'zod'
+import {
+	startOfWeek,
+	endOfWeek,
+	isWithinInterval,
+	isSameWeek
+} from 'date-fns'
 
 const dailyActivitySchema = z.object({
 	date: z.coerce
@@ -8,13 +14,17 @@ const dailyActivitySchema = z.object({
 			invalid_type_error: 'Geçerli bir tarih seçiniz'
 		})
 		.refine((date) => {
-			const now = new Date()
-			const threeDaysAgo = new Date(now.setDate(now.getDate() - 3))
-			const threeDaysLater = new Date(
-				new Date().setDate(new Date().getDate() + 3)
+			const today = new Date()
+			const currentWeekStart = startOfWeek(today, { weekStartsOn: 1 })
+			const currentWeekEnd = endOfWeek(today, { weekStartsOn: 1 })
+
+			return (
+				isWithinInterval(date, {
+					start: currentWeekStart,
+					end: currentWeekEnd
+				}) && isSameWeek(date, today, { weekStartsOn: 1 })
 			)
-			return date >= threeDaysAgo && date <= threeDaysLater
-		}, 'Aktivite tarihi en fazla 3 gün öncesi veya 3 gün sonrası için seçilebilir'),
+		}, 'Sadece bu haftaya (Pazartesi-Pazar) ait günlük ekleyebilirsiniz'),
 	content: z
 		.string({
 			required_error: 'Aktivite içeriği gereklidir'
