@@ -7,7 +7,12 @@ import {
 	useStudentActivities,
 	useSubmitFeedback
 } from '@/features/student-activities/queries/useStudentQueries'
-import { generateActivityReport } from '@/features/student-activities/services/pdf'
+import {
+	generateActivityReport,
+	generateSummaryReport
+} from '@/features/student-activities/services/pdf'
+import { summarizeActivities } from '@/features/student-activities/services/ai'
+import { toast } from '@/hooks/use-toast'
 
 function StudentActivitiesContent() {
 	const router = useRouter()
@@ -20,6 +25,7 @@ function StudentActivitiesContent() {
 	const [search, setSearch] = useState('')
 	const [detailsOpen, setDetailsOpen] = useState(false)
 	const [selectedActivity, setSelectedActivity] = useState(null)
+	const [isSummarizing, setIsSummarizing] = useState(false)
 
 	const {
 		data: activitiesData,
@@ -90,13 +96,43 @@ function StudentActivitiesContent() {
 				activitiesData.data
 			)
 
-			// PDF'i indir
 			pdfDoc.download(
 				`${activitiesData.student.firstName}_${activitiesData.student.lastName}_staj_raporu.pdf`
 			)
 		} catch (error) {
 			console.error('PDF oluşturma hatası:', error)
-			// Burada bir hata bildirimi gösterebilirsiniz
+		}
+	}
+
+	const handleGenerateSummary = async () => {
+		try {
+			if (!activitiesData?.student || !activitiesData?.data) {
+				toast({
+					variant: 'destructive',
+					title: 'Hata',
+					description: 'Öğrenci veya aktivite verisi bulunamadı'
+				})
+				return
+			}
+
+			setIsSummarizing(true)
+			const summary = await summarizeActivities(activitiesData.data)
+			const pdfDoc = generateSummaryReport(
+				activitiesData.student,
+				summary
+			)
+			pdfDoc.download(
+				`${activitiesData.student.firstName}_${activitiesData.student.lastName}_staj_özeti.pdf`
+			)
+		} catch (error) {
+			toast({
+				variant: 'destructive',
+				title: 'Hata',
+				description: 'Özet raporu oluşturulurken bir hata oluştu'
+			})
+			console.error(error)
+		} finally {
+			setIsSummarizing(false)
 		}
 	}
 
@@ -123,6 +159,9 @@ function StudentActivitiesContent() {
 				onApprove={handleApprove}
 				onReject={handleReject}
 				onGenerateReport={handleGenerateReport}
+				onGenerateSummary={handleGenerateSummary}
+				isLoading={isLoading}
+				isSummarizing={isSummarizing}
 			/>
 
 			<ActivityDetailModal

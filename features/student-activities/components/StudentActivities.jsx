@@ -10,7 +10,8 @@ import {
 	ChevronRight,
 	ChevronsLeft,
 	ChevronsRight,
-	FileDown
+	FileDown,
+	FileText
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -57,7 +58,10 @@ export function StudentActivities({
 	onLimitChange,
 	onStatusFilter,
 	onSearch,
-	onGenerateReport
+	onGenerateReport,
+	onGenerateSummary,
+	isLoading,
+	isSummarizing
 }) {
 	const [search, setSearch] = useState('')
 	const [debouncedSearch, setDebouncedSearch] = useState('')
@@ -91,13 +95,6 @@ export function StudentActivities({
 							: 'Tüm Öğrenci Aktiviteleri'}
 					</h1>
 				</div>
-
-				{student && (
-					<Button onClick={onGenerateReport}>
-						<FileDown className="w-4 h-4 mr-2" />
-						Rapor Oluştur
-					</Button>
-				)}
 			</div>
 
 			<div className="flex items-center justify-between">
@@ -119,6 +116,23 @@ export function StudentActivities({
 							<SelectItem value="REJECTED">Reddedilenler</SelectItem>
 						</SelectContent>
 					</Select>
+				</div>
+				<div>
+					{student && (
+						<div className="flex gap-2">
+							<Button onClick={onGenerateReport} disabled={isLoading}>
+								<FileDown className="w-4 h-4 mr-2" />
+								Rapor Oluştur
+							</Button>
+							<Button
+								onClick={onGenerateSummary}
+								disabled={isLoading || isSummarizing}
+							>
+								<FileText className="w-4 h-4 mr-2" />
+								{isSummarizing ? 'Özetleniyor...' : 'Özetle'}
+							</Button>
+						</div>
+					)}
 				</div>
 			</div>
 
