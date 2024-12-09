@@ -6,7 +6,8 @@ import {
 	ChevronsUpDown,
 	CreditCard,
 	LogOut,
-	Sparkles
+	Sparkles,
+	Key
 } from 'lucide-react'
 import { signOut } from 'next-auth/react'
 
@@ -30,6 +31,7 @@ import {
 	SidebarMenuItem,
 	useSidebar
 } from '@/components/ui/sidebar'
+import Link from 'next/link'
 
 export function NavUser({ user }) {
 	const { isMobile } = useSidebar()
@@ -73,14 +75,12 @@ export function NavUser({ user }) {
 						sideOffset={4}
 					>
 						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<BadgeCheck className="mr-2 size-4" />
-								Hesabım
+							<DropdownMenuItem asChild>
+								<Link href="/panel/change-password">
+									<Key className="mr-2 size-4" />
+									Şifremi Yenile
+								</Link>
 							</DropdownMenuItem>
-							{/* <DropdownMenuItem>
-								<Bell className="mr-2 size-4" />
-								Bildirimlerim
-							</DropdownMenuItem> */}
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem onClick={handleSignOut}>
