@@ -159,7 +159,7 @@ export const generateSummaryReport = (student, summary) => {
 				},
 				layout: 'noBorders'
 			},
-			{ text: 'Özet', style: 'subheader' },
+			{ text: 'Yapay Zeka Değerlendirmesi', style: 'subheader' },
 			{
 				text: summary,
 				style: 'tableCell',
