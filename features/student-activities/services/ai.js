@@ -4,9 +4,7 @@ import pdfFonts from 'pdfmake/build/vfs_fonts'
 
 pdfMake.vfs = pdfFonts.vfs
 
-const genAI = new GoogleGenerativeAI(
-	process.env.NEXT_PUBLIC_GOOGLE_AI_API_KEY
-)
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY)
 
 export const summarizeActivities = async (activities) => {
 	try {
