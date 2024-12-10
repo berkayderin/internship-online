@@ -6,14 +6,10 @@ import { useStudents } from '@/features/student-activities/queries/useStudentQue
 
 export default function StudentsPage() {
 	const router = useRouter()
-	const { data: students, isLoading } = useStudents()
+	const { data: students } = useStudents()
 
 	const handleStudentSelect = (studentId) => {
 		router.push(`/panel/student-activities?studentId=${studentId}`)
-	}
-
-	if (isLoading) {
-		return <div>Yükleniyor...</div>
 	}
 
 	return (

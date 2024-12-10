@@ -136,10 +136,6 @@ function StudentActivitiesContent() {
 		}
 	}
 
-	if (isLoading) {
-		return <div>Yükleniyor...</div>
-	}
-
 	if (error) {
 		return <div>Hata: {error.message}</div>
 	}

@@ -64,7 +64,7 @@ export default function ApplicationsPage() {
 	const [actionType, setActionType] = useState(null)
 	const [selectedIds, setSelectedIds] = useState([])
 
-	const { data: applications, isLoading } = useApplications()
+	const { data: applications } = useApplications()
 	const updateApplication = useUpdateApplication()
 	const bulkUpdateApplications = useBulkUpdateApplications()
 
@@ -128,8 +128,6 @@ export default function ApplicationsPage() {
 			console.error('Error:', error)
 		}
 	}
-
-	if (isLoading) return <div>Yükleniyor...</div>
 
 	return (
 		<div className="space-y-6">

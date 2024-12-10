@@ -25,7 +25,6 @@ import { toast } from '@/hooks/use-toast'
 import { Eye, EyeOff } from 'lucide-react'
 
 export default function ChangePasswordPage() {
-	const [isLoading, setIsLoading] = useState(false)
 	const [showCurrentPassword, setShowCurrentPassword] =
 		useState(false)
 	const [showNewPassword, setShowNewPassword] = useState(false)
@@ -42,7 +41,6 @@ export default function ChangePasswordPage() {
 	})
 
 	const onSubmit = async (data) => {
-		setIsLoading(true)
 		try {
 			const response = await fetch('/api/auth/change-password', {
 				method: 'POST',
@@ -68,8 +66,6 @@ export default function ChangePasswordPage() {
 				description: error.message,
 				variant: 'destructive'
 			})
-		} finally {
-			setIsLoading(false)
 		}
 	}
 
