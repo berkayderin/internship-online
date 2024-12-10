@@ -182,12 +182,8 @@ export default function ChangePasswordPage() {
 									</FormItem>
 								)}
 							/>
-							<Button
-								type="submit"
-								className="w-full"
-								disabled={isLoading}
-							>
-								{isLoading ? 'İşleniyor...' : 'Şifreyi Güncelle'}
+							<Button type="submit" className="w-full">
+								Şifreyi Güncelle
 							</Button>
 						</form>
 					</Form>

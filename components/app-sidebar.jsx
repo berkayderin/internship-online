@@ -136,19 +136,6 @@ export function AppSidebar({ ...props }) {
 						isActive: pathname.startsWith('/panel/student-activities')
 					}
 				]
-			},
-			{
-				title: 'Ayarlar',
-				icon: Settings,
-				isActive: pathname.startsWith('/panel/settings'),
-				items: [
-					{
-						title: 'Sistem Ayarları',
-						url: '/panel/settings',
-						icon: Settings,
-						isActive: pathname.startsWith('/panel/settings')
-					}
-				]
 			}
 		]
 
