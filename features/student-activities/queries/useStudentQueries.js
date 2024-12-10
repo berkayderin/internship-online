@@ -5,6 +5,7 @@ import {
 	useQueryClient
 } from '@tanstack/react-query'
 import { studentService } from '../services/student'
+import { toast } from '@/hooks/use-toast'
 
 export function useStudents() {
 	return useQuery({
@@ -31,6 +32,22 @@ export function useSubmitFeedback() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({
 				queryKey: ['student-activities']
+			})
+		}
+	})
+}
+
+export function useDeleteStudent() {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: (studentId) =>
+			studentService.deleteStudent(studentId),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['students'] })
+			toast({
+				title: 'Öğrenci başarıyla silindi',
+				description: 'Öğrencinin tüm aktiviteleri ve verileri silindi'
 			})
 		}
 	})

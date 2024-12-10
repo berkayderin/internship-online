@@ -46,3 +46,36 @@ export async function GET(req, { params }) {
 		)
 	}
 }
+
+export async function DELETE(req, { params }) {
+	try {
+		const session = await auth()
+
+		if (!session || session.user.role !== 'ADMIN') {
+			return NextResponse.json(
+				{ error: 'Unauthorized' },
+				{ status: 401 }
+			)
+		}
+
+		const { id } = params
+
+		// Önce öğrencinin aktivitelerini sil
+		await prisma.dailyActivity.deleteMany({
+			where: { userId: id }
+		})
+
+		// Sonra öğrenciyi sil
+		await prisma.user.delete({
+			where: { id }
+		})
+
+		return NextResponse.json({ message: 'Öğrenci başarıyla silindi' })
+	} catch (error) {
+		console.error('Error deleting student:', error)
+		return NextResponse.json(
+			{ error: 'Bir hata oluştu' },
+			{ status: 500 }
+		)
+	}
+}

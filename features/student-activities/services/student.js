@@ -77,5 +77,20 @@ export const studentService = {
 			)
 			throw error
 		}
+	},
+
+	deleteStudent: async (studentId) => {
+		try {
+			const response = await axios.delete(
+				`${STUDENTS_API_URL}/${studentId}`
+			)
+			return response.data
+		} catch (error) {
+			console.error(
+				'Service error:',
+				error.response?.data || error.message
+			)
+			throw error
+		}
 	}
 }
