@@ -38,6 +38,7 @@ import {
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { statusText, statusVariants } from './ActivityDetailModal'
+import { StudentActivitiesSkeleton } from './StudentActivitiesSkeleton'
 
 const defaultPagination = {
 	page: 1,
@@ -46,7 +47,7 @@ const defaultPagination = {
 	pageCount: 1
 }
 
-export function StudentActivities({
+const StudentActivities = ({
 	student,
 	activities = [],
 	pagination = defaultPagination,
@@ -62,7 +63,7 @@ export function StudentActivities({
 	onGenerateSummary,
 	isLoading,
 	isSummarizing
-}) {
+}) => {
 	const [search, setSearch] = useState('')
 	const [debouncedSearch, setDebouncedSearch] = useState('')
 
@@ -79,9 +80,13 @@ export function StudentActivities({
 		onSearch(debouncedSearch)
 	}, [debouncedSearch, onSearch])
 
+	if (isLoading) {
+		return <StudentActivitiesSkeleton />
+	}
+
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
+			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 				<div className="flex items-center gap-4">
 					{student && (
 						<Button variant="ghost" onClick={onBack}>
@@ -97,16 +102,16 @@ export function StudentActivities({
 				</div>
 			</div>
 
-			<div className="flex items-center justify-between">
-				<div className="flex items-center gap-2">
+			<div className="flex flex-col sm:flex-row sm:items-center gap-4">
+				<div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
 					<Input
 						placeholder="Ara..."
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
-						className="w-64"
+						className="w-full sm:w-64"
 					/>
 					<Select onValueChange={onStatusFilter} defaultValue="all">
-						<SelectTrigger className="w-[180px]">
+						<SelectTrigger className="w-full sm:w-[180px]">
 							<SelectValue placeholder="Duruma göre filtrele" />
 						</SelectTrigger>
 						<SelectContent>
@@ -117,36 +122,41 @@ export function StudentActivities({
 						</SelectContent>
 					</Select>
 				</div>
-				<div>
-					{student && (
-						<div className="flex gap-2">
-							<Button onClick={onGenerateReport} disabled={isLoading}>
-								<FileDown className="w-4 h-4 mr-2" />
-								Rapor Oluştur
-							</Button>
-							<Button
-								onClick={onGenerateSummary}
-								disabled={isLoading || isSummarizing}
-							>
-								<FileText className="w-4 h-4 mr-2" />
-								{isSummarizing ? 'Özetleniyor...' : 'Özetle'}
-							</Button>
-						</div>
-					)}
-				</div>
+				{student && (
+					<div className="flex flex-col sm:flex-row gap-2 ml-auto">
+						<Button
+							className="sm:w-auto"
+							onClick={onGenerateReport}
+							disabled={isLoading}
+						>
+							<FileDown className="w-4 h-4 mr-2" />
+							Rapor Oluştur
+						</Button>
+						<Button
+							className="sm:w-auto"
+							onClick={onGenerateSummary}
+							disabled={isLoading || isSummarizing}
+						>
+							<FileText className="w-4 h-4 mr-2" />
+							{isSummarizing ? 'Özetleniyor...' : 'Özetle'}
+						</Button>
+					</div>
+				)}
 			</div>
 
 			<div className="rounded-md border">
-				<Table className="w-[1400px]">
+				<Table className="w-full">
 					<TableHeader>
 						<TableRow>
-							<TableHead>Tarih</TableHead>
-							<TableHead>Öğrenci</TableHead>
+							<TableHead className="w-[150px]">Tarih</TableHead>
+							<TableHead className="w-[200px]">Öğrenci</TableHead>
 							<TableHead>İçerik</TableHead>
-							<TableHead>Durum</TableHead>
-							<TableHead>Geri Bildirim</TableHead>
-							<TableHead>Detay</TableHead>
-							<TableHead>İşlemler</TableHead>
+							<TableHead className="w-[120px]">Durum</TableHead>
+							<TableHead className="w-[200px]">
+								Geri Bildirim
+							</TableHead>
+							<TableHead className="w-[80px]">Detay</TableHead>
+							<TableHead className="w-[80px]">İşlemler</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -228,8 +238,8 @@ export function StudentActivities({
 				</Table>
 			</div>
 
-			<div className="flex items-center justify-between">
-				<div className="text-sm text-muted-foreground">
+			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+				<div className="text-sm text-muted-foreground text-center sm:text-left">
 					Toplam {pagination.total} kayıttan{' '}
 					{(pagination.page - 1) * pagination.limit + 1}-
 					{Math.min(
@@ -239,7 +249,7 @@ export function StudentActivities({
 					arası gösteriliyor
 				</div>
 
-				<div className="flex items-center gap-2">
+				<div className="flex flex-col sm:flex-row items-center gap-2">
 					<div className="flex items-center gap-1">
 						<Button
 							variant="outline"
@@ -275,7 +285,7 @@ export function StudentActivities({
 						</Button>
 					</div>
 					<Select onValueChange={onLimitChange} defaultValue="10">
-						<SelectTrigger className="w-[140px]">
+						<SelectTrigger className="w-full sm:w-[140px]">
 							<SelectValue placeholder="Sayfa başına" />
 						</SelectTrigger>
 						<SelectContent>
@@ -290,3 +300,5 @@ export function StudentActivities({
 		</div>
 	)
 }
+
+export { StudentActivities }

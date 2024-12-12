@@ -1,3 +1,4 @@
+// app/panel/student-activities/page.jsx
 'use client'
 import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -14,7 +15,7 @@ import {
 import { summarizeActivities } from '@/features/student-activities/services/ai'
 import { toast } from '@/hooks/use-toast'
 
-function StudentActivitiesContent() {
+const StudentActivitiesPage = () => {
 	const router = useRouter()
 	const searchParams = useSearchParams()
 	const studentId = searchParams.get('studentId')
@@ -136,46 +137,51 @@ function StudentActivitiesContent() {
 		}
 	}
 
-	if (error) {
-		return <div>Hata: {error.message}</div>
-	}
-
 	return (
-		<div className="space-y-6">
-			<StudentActivities
-				student={activitiesData?.student}
-				activities={activitiesData?.data || []}
-				pagination={activitiesData?.pagination}
-				onBack={handleBack}
-				onViewDetails={handleViewDetails}
-				onPageChange={setPage}
-				onLimitChange={(value) => setLimit(parseInt(value))}
-				onStatusFilter={handleStatusFilter}
-				onSearch={handleSearch}
-				onApprove={handleApprove}
-				onReject={handleReject}
-				onGenerateReport={handleGenerateReport}
-				onGenerateSummary={handleGenerateSummary}
-				isLoading={isLoading}
-				isSummarizing={isSummarizing}
-			/>
+		<Suspense
+			fallback={
+				<div className="flex items-center justify-center min-h-[200px]">
+					<div className="text-center text-muted-foreground">
+						Sayfa yükleniyor...
+					</div>
+				</div>
+			}
+		>
+			{error ? (
+				<div className="text-center text-red-500 bg-red-50 rounded-md">
+					Hata: {error.message}
+				</div>
+			) : (
+				<div>
+					<StudentActivities
+						student={activitiesData?.student}
+						activities={activitiesData?.data || []}
+						pagination={activitiesData?.pagination}
+						onBack={handleBack}
+						onViewDetails={handleViewDetails}
+						onPageChange={setPage}
+						onLimitChange={(value) => setLimit(parseInt(value))}
+						onStatusFilter={handleStatusFilter}
+						onSearch={handleSearch}
+						onApprove={handleApprove}
+						onReject={handleReject}
+						onGenerateReport={handleGenerateReport}
+						onGenerateSummary={handleGenerateSummary}
+						isLoading={isLoading}
+						isSummarizing={isSummarizing}
+					/>
 
-			<ActivityDetailModal
-				activity={selectedActivity}
-				open={detailsOpen}
-				onOpenChange={setDetailsOpen}
-				onApprove={handleApprove}
-				onReject={handleReject}
-			/>
-		</div>
-	)
-}
-
-// Ana sayfa bileşeni
-export default function StudentActivitiesPage() {
-	return (
-		<Suspense fallback={<div>Sayfa yükleniyor...</div>}>
-			<StudentActivitiesContent />
+					<ActivityDetailModal
+						activity={selectedActivity}
+						open={detailsOpen}
+						onOpenChange={setDetailsOpen}
+						onApprove={handleApprove}
+						onReject={handleReject}
+					/>
+				</div>
+			)}
 		</Suspense>
 	)
 }
+
+export default StudentActivitiesPage

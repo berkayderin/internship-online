@@ -57,8 +57,7 @@ ${activitiesText}`
 
 		return formattedText
 	} catch (error) {
-		console.error('AI özet oluşturma hatası:', error)
-		throw error
+		console.error('Summarize activities error:', error)
 	}
 }
 

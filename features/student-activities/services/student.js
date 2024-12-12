@@ -10,10 +10,9 @@ export const studentService = {
 			return response.data
 		} catch (error) {
 			console.error(
-				'Service error:',
+				'Get students error:',
 				error.response?.data || error.message
 			)
-			throw error
 		}
 	},
 
@@ -44,8 +43,6 @@ export const studentService = {
 					params: queryParams
 				})
 
-				console.log('Tüm aktiviteler response:', response.data)
-
 				return {
 					student: null,
 					...response.data
@@ -53,10 +50,9 @@ export const studentService = {
 			}
 		} catch (error) {
 			console.error(
-				'Service error:',
+				'Get student activities error:',
 				error.response?.data || error.message
 			)
-			throw error
 		}
 	},
 
@@ -72,10 +68,9 @@ export const studentService = {
 			return response.data
 		} catch (error) {
 			console.error(
-				'Service error:',
+				'Submit feedback error:',
 				error.response?.data || error.message
 			)
-			throw error
 		}
 	},
 
@@ -87,10 +82,9 @@ export const studentService = {
 			return response.data
 		} catch (error) {
 			console.error(
-				'Service error:',
+				'Delete student error:',
 				error.response?.data || error.message
 			)
-			throw error
 		}
 	}
 }
