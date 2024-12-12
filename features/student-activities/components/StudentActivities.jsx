@@ -125,7 +125,7 @@ const StudentActivities = ({
 				{student && (
 					<div className="flex flex-col sm:flex-row gap-2 ml-auto">
 						<Button
-							className="sm:w-auto"
+							className="w-full sm:w-auto"
 							onClick={onGenerateReport}
 							disabled={isLoading}
 						>
@@ -133,7 +133,7 @@ const StudentActivities = ({
 							Rapor Oluştur
 						</Button>
 						<Button
-							className="sm:w-auto"
+							className="w-full sm:w-auto"
 							onClick={onGenerateSummary}
 							disabled={isLoading || isSummarizing}
 						>
@@ -238,63 +238,65 @@ const StudentActivities = ({
 				</Table>
 			</div>
 
-			<div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-				<div className="text-sm text-muted-foreground text-center sm:text-left">
-					Toplam {pagination.total} kayıttan{' '}
-					{(pagination.page - 1) * pagination.limit + 1}-
-					{Math.min(
-						pagination.page * pagination.limit,
-						pagination.total
-					)}{' '}
-					arası gösteriliyor
-				</div>
-
-				<div className="flex flex-col sm:flex-row items-center gap-2">
-					<div className="flex items-center gap-1">
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => onPageChange(1)}
-							disabled={pagination.page === 1}
-						>
-							<ChevronsLeft className="h-4 w-4" />
-						</Button>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => onPageChange(pagination.page - 1)}
-							disabled={pagination.page === 1}
-						>
-							<ChevronLeft className="h-4 w-4" />
-						</Button>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => onPageChange(pagination.page + 1)}
-							disabled={pagination.page === pagination.pageCount}
-						>
-							<ChevronRight className="h-4 w-4" />
-						</Button>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => onPageChange(pagination.pageCount)}
-							disabled={pagination.page === pagination.pageCount}
-						>
-							<ChevronsRight className="h-4 w-4" />
-						</Button>
+			<div className="w-full bg-white">
+				<div className="flex flex-col sm:flex-row items-center gap-4">
+					<div className="text-sm text-muted-foreground">
+						Toplam {pagination.total} kayıttan{' '}
+						{(pagination.page - 1) * pagination.limit + 1}-
+						{Math.min(
+							pagination.page * pagination.limit,
+							pagination.total
+						)}{' '}
+						arası gösteriliyor
 					</div>
-					<Select onValueChange={onLimitChange} defaultValue="10">
-						<SelectTrigger className="w-full sm:w-[140px]">
-							<SelectValue placeholder="Sayfa başına" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="5">5 kayıt</SelectItem>
-							<SelectItem value="10">10 kayıt</SelectItem>
-							<SelectItem value="20">20 kayıt</SelectItem>
-							<SelectItem value="50">50 kayıt</SelectItem>
-						</SelectContent>
-					</Select>
+
+					<div className="flex flex-col sm:flex-row items-center gap-2 sm:ml-auto">
+						<div className="flex items-center gap-1">
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => onPageChange(1)}
+								disabled={pagination.page === 1}
+							>
+								<ChevronsLeft className="h-4 w-4" />
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => onPageChange(pagination.page - 1)}
+								disabled={pagination.page === 1}
+							>
+								<ChevronLeft className="h-4 w-4" />
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => onPageChange(pagination.page + 1)}
+								disabled={pagination.page === pagination.pageCount}
+							>
+								<ChevronRight className="h-4 w-4" />
+							</Button>
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => onPageChange(pagination.pageCount)}
+								disabled={pagination.page === pagination.pageCount}
+							>
+								<ChevronsRight className="h-4 w-4" />
+							</Button>
+						</div>
+						<Select onValueChange={onLimitChange} defaultValue="10">
+							<SelectTrigger className="w-[140px]">
+								<SelectValue placeholder="Sayfa başına" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="5">5 kayıt</SelectItem>
+								<SelectItem value="10">10 kayıt</SelectItem>
+								<SelectItem value="20">20 kayıt</SelectItem>
+								<SelectItem value="50">50 kayıt</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -25,10 +25,11 @@ import {
 	useStudents,
 	useDeleteStudent
 } from '@/features/student-activities/queries/useStudentQueries'
+import { StudentsPageSkeleton } from '@/features/student-activities/components/StudentsPageSkeleton'
 
 const StudentsPage = () => {
 	const router = useRouter()
-	const { data: students } = useStudents()
+	const { data: students, isLoading } = useStudents()
 	const deleteStudentMutation = useDeleteStudent()
 	const [studentToDelete, setStudentToDelete] = useState(null)
 
@@ -43,6 +44,10 @@ const StudentsPage = () => {
 
 	const handleDeleteConfirm = () => {
 		handleStudentDelete(studentToDelete)
+	}
+
+	if (isLoading) {
+		return <StudentsPageSkeleton />
 	}
 
 	return (
