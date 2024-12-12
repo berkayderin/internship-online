@@ -1,7 +1,7 @@
+// app/panel/internship-periods/page.jsx
 'use client'
 
 import { useState } from 'react'
-import { useSession } from 'next-auth/react'
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
 import { Edit, Trash2 } from 'lucide-react'
@@ -27,9 +27,9 @@ import {
 	useInternshipPeriods,
 	useDeleteInternshipPeriod
 } from '@/features/internship-periods/queries/useInternshipPeriod'
+import InternshipPeriodsTableSkeleton from '@/features/internship-periods/components/InternshipPeriodsTableSkeleton'
 
 export default function InternshipPeriodsPage() {
-	const { data: session } = useSession()
 	const [createDialogOpen, setCreateDialogOpen] = useState(false)
 	const [editDialogOpen, setEditDialogOpen] = useState(false)
 	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -54,6 +54,10 @@ export default function InternshipPeriodsPage() {
 		setSelectedPeriod(null)
 	}
 
+	if (isLoading) {
+		return <InternshipPeriodsTableSkeleton />
+	}
+
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
@@ -64,7 +68,7 @@ export default function InternshipPeriodsPage() {
 			</div>
 
 			<div className="rounded-md border">
-				<Table className="w-[1400px]">
+				<Table>
 					<TableHeader>
 						<TableRow>
 							<TableHead>Dönem Adı</TableHead>

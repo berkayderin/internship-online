@@ -1,3 +1,4 @@
+// features/internship-periods/components/PeriodDialog.jsx
 'use client'
 
 import { useForm } from 'react-hook-form'
