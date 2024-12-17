@@ -1,16 +1,76 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import {
+	GoogleGenerativeAI,
+	HarmCategory,
+	HarmBlockThreshold
+} from '@google/generative-ai'
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 
 pdfMake.vfs = pdfFonts.vfs
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY)
+const genAI = new GoogleGenerativeAI(
+	process.env.NEXT_PUBLIC_GEMINI_API_KEY
+)
+
+const delay = (ms) =>
+	new Promise((resolve) => setTimeout(resolve, ms))
+
+const retryOperation = async (
+	operation,
+	maxAttempts = 3,
+	delayMs = 2000
+) => {
+	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+		try {
+			return await operation()
+		} catch (error) {
+			if (attempt === maxAttempts) throw error
+
+			if (error?.error?.code === 503) {
+				console.log(
+					`Deneme ${attempt}/${maxAttempts} başarısız. Yeniden deneniyor...`
+				)
+				await delay(delayMs * attempt)
+				continue
+			}
+
+			throw error
+		}
+	}
+}
 
 export const summarizeActivities = async (activities) => {
 	try {
 		const model = genAI.getGenerativeModel({
-			model: 'gemini-1.5-pro'
+			model: 'gemini-1.5-pro',
+			generationConfig: {
+				temperature: 1,
+				topP: 0.95,
+				topK: 40,
+				maxOutputTokens: 8192,
+				responseMimeType: 'text/plain'
+			},
+			safetySettings: [
+				{
+					category: HarmCategory.HARM_CATEGORY_HARASSMENT,
+					threshold: HarmBlockThreshold.BLOCK_NONE
+				},
+				{
+					category: HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+					threshold: HarmBlockThreshold.BLOCK_NONE
+				},
+				{
+					category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+					threshold: HarmBlockThreshold.BLOCK_NONE
+				},
+				{
+					category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+					threshold: HarmBlockThreshold.BLOCK_NONE
+				}
+			]
 		})
+
+		const chatSession = model.startChat()
 
 		const activitiesText = activities
 			.map(
@@ -21,7 +81,7 @@ export const summarizeActivities = async (activities) => {
 			)
 			.join('\n')
 
-		const prompt = `Aşağıdaki staj aktivitelerini analiz et ve iki bölümden oluşan bir yanıt ver. 
+		const prompt = `Aşağıdaki staj aktivitelerini analiz et ve iki b��lümden oluşan bir yanıt ver. 
 Sadece teknoloji isimleri, programlama dilleri, yazılım araçları ve önemli teknik kavramları **kelime** şeklinde belirt. 
 Normal cümle yapısındaki kelimeleri kalınlaştırma.
 
@@ -41,9 +101,20 @@ Normal cümle yapısındaki kelimeleri kalınlaştırma.
 Aktiviteler:
 ${activitiesText}`
 
-		const result = await model.generateContent(prompt)
-		const response = result.response
-		const text = response.text()
+		const result = await retryOperation(async () => {
+			return await Promise.race([
+				chatSession.sendMessage(prompt),
+				new Promise((_, reject) =>
+					setTimeout(
+						() =>
+							reject(new Error('API isteği zaman aşımına uğradı')),
+						30000
+					)
+				)
+			])
+		})
+
+		const text = result.response.text()
 
 		const formattedText = text
 			.split(/(\*\*[^*]+\*\*)/)
