@@ -2,6 +2,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
+import { format } from 'date-fns'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -21,7 +22,10 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import applicationSchema from '../zod/ApplicationSchema'
-import { useCreateApplication } from '../queries/useApplication'
+import {
+	useCreateApplication,
+	useInternshipPeriod
+} from '../queries/useApplication'
 import { Calendar } from '@/components/ui/calendar'
 import {
 	Popover,
@@ -29,255 +33,289 @@ import {
 	PopoverTrigger
 } from '@/components/ui/popover'
 import { CalendarIcon } from 'lucide-react'
-import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
+import { toast } from '@/hooks/use-toast'
 
 export function ApplicationDialog({ open, onOpenChange, periodId }) {
+	const { data: period, isLoading } = useInternshipPeriod(periodId)
+
+	useEffect(() => {
+		if (period) {
+			console.log('Period:', {
+				internshipStartDate: period.internshipStartDate,
+				internshipEndDate: period.internshipEndDate
+			})
+		}
+	}, [period])
+
 	const form = useForm({
-		resolver: zodResolver(applicationSchema),
+		resolver: zodResolver(applicationSchema, {
+			contextualData: {
+				period: period
+			}
+		}),
 		defaultValues: {
-			periodId: periodId || '',
+			periodId: '',
 			companyName: '',
 			companyPhone: '',
 			companyWebsite: '',
-			companyEmployeeCount: 0,
-			companyEngineerCount: 0,
 			companyAddress: '',
-			internshipStartDate: new Date(),
-			internshipEndDate: new Date()
+			companyEmployeeCount: '',
+			internshipStartDate: '',
+			internshipEndDate: ''
 		}
 	})
 
 	useEffect(() => {
-		form.setValue('periodId', periodId || '')
+		if (periodId) {
+			form.setValue('periodId', periodId)
+		}
 	}, [periodId, form])
 
 	const createApplication = useCreateApplication()
 
 	const onSubmit = async (data) => {
+		if (!periodId) {
+			toast({
+				title: 'Hata',
+				description: 'Staj dönemi seçilmedi',
+				variant: 'destructive'
+			})
+			return
+		}
+
 		try {
 			const formattedData = {
 				...data,
-				internshipStartDate: data.internshipStartDate.toISOString(),
-				internshipEndDate: data.internshipEndDate.toISOString()
+				periodId: periodId,
+				internshipStartDate: new Date(
+					data.internshipStartDate
+				).toISOString(),
+				internshipEndDate: new Date(
+					data.internshipEndDate
+				).toISOString()
 			}
+
 			await createApplication.mutateAsync(formattedData)
 			onOpenChange(false)
+			form.reset()
 		} catch (error) {
-			console.error('Form submission error:', error)
+			console.error('Submit Error:', error)
 		}
 	}
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="sm:max-w-[425px]">
+			<DialogContent className="w-full max-w-2xl">
 				<DialogHeader>
 					<DialogTitle>Staj Başvurusu</DialogTitle>
 				</DialogHeader>
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(onSubmit, (errors) => {
-							console.log('errors:', errors)
-						})}
+						onSubmit={form.handleSubmit(onSubmit)}
 						className="space-y-4"
 					>
-						<div className="flex gap-4">
-							<div className="flex-1 space-y-4">
-								<FormField
-									control={form.control}
-									name="companyName"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>İşyeri Adı</FormLabel>
-											<FormControl>
-												<Input {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="companyPhone"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>İşyeri Telefonu</FormLabel>
-											<FormControl>
-												<Input {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="companyWebsite"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>
-												İşyeri Web Adresi (Opsiyonel)
-											</FormLabel>
-											<FormControl>
-												<Input
-													{...field}
-													value={field.value || ''}
-													placeholder="https://example.com"
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="companyAddress"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>İşyeri Adresi</FormLabel>
-											<FormControl>
-												<Textarea {...field} />
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
+						<FormField
+							control={form.control}
+							name="companyName"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>İşyeri Adı</FormLabel>
+									<FormControl>
+										<Input {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
-							<div className="flex-1 space-y-4">
-								<FormField
-									control={form.control}
-									name="companyEmployeeCount"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Toplam Çalışan Sayısı</FormLabel>
-											<FormControl>
-												<Input
-													type="number"
-													min="1"
-													{...field}
-													onChange={(e) =>
-														field.onChange(Number(e.target.value))
+						<FormField
+							control={form.control}
+							name="companyPhone"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>İşyeri Telefonu</FormLabel>
+									<FormControl>
+										<Input {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="companyWebsite"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>İşyeri Web Adresi (Opsiyonel)</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											value={field.value || ''}
+											placeholder="https://example.com"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="companyAddress"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>İşyeri Adresi</FormLabel>
+									<FormControl>
+										<Textarea {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<div className="flex gap-4">
+							<FormField
+								control={form.control}
+								name="internshipStartDate"
+								render={({ field }) => (
+									<FormItem className="flex-1">
+										<FormLabel>Başlangıç Tarihi</FormLabel>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant="outline"
+														className={cn(
+															'w-full pl-3 text-left font-normal',
+															!field.value && 'text-muted-foreground'
+														)}
+													>
+														{field.value ? (
+															format(field.value, 'PPP', {
+																locale: tr
+															})
+														) : (
+															<span>Tarih seçin</span>
+														)}
+														<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+											<PopoverContent
+												className="w-auto p-0"
+												align="start"
+											>
+												<Calendar
+													mode="single"
+													selected={field.value}
+													onSelect={field.onChange}
+													disabled={(date) =>
+														date <
+															new Date(period?.internshipStartDate) ||
+														date > new Date(period?.internshipEndDate)
 													}
+													initialFocus
+													locale={tr}
 												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="companyEngineerCount"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Toplam Mühendis Sayısı</FormLabel>
-											<FormControl>
-												<Input
-													type="number"
-													min="1"
-													{...field}
-													onChange={(e) =>
-														field.onChange(Number(e.target.value))
+											</PopoverContent>
+										</Popover>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="internshipEndDate"
+								render={({ field }) => (
+									<FormItem className="flex-1">
+										<FormLabel>Bitiş Tarihi</FormLabel>
+										<Popover>
+											<PopoverTrigger asChild>
+												<FormControl>
+													<Button
+														variant="outline"
+														className={cn(
+															'w-full pl-3 text-left font-normal',
+															!field.value && 'text-muted-foreground'
+														)}
+													>
+														{field.value ? (
+															format(field.value, 'PPP', {
+																locale: tr
+															})
+														) : (
+															<span>Tarih seçin</span>
+														)}
+														<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+													</Button>
+												</FormControl>
+											</PopoverTrigger>
+											<PopoverContent className="w-auto p-0">
+												<Calendar
+													mode="single"
+													selected={field.value}
+													onSelect={field.onChange}
+													disabled={(date) =>
+														date <
+															new Date(period?.internshipStartDate) ||
+														date > new Date(period?.internshipEndDate)
 													}
+													locale={tr}
 												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="internshipStartDate"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Staj Başlangıç Tarihi</FormLabel>
-											<Popover>
-												<PopoverTrigger asChild>
-													<FormControl>
-														<Button
-															variant="outline"
-															className={cn(
-																'w-full pl-3 text-left font-normal',
-																!field.value &&
-																	'text-muted-foreground'
-															)}
-														>
-															{field.value ? (
-																format(field.value, 'PPP', {
-																	locale: tr
-																})
-															) : (
-																<span>Tarih seçin</span>
-															)}
-															<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-														</Button>
-													</FormControl>
-												</PopoverTrigger>
-												<PopoverContent
-													className="w-auto p-0"
-													align="start"
-												>
-													<Calendar
-														mode="single"
-														selected={field.value}
-														onSelect={field.onChange}
-														disabled={(date) =>
-															date < new Date() ||
-															date >
-																new Date(date.getFullYear() + 1, 0, 1)
-														}
-														initialFocus
-														locale={tr}
-													/>
-												</PopoverContent>
-											</Popover>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="internshipEndDate"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>Staj Bitiş Tarihi</FormLabel>
-											<Popover>
-												<PopoverTrigger asChild>
-													<FormControl>
-														<Button
-															variant="outline"
-															className={cn(
-																'w-full pl-3 text-left font-normal',
-																!field.value &&
-																	'text-muted-foreground'
-															)}
-														>
-															{field.value ? (
-																format(field.value, 'd MMMM yyyy', {
-																	locale: tr
-																})
-															) : (
-																<span>Tarih seçin</span>
-															)}
-															<CalendarIcon className="ml-auto h-4 w-4" />
-														</Button>
-													</FormControl>
-												</PopoverTrigger>
-												<PopoverContent className="w-auto p-0">
-													<Calendar
-														mode="single"
-														selected={field.value}
-														onSelect={field.onChange}
-														locale={tr}
-													/>
-												</PopoverContent>
-											</Popover>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
+											</PopoverContent>
+										</Popover>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 						</div>
+
+						<FormField
+							control={form.control}
+							name="companyEmployeeCount"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Toplam Çalışan Sayısı</FormLabel>
+									<FormControl>
+										<Input
+											type="number"
+											min="1"
+											{...field}
+											onChange={(e) =>
+												field.onChange(Number(e.target.value))
+											}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="companyEngineerCount"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Toplam Mühendis Sayısı</FormLabel>
+									<FormControl>
+										<Input
+											type="number"
+											min="1"
+											{...field}
+											onChange={(e) =>
+												field.onChange(Number(e.target.value))
+											}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
 						<div className="flex justify-end">
 							<Button
 								type="submit"

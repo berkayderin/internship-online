@@ -84,3 +84,28 @@ export async function DELETE(req, { params }) {
 		)
 	}
 }
+
+export async function GET(req, { params }) {
+	try {
+		const { id } = params
+
+		const period = await prisma.internshipPeriod.findUnique({
+			where: { id }
+		})
+
+		if (!period) {
+			return NextResponse.json(
+				{ error: 'Staj dönemi bulunamadı' },
+				{ status: 404 }
+			)
+		}
+
+		return NextResponse.json(period)
+	} catch (error) {
+		console.error('Error fetching internship period:', error)
+		return NextResponse.json(
+			{ error: 'Bir hata oluştu' },
+			{ status: 500 }
+		)
+	}
+}

@@ -54,27 +54,12 @@ export async function POST(req) {
 
 		if (!session) {
 			return NextResponse.json(
-				{ error: 'Unauthorized' },
+				{ error: 'Yetkisiz erişim' },
 				{ status: 401 }
 			)
 		}
 
 		const data = await req.json()
-
-		const existingApplication = await prisma.application.findFirst({
-			where: {
-				userId: session.user.id,
-				periodId: data.periodId
-			}
-		})
-
-		if (existingApplication) {
-			return NextResponse.json(
-				{ error: 'Bu dönem için zaten başvuru yaptınız.' },
-				{ status: 400 }
-			)
-		}
-
 		const validationResult = applicationSchema.safeParse(data)
 
 		if (!validationResult.success) {
@@ -87,30 +72,32 @@ export async function POST(req) {
 			)
 		}
 
-		const user = await prisma.user.update({
-			where: { id: session.user.id },
-			data: {
-				internshipStartDate: data.internshipStartDate,
-				internshipEndDate: data.internshipEndDate
-			}
-		})
+		const startDate = new Date(data.internshipStartDate)
+		const endDate = new Date(data.internshipEndDate)
 
 		const application = await prisma.application.create({
 			data: {
-				...validationResult.data,
+				...data,
 				userId: session.user.id,
+				internshipStartDate: startDate,
+				internshipEndDate: endDate,
 				status: 'PENDING'
+			},
+			include: {
+				user: {
+					select: {
+						firstName: true,
+						lastName: true,
+						department: true
+					}
+				},
+				period: true
 			}
 		})
 
 		return NextResponse.json(application)
 	} catch (error) {
-		console.error('Detailed error:', {
-			message: error.message,
-			stack: error.stack,
-			cause: error.cause
-		})
-
+		console.error('Error:', error)
 		return NextResponse.json(
 			{ error: 'Bir hata oluştu', details: error.message },
 			{ status: 500 }

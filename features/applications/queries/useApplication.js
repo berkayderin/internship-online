@@ -19,7 +19,25 @@ export const useCreateApplication = () => {
 				description: 'Başvurunuz başarıyla gönderildi.'
 			})
 		},
-		onError: () => {
+		onError: (error) => {
+			if (error.response?.data?.error === 'Validation failed') {
+				const hasDateError = error.response.data.errors?.some(
+					(err) =>
+						err.path[0] === 'internshipStartDate' ||
+						err.path[0] === 'internshipEndDate'
+				)
+
+				if (hasDateError) {
+					toast({
+						title: 'Hata',
+						description:
+							'Staj başlangıç ve bitiş tarihi Fakülte tarafından belirlenen aralıkta değildir.',
+						variant: 'destructive'
+					})
+					return
+				}
+			}
+
 			toast({
 				title: 'Hata',
 				description: 'Başvuru gönderilemedi.',
@@ -79,5 +97,13 @@ export const useBulkUpdateApplications = () => {
 				variant: 'destructive'
 			})
 		}
+	})
+}
+
+export const useInternshipPeriod = (periodId) => {
+	return useQuery({
+		queryKey: ['internship-periods', periodId],
+		queryFn: () => applicationService.getInternshipPeriod(periodId),
+		enabled: !!periodId
 	})
 }

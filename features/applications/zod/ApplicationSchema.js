@@ -8,7 +8,7 @@ const applicationSchema = z
 		}),
 		companyName: z
 			.string({
-				required_error: 'İşyeri adı zorunludur'
+				required_error: 'İşyeri adı gereklidir'
 			})
 			.min(2, 'İşyeri adı en az 2 karakter olmalıdır'),
 		companyPhone: z
@@ -40,12 +40,10 @@ const applicationSchema = z
 			})
 			.min(10, 'Geçerli bir adres giriniz'),
 		internshipStartDate: z.coerce.date({
-			required_error: 'Staj başlangıç tarihi seçilmelidir',
-			invalid_type_error: 'Geçerli bir tarih seçiniz'
+			required_error: 'Staj başlangıç tarihi gereklidir'
 		}),
 		internshipEndDate: z.coerce.date({
-			required_error: 'Staj bitiş tarihi seçilmelidir',
-			invalid_type_error: 'Geçerli bir tarih seçiniz'
+			required_error: 'Staj bitiş tarihi gereklidir'
 		})
 	})
 	.refine(
@@ -63,5 +61,47 @@ const applicationSchema = z
 			path: ['internshipEndDate']
 		}
 	)
+	.superRefine((data, ctx) => {
+		const period = ctx?.contextualData?.period
+
+		if (!period) {
+			console.log('Period bilgisi bulunamadı')
+			return
+		}
+
+		console.log('Validation Data:', {
+			formStartDate: new Date(data.internshipStartDate),
+			formEndDate: new Date(data.internshipEndDate),
+			periodStartDate: new Date(period.internshipStartDate),
+			periodEndDate: new Date(period.internshipEndDate)
+		})
+
+		// Seçilen başlangıç tarihi kontrol
+		if (
+			new Date(data.internshipStartDate) <
+			new Date(period.internshipStartDate)
+		) {
+			console.log('Başlangıç tarihi hatası')
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message:
+					'Staj başlangıç tarihi dönem başlangıcından önce olamaz',
+				path: ['internshipStartDate']
+			})
+		}
+
+		// Seçilen bitiş tarihi kontrol
+		if (
+			new Date(data.internshipEndDate) >
+			new Date(period.internshipEndDate)
+		) {
+			console.log('Bitiş tarihi hatası')
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'Staj bitiş tarihi dönem bitişinden sonra olamaz',
+				path: ['internshipEndDate']
+			})
+		}
+	})
 
 export default applicationSchema

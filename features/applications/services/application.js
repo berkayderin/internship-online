@@ -54,5 +54,19 @@ export const applicationService = {
 			)
 			throw error
 		}
+	},
+	getInternshipPeriod: async (periodId) => {
+		try {
+			const response = await axios.get(
+				`/api/internship-periods/${periodId}`
+			)
+			return response.data
+		} catch (error) {
+			console.error(
+				'Service error:',
+				error.response?.data || error.message
+			)
+			throw error
+		}
 	}
 }

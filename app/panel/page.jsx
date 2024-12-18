@@ -35,6 +35,11 @@ export default function PanelPage() {
 
 	const isAdmin = session?.user?.role === 'ADMIN'
 
+	const handleApplyClick = (periodId) => {
+		setSelectedPeriodId(periodId)
+		setApplicationOpen(true)
+	}
+
 	return (
 		<div className="max-w-4xl">
 			<div className="flex flex-col justify-start items-start gap-4">

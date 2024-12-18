@@ -250,13 +250,13 @@ export default function ApplicationsPage() {
 												<div className="text-sm text-muted-foreground flex items-center gap-1">
 													<Calendar className="h-4 w-4" />
 													{format(
-														new Date(application.period.startDate),
+														new Date(application.internshipStartDate),
 														'd MMM',
 														{ locale: tr }
 													)}{' '}
 													-{' '}
 													{format(
-														new Date(application.period.endDate),
+														new Date(application.internshipEndDate),
 														'd MMM yyyy',
 														{ locale: tr }
 													)}
