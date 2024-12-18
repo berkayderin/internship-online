@@ -111,7 +111,7 @@ const DailyActivitiesPage = () => {
 	}
 
 	return (
-		<div className="max-w-7xl w-full space-y-6">
+		<div className="w-full space-y-6">
 			<div className="flex justify-between items-center">
 				<h1 className="text-2xl font-bold">
 					{isAdmin ? 'Tüm Aktiviteler' : 'Staj Günlüğü'}

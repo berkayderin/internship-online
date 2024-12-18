@@ -132,76 +132,91 @@ export function DailyActivitiesTable({
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{filteredData.map((activity) => (
-							<TableRow key={activity.id}>
-								<TableCell className="whitespace-nowrap font-medium">
-									{format(new Date(activity.date), 'd MMMM yyyy', {
-										locale: tr
-									})}
-								</TableCell>
-								{isAdmin && (
-									<TableCell className="whitespace-nowrap">
-										{activity.user.firstName} {activity.user.lastName}
-										<div className="text-sm text-muted-foreground">
-											{activity.user.department}
-										</div>
-									</TableCell>
-								)}
-								<TableCell className="whitespace-nowrap">
-									{handleContentDisplay(activity.content)}
-								</TableCell>
-								<TableCell className="whitespace-nowrap">
-									<Badge variant={statusVariants[activity.status]}>
-										{statusText[activity.status]}
-									</Badge>
-								</TableCell>
-								<TableCell className="whitespace-nowrap">
-									{activity.feedback ? (
-										<span className="text-sm">
-											{activity.feedback}
-										</span>
-									) : (
-										<span className="text-sm text-muted-foreground">
-											-
-										</span>
-									)}
-								</TableCell>
-								<TableCell className="whitespace-nowrap">
-									{((isAdmin && activity.status === 'PENDING') ||
-										(!isAdmin && activity.status === 'PENDING')) && (
-										<DropdownMenu>
-											<DropdownMenuTrigger asChild>
-												<Button variant="ghost" size="sm">
-													<ChevronDown className="ml-2 h-4 w-4" />
-												</Button>
-											</DropdownMenuTrigger>
-											<DropdownMenuContent align="end">
-												{isAdmin ? (
-													<>
-														<DropdownMenuItem
-															onClick={() => onApprove(activity.id)}
-														>
-															Onayla
-														</DropdownMenuItem>
-														<DropdownMenuItem
-															onClick={() => onReject(activity.id)}
-														>
-															Reddet
-														</DropdownMenuItem>
-													</>
-												) : (
-													<DropdownMenuItem
-														onClick={() => onEdit(activity)}
-													>
-														Düzenle
-													</DropdownMenuItem>
-												)}
-											</DropdownMenuContent>
-										</DropdownMenu>
-									)}
+						{filteredData.length === 0 ? (
+							<TableRow>
+								<TableCell
+									colSpan={isAdmin ? 6 : 5}
+									className="h-24 text-center text-muted-foreground"
+								>
+									{search
+										? 'Arama kriterlerine uygun staj günlüğü bulunamadı.'
+										: 'Henüz staj günlüğü girilmemiş.'}
 								</TableCell>
 							</TableRow>
-						))}
+						) : (
+							filteredData.map((activity) => (
+								<TableRow key={activity.id}>
+									<TableCell className="whitespace-nowrap font-medium">
+										{format(new Date(activity.date), 'd MMMM yyyy', {
+											locale: tr
+										})}
+									</TableCell>
+									{isAdmin && (
+										<TableCell className="whitespace-nowrap">
+											{activity.user.firstName}{' '}
+											{activity.user.lastName}
+											<div className="text-sm text-muted-foreground">
+												{activity.user.department}
+											</div>
+										</TableCell>
+									)}
+									<TableCell className="whitespace-nowrap">
+										{handleContentDisplay(activity.content)}
+									</TableCell>
+									<TableCell className="whitespace-nowrap">
+										<Badge variant={statusVariants[activity.status]}>
+											{statusText[activity.status]}
+										</Badge>
+									</TableCell>
+									<TableCell className="whitespace-nowrap">
+										{activity.feedback ? (
+											<span className="text-sm">
+												{activity.feedback}
+											</span>
+										) : (
+											<span className="text-sm text-muted-foreground">
+												-
+											</span>
+										)}
+									</TableCell>
+									<TableCell className="whitespace-nowrap">
+										{((isAdmin && activity.status === 'PENDING') ||
+											(!isAdmin &&
+												activity.status === 'PENDING')) && (
+											<DropdownMenu>
+												<DropdownMenuTrigger asChild>
+													<Button variant="ghost" size="sm">
+														<ChevronDown className="ml-2 h-4 w-4" />
+													</Button>
+												</DropdownMenuTrigger>
+												<DropdownMenuContent align="end">
+													{isAdmin ? (
+														<>
+															<DropdownMenuItem
+																onClick={() => onApprove(activity.id)}
+															>
+																Onayla
+															</DropdownMenuItem>
+															<DropdownMenuItem
+																onClick={() => onReject(activity.id)}
+															>
+																Reddet
+															</DropdownMenuItem>
+														</>
+													) : (
+														<DropdownMenuItem
+															onClick={() => onEdit(activity)}
+														>
+															Düzenle
+														</DropdownMenuItem>
+													)}
+												</DropdownMenuContent>
+											</DropdownMenu>
+										)}
+									</TableCell>
+								</TableRow>
+							))
+						)}
 					</TableBody>
 				</Table>
 			</div>
