@@ -68,3 +68,10 @@ export const useSubmitFeedback = () => {
 		}
 	})
 }
+
+export const useIsActive = () => {
+	return useQuery({
+		queryKey: ['isActiveInternship'],
+		queryFn: dailyActivityService.isActive
+	})
+}

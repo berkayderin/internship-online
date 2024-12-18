@@ -7,7 +7,8 @@ import {
 	useCreateActivity,
 	useGetActivities,
 	useUpdateActivity,
-	useSubmitFeedback
+	useSubmitFeedback,
+	useIsActive
 } from '@/features/daily-activities/queries/useDailyActivity'
 import {
 	Dialog,
@@ -22,6 +23,7 @@ import { DailyActivitiesTable } from '@/features/daily-activities/components/Dai
 
 const DailyActivitiesPage = () => {
 	const { data: session } = useSession()
+	const { data: activeStatus } = useIsActive()
 	const [isFormOpen, setIsFormOpen] = useState(false)
 	const [selectedActivity, setSelectedActivity] = useState(null)
 	const [feedbackDialogOpen, setFeedbackDialogOpen] = useState(false)
@@ -115,7 +117,14 @@ const DailyActivitiesPage = () => {
 					{isAdmin ? 'Tüm Aktiviteler' : 'Staj Günlüğü'}
 				</h1>
 				{!isAdmin && (
-					<Button onClick={handleOpenNewForm}>Ekle</Button>
+					<Button
+						onClick={handleOpenNewForm}
+						disabled={!activeStatus?.isActive}
+					>
+						{!activeStatus?.isActive
+							? 'Staj dönemi içinde değilsiniz.'
+							: 'Staj Günlüğü Ekle'}
+					</Button>
 				)}
 			</div>
 

@@ -73,5 +73,20 @@ export const dailyActivityService = {
 			)
 			throw error
 		}
+	},
+
+	isActive: async () => {
+		try {
+			const response = await axios.get(
+				'/api/internship-periods/is-active'
+			)
+			return response.data
+		} catch (error) {
+			console.error(
+				'Service error:',
+				error.response?.data || error.message
+			)
+			throw error
+		}
 	}
 }
