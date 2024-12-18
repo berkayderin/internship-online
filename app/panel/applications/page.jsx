@@ -292,18 +292,28 @@ export default function ApplicationsPage() {
 													{application.period.name}
 												</div>
 												<div className="text-sm text-muted-foreground flex items-center gap-1">
-													<Calendar className="h-4 w-4" />
-													{format(
-														new Date(application.internshipStartDate),
-														'd MMM',
-														{ locale: tr }
-													)}{' '}
-													-{' '}
-													{format(
-														new Date(application.internshipEndDate),
-														'd MMM yyyy',
-														{ locale: tr }
-													)}
+													<div className="flex flex-col">
+														<div className="flex items-center gap-1">
+															<span>Staj Başlangıç: </span>
+															{format(
+																new Date(
+																	application.internshipStartDate
+																),
+																'd MMM yyyy',
+																{ locale: tr }
+															)}
+														</div>
+														<div className="flex items-center gap-1">
+															<span>Staj Bitiş: </span>
+															{format(
+																new Date(
+																	application.internshipEndDate
+																),
+																'd MMM yyyy',
+																{ locale: tr }
+															)}
+														</div>
+													</div>
 												</div>
 											</div>
 										</TableCell>
