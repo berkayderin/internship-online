@@ -10,6 +10,7 @@ import { ApplicationDialog } from '@/features/applications/components/Applicatio
 import { useInternshipPeriods } from '@/features/internship-periods/queries/useInternshipPeriod'
 import { useApplications } from '@/features/applications/queries/useApplication'
 import { PlusIcon } from 'lucide-react'
+import { CountdownTimer } from '@/components/main/CountdownTimer'
 
 const statusText = {
 	PENDING: 'Beklemede',
@@ -33,22 +34,6 @@ export default function PanelPage() {
 	const { data: applications } = useApplications()
 
 	const isAdmin = session?.user?.role === 'ADMIN'
-	const activePeriod = periods?.find((period) => {
-		const now = new Date()
-		return (
-			now >= new Date(period.startDate) &&
-			now <= new Date(period.endDate)
-		)
-	})
-
-	const currentApplication = applications?.find(
-		(app) => app.periodId === activePeriod?.id
-	)
-
-	const handleApplyClick = (periodId) => {
-		setSelectedPeriodId(periodId)
-		setApplicationOpen(true)
-	}
 
 	return (
 		<div className="max-w-4xl">
@@ -67,72 +52,128 @@ export default function PanelPage() {
 				)}
 			</div>
 
-			{!isAdmin && activePeriod && (
-				<div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 mt-4">
-					<h2 className="text-2xl font-semibold mb-4  ">
-						Aktif Staj Dönemi
-					</h2>
-
-					<div className="space-y-4">
-						<div className="flex flex-col gap-2">
-							<span className="text-gray-600 dark:text-gray-400">
-								Dönem Adı:
-							</span>
-							<p className="text-lg font-medium">
-								{activePeriod.name}
-							</p>
-						</div>
-
-						<div className="flex flex-col gap-2">
-							<span className="text-gray-600 dark:text-gray-400">
-								Tarih Aralığı:
-							</span>
-							<p className="text-lg font-medium">
-								{new Date(activePeriod.startDate).toLocaleDateString(
-									'tr-TR'
-								)}{' '}
-								-
-								{new Date(activePeriod.endDate).toLocaleDateString(
-									'tr-TR'
-								)}
-							</p>
-						</div>
-
-						{currentApplication ? (
-							<div className="mt-6 space-y-4">
-								<div className="flex items-center gap-3">
-									<span className="font-medium text-gray-700 dark:text-gray-300">
-										Başvuru Durumu:
+			{!isAdmin && periods?.length > 0 && (
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+					{periods.map((period) => (
+						<div
+							key={period.id}
+							className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200"
+						>
+							<div className="space-y-4">
+								<div className="flex flex-col gap-2">
+									<span className="text-gray-600 dark:text-gray-400">
+										Dönem Adı:
 									</span>
-									<Badge
-										variant={
-											statusVariants[currentApplication.status]
-										}
-									>
-										{statusText[currentApplication.status]}
-									</Badge>
+									<p className="text-lg font-medium">{period.name}</p>
 								</div>
 
-								{currentApplication.feedback && (
-									<div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200 ">
-										<p className="font-medium  dark:text-gray-200 mb-2">
-											Geri Bildirim:
+								<div className="flex flex-col gap-2">
+									<span className="text-gray-600 dark:text-gray-400">
+										Başvuru Tarihleri:
+									</span>
+									<p className="text-lg font-medium">
+										{new Date(period.startDate).toLocaleDateString(
+											'tr-TR'
+										)}{' '}
+										-{' '}
+										{new Date(period.endDate).toLocaleDateString(
+											'tr-TR'
+										)}
+									</p>
+								</div>
+
+								<div className="flex flex-col gap-2">
+									<span className="text-gray-600 dark:text-gray-400">
+										Staj Tarihleri:
+									</span>
+									<p className="text-lg font-medium">
+										{new Date(
+											period.internshipStartDate
+										).toLocaleDateString('tr-TR')}{' '}
+										-{' '}
+										{new Date(
+											period.internshipEndDate
+										).toLocaleDateString('tr-TR')}
+									</p>
+								</div>
+
+								{new Date() < new Date(period.startDate) ? (
+									<div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+										<CountdownTimer
+											targetDate={new Date(period.startDate)}
+										/>
+										<Button className="w-full mt-4" disabled>
+											Başvurular Henüz Başlamadı
+										</Button>
+									</div>
+								) : new Date() > new Date(period.endDate) ? (
+									<div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
+										<p className="text-red-600 dark:text-red-400 text-center">
+											Başvuru dönemi sona erdi
 										</p>
-										<p className="text-gray-600 dark:text-gray-400 italic">
-											{currentApplication.feedback}
-										</p>
+										<Button className="w-full mt-4" disabled>
+											Başvurular Kapandı
+										</Button>
+									</div>
+								) : (
+									<div>
+										{applications?.find(
+											(app) => app.periodId === period.id
+										) ? (
+											<div className="mt-6 space-y-4">
+												<div className="flex items-center gap-3">
+													<span className="font-medium text-gray-700 dark:text-gray-300">
+														Başvuru Durumu:
+													</span>
+													<Badge
+														variant={
+															statusVariants[
+																applications.find(
+																	(app) => app.periodId === period.id
+																).status
+															]
+														}
+													>
+														{
+															statusText[
+																applications.find(
+																	(app) => app.periodId === period.id
+																).status
+															]
+														}
+													</Badge>
+												</div>
+
+												{applications.find(
+													(app) => app.periodId === period.id
+												).feedback && (
+													<div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg border border-gray-200">
+														<p className="font-medium dark:text-gray-200 mb-2">
+															Geri Bildirim:
+														</p>
+														<p className="text-gray-600 dark:text-gray-400 italic">
+															{
+																applications.find(
+																	(app) => app.periodId === period.id
+																).feedback
+															}
+														</p>
+													</div>
+												)}
+											</div>
+										) : (
+											<Button
+												onClick={() => handleApplyClick(period.id)}
+												className="w-full mt-4"
+											>
+												Staja Başvur
+											</Button>
+										)}
 									</div>
 								)}
 							</div>
-						) : (
-							<Button
-								onClick={() => handleApplyClick(activePeriod.id)}
-								className="w-full mt-4"
-							>
-								Staja Başvur
-							</Button>
-						)}
-					</div>
+						</div>
+					))}
 				</div>
 			)}
 
