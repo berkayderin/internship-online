@@ -5,12 +5,12 @@ import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { CreatePeriodDialog } from '@/features/internship-periods/components/CreatePeriodDialog'
 import { ApplicationDialog } from '@/features/applications/components/ApplicationDialog'
 import { useInternshipPeriods } from '@/features/internship-periods/queries/useInternshipPeriod'
 import { useApplications } from '@/features/applications/queries/useApplication'
 import { PlusIcon } from 'lucide-react'
 import { CountdownTimer } from '@/components/main/CountdownTimer'
+import { PeriodDialog } from '@/features/internship-periods/components/PeriodDialog'
 
 const statusText = {
 	PENDING: 'Beklemede',
@@ -182,10 +182,9 @@ export default function PanelPage() {
 				</div>
 			)}
 
-			<CreatePeriodDialog
+			<PeriodDialog
 				open={createPeriodOpen}
 				onOpenChange={setCreatePeriodOpen}
-				periodId={selectedPeriodId}
 			/>
 
 			<ApplicationDialog
