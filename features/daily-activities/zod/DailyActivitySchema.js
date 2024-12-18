@@ -4,7 +4,8 @@ import {
 	startOfWeek,
 	endOfWeek,
 	isWithinInterval,
-	isSameWeek
+	isSameWeek,
+	isAfter
 } from 'date-fns'
 
 const dailyActivitySchema = z.object({
@@ -16,15 +17,16 @@ const dailyActivitySchema = z.object({
 		.refine((date) => {
 			const today = new Date()
 			const currentWeekStart = startOfWeek(today, { weekStartsOn: 1 })
-			const currentWeekEnd = endOfWeek(today, { weekStartsOn: 1 })
 
 			return (
 				isWithinInterval(date, {
 					start: currentWeekStart,
-					end: currentWeekEnd
-				}) && isSameWeek(date, today, { weekStartsOn: 1 })
+					end: today
+				}) &&
+				isSameWeek(date, today, { weekStartsOn: 1 }) &&
+				!isAfter(date, today)
 			)
-		}, 'Sadece bu haftaya (Pazartesi-Pazar) ait günlük ekleyebilirsiniz'),
+		}, 'Sadece bu haftanın bugün ve önceki günlerine ait günlük ekleyebilirsiniz'),
 	content: z
 		.string({
 			required_error: 'Aktivite içeriği gereklidir'

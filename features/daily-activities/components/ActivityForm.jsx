@@ -37,7 +37,7 @@ export function ActivityForm({
 }) {
 	const today = new Date()
 	const currentWeekStart = startOfWeek(today, { weekStartsOn: 1 })
-	const currentWeekEnd = endOfWeek(today, { weekStartsOn: 1 })
+	const currentWeekEnd = today
 
 	const form = useForm({
 		resolver: zodResolver(dailyActivitySchema),
