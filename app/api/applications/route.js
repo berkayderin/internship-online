@@ -10,34 +10,37 @@ export async function GET() {
 
 		if (!session) {
 			return NextResponse.json(
-				{ error: 'Unauthorized' },
+				{ error: 'Yetkisiz erişim' },
 				{ status: 401 }
 			)
 		}
 
 		const applications = await prisma.application.findMany({
-			where:
-				session.user.role === 'ADMIN'
-					? {}
-					: { userId: session.user.id },
+			where: {
+				AND: [
+					{
+						periodId: { not: undefined }
+					},
+					session.user.role === 'ADMIN'
+						? {}
+						: { userId: session.user.id }
+				]
+			},
 			include: {
 				period: true,
 				user: {
 					select: {
 						firstName: true,
 						lastName: true,
-						department: true
+						email: true
 					}
 				}
-			},
-			orderBy: {
-				createdAt: 'desc'
 			}
 		})
 
 		return NextResponse.json(applications)
 	} catch (error) {
-		console.error('Error:', error)
+		console.error('Hata:', error)
 		return NextResponse.json(
 			{ error: 'Bir hata oluştu' },
 			{ status: 500 }

@@ -25,7 +25,7 @@ enum ApplicationStatus {
 }
 
 model User {
-  id                  String          @id @default(cuid()) @map("_id")
+  id                  String          @id @default(auto()) @map("_id") @db.ObjectId
   email               String          @unique
   passwordHash        String
   firstName           String
@@ -41,7 +41,7 @@ model User {
 }
 
 model InternshipPeriod {
-  id                  String        @id @default(cuid()) @map("_id")
+  id                  String        @id @default(auto()) @map("_id") @db.ObjectId
   name                String
   startDate           DateTime // Başvuru başlangıç tarihi
   endDate             DateTime // Başvuru bitiş tarihi
@@ -53,7 +53,7 @@ model InternshipPeriod {
 }
 
 model Application {
-  id                   String            @id @default(cuid()) @map("_id")
+  id                   String            @id @default(auto()) @map("_id") @db.ObjectId
   companyName          String // Şirket adı
   companyPhone         String // Şirket telefonu
   companyWebsite       String? // Şirket web sitesi (opsiyonel)
@@ -64,22 +64,22 @@ model Application {
   internshipEndDate    DateTime // Yeni eklenen alan
   status               ApplicationStatus @default(PENDING) // Başvuru durumu
   feedback             String? // Geri bildirim (opsiyonel)
-  userId               String // Başvuru sahibi kullanıcı kimliği
-  periodId             String // Staj dönemi kimliği
+  userId               String            @db.ObjectId // Başvuru sahibi kullanıcı kimliği
+  periodId             String            @db.ObjectId // Staj dönemi kimliği
   user                 User              @relation(fields: [userId], references: [id])
-  period               InternshipPeriod  @relation(fields: [periodId], references: [id])
+  period               InternshipPeriod  @relation(fields: [periodId], references: [id], onDelete: Cascade)
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
 }
 
 model DailyActivity {
-  id        String         @id @default(cuid()) @map("_id")
+  id        String         @id @default(auto()) @map("_id") @db.ObjectId
   date      DateTime
   content   String
   status    ActivityStatus @default(PENDING)
   feedback  String? // Geri bildirim (opsiyonel)
-  userId    String
-  adminId   String?
+  userId    String         @db.ObjectId // Başvuru sahibi kullanıcı kimliği
+  adminId   String?        @db.ObjectId // Yönetici kullanıcı kimliği
   user      User           @relation(fields: [userId], references: [id])
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
