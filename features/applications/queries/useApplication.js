@@ -107,3 +107,48 @@ export const useInternshipPeriod = (periodId) => {
 		enabled: !!periodId
 	})
 }
+
+export const useDeleteApplication = () => {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: applicationService.deleteApplication,
+		onSuccess: () => {
+			queryClient.invalidateQueries(['applications'])
+			toast({
+				title: 'Başarılı',
+				description: 'Başvuru başarıyla silindi.'
+			})
+		},
+		onError: () => {
+			toast({
+				title: 'Hata',
+				description: 'Başvuru silinemedi.',
+				variant: 'destructive'
+			})
+		}
+	})
+}
+
+export const useUpdateApplicationByUser = () => {
+	const queryClient = useQueryClient()
+
+	return useMutation({
+		mutationFn: ({ id, data }) =>
+			applicationService.updateApplicationByUser(id, data),
+		onSuccess: () => {
+			queryClient.invalidateQueries(['applications'])
+			toast({
+				title: 'Başarılı',
+				description: 'Başvurunuz başarıyla güncellendi.'
+			})
+		},
+		onError: () => {
+			toast({
+				title: 'Hata',
+				description: 'Başvuru güncellenemedi.',
+				variant: 'destructive'
+			})
+		}
+	})
+}

@@ -68,5 +68,29 @@ export const applicationService = {
 			)
 			throw error
 		}
+	},
+	deleteApplication: async (id) => {
+		try {
+			const response = await axios.delete(`${API_URL}/${id}`)
+			return response.data
+		} catch (error) {
+			console.error(
+				'Service error:',
+				error.response?.data || error.message
+			)
+			throw error
+		}
+	},
+	updateApplicationByUser: async (id, data) => {
+		try {
+			const response = await axios.put(`${API_URL}/${id}`, data)
+			return response.data
+		} catch (error) {
+			console.error(
+				'Service error:',
+				error.response?.data || error.message
+			)
+			throw error
+		}
 	}
 }

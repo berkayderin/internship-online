@@ -24,7 +24,8 @@ import { Textarea } from '@/components/ui/textarea'
 import applicationSchema from '../zod/ApplicationSchema'
 import {
 	useCreateApplication,
-	useInternshipPeriod
+	useInternshipPeriod,
+	useUpdateApplicationByUser
 } from '../queries/useApplication'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -37,17 +38,17 @@ import { tr } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { toast } from '@/hooks/use-toast'
 
-export function ApplicationDialog({ open, onOpenChange, periodId }) {
+export function ApplicationDialog({
+	open,
+	onOpenChange,
+	periodId,
+	initialData,
+	mode,
+	onSubmit
+}) {
 	const { data: period, isLoading } = useInternshipPeriod(periodId)
-
-	useEffect(() => {
-		if (period) {
-			console.log('Period:', {
-				internshipStartDate: period.internshipStartDate,
-				internshipEndDate: period.internshipEndDate
-			})
-		}
-	}, [period])
+	const updateApplicationByUser = useUpdateApplicationByUser()
+	const createApplication = useCreateApplication()
 
 	const form = useForm({
 		resolver: zodResolver(applicationSchema, {
@@ -55,16 +56,26 @@ export function ApplicationDialog({ open, onOpenChange, periodId }) {
 				period: period
 			}
 		}),
-		defaultValues: {
-			periodId: '',
-			companyName: '',
-			companyPhone: '',
-			companyWebsite: '',
-			companyAddress: '',
-			companyEmployeeCount: '',
-			internshipStartDate: '',
-			internshipEndDate: ''
-		}
+		defaultValues: initialData
+			? {
+					...initialData,
+					internshipStartDate: initialData.internshipStartDate
+						? new Date(initialData.internshipStartDate)
+						: '',
+					internshipEndDate: initialData.internshipEndDate
+						? new Date(initialData.internshipEndDate)
+						: ''
+			  }
+			: {
+					periodId: '',
+					companyName: '',
+					companyPhone: '',
+					companyWebsite: '',
+					companyAddress: '',
+					companyEmployeeCount: '',
+					internshipStartDate: '',
+					internshipEndDate: ''
+			  }
 	})
 
 	useEffect(() => {
@@ -73,18 +84,7 @@ export function ApplicationDialog({ open, onOpenChange, periodId }) {
 		}
 	}, [periodId, form])
 
-	const createApplication = useCreateApplication()
-
-	const onSubmit = async (data) => {
-		if (!periodId) {
-			toast({
-				title: 'Hata',
-				description: 'Staj dönemi seçilmedi',
-				variant: 'destructive'
-			})
-			return
-		}
-
+	const handleFormSubmit = async (data) => {
 		try {
 			const formattedData = {
 				...data,
@@ -97,7 +97,12 @@ export function ApplicationDialog({ open, onOpenChange, periodId }) {
 				).toISOString()
 			}
 
-			await createApplication.mutateAsync(formattedData)
+			if (mode === 'edit') {
+				await onSubmit(formattedData)
+			} else {
+				await createApplication.mutateAsync(formattedData)
+			}
+
 			onOpenChange(false)
 			form.reset()
 		} catch (error) {
@@ -109,11 +114,13 @@ export function ApplicationDialog({ open, onOpenChange, periodId }) {
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogContent className="w-full max-w-2xl">
 				<DialogHeader>
-					<DialogTitle>Staj Başvurusu</DialogTitle>
+					<DialogTitle>
+						{mode === 'edit' ? 'Başvuru Düzenle' : 'Staj Başvurusu'}
+					</DialogTitle>
 				</DialogHeader>
 				<Form {...form}>
 					<form
-						onSubmit={form.handleSubmit(onSubmit)}
+						onSubmit={form.handleSubmit(handleFormSubmit)}
 						className="space-y-4"
 					>
 						<FormField

@@ -31,7 +31,9 @@ import {
 import {
 	useApplications,
 	useUpdateApplication,
-	useBulkUpdateApplications
+	useBulkUpdateApplications,
+	useDeleteApplication,
+	useUpdateApplicationByUser
 } from '@/features/applications/queries/useApplication'
 import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from '@/hooks/use-toast'
@@ -43,6 +45,7 @@ import {
 	TooltipTrigger
 } from '@/components/ui/tooltip'
 import { ApplicationTableSkeleton } from '@/features/applications/components/ApplicationTableSkeleton'
+import { ApplicationDialog } from '@/features/applications/components/ApplicationDialog'
 
 const statusText = {
 	PENDING: 'Beklemede',
@@ -64,10 +67,15 @@ export default function ApplicationsPage() {
 	const [feedback, setFeedback] = useState('')
 	const [actionType, setActionType] = useState(null)
 	const [selectedIds, setSelectedIds] = useState([])
+	const [editApplication, setEditApplication] = useState(null)
+	const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+	const [applicationToDelete, setApplicationToDelete] = useState(null)
 
 	const { data: applications } = useApplications()
 	const updateApplication = useUpdateApplication()
 	const bulkUpdateApplications = useBulkUpdateApplications()
+	const deleteApplication = useDeleteApplication()
+	const updateApplicationByUser = useUpdateApplicationByUser()
 
 	const canManageApplication = (application) => {
 		return application.userId !== session?.user?.id
@@ -130,6 +138,37 @@ export default function ApplicationsPage() {
 		}
 	}
 
+	const handleEdit = (application) => {
+		setEditApplication(application)
+	}
+
+	const handleSubmit = async (data) => {
+		try {
+			await updateApplicationByUser.mutateAsync({
+				id: editApplication.id,
+				data: data
+			})
+			setEditApplication(null)
+		} catch (error) {
+			console.error('Error:', error)
+		}
+	}
+
+	const handleDeleteClick = (application) => {
+		setApplicationToDelete(application)
+		setDeleteDialogOpen(true)
+	}
+
+	const handleConfirmDelete = async () => {
+		try {
+			await deleteApplication.mutateAsync(applicationToDelete.id)
+			setDeleteDialogOpen(false)
+			setApplicationToDelete(null)
+		} catch (error) {
+			console.error('Error:', error)
+		}
+	}
+
 	return (
 		<div className="space-y-6">
 			<div className="flex justify-between items-center">
@@ -168,7 +207,12 @@ export default function ApplicationsPage() {
 							<TableHead>Staj Dönemi</TableHead>
 							<TableHead>Başvuru Tarihi</TableHead>
 							<TableHead>Durum</TableHead>
-							{isAdmin && <TableHead>İşlemler</TableHead>}
+							<TableHead>Geri Bildirim</TableHead>
+							{isAdmin ? (
+								<TableHead>İşlemler</TableHead>
+							) : (
+								<TableHead>İşlemler</TableHead>
+							)}
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -273,28 +317,23 @@ export default function ApplicationsPage() {
 											)}
 										</TableCell>
 										<TableCell>
-											<div className="flex items-center gap-2">
-												<Badge
-													variant={statusVariants[application.status]}
-												>
-													{statusText[application.status]}
-												</Badge>
-												{application.status === 'REJECTED' &&
-													application.feedback && (
-														<TooltipProvider>
-															<Tooltip>
-																<TooltipTrigger>
-																	<Info className="h-4 w-4 text-muted-foreground" />
-																</TooltipTrigger>
-																<TooltipContent>
-																	<p className="max-w-xs">
-																		{application.feedback}
-																	</p>
-																</TooltipContent>
-															</Tooltip>
-														</TooltipProvider>
-													)}
-											</div>
+											<Badge
+												variant={statusVariants[application.status]}
+											>
+												{statusText[application.status]}
+											</Badge>
+										</TableCell>
+										<TableCell>
+											{application.status === 'REJECTED' &&
+											application.feedback ? (
+												<span className="text-sm text-muted-foreground">
+													{application.feedback}
+												</span>
+											) : (
+												<span className="text-sm text-muted-foreground">
+													-
+												</span>
+											)}
 										</TableCell>
 										{isAdmin && (
 											<TableCell>
@@ -325,6 +364,32 @@ export default function ApplicationsPage() {
 															</Button>
 														</>
 													)}
+												</div>
+											</TableCell>
+										)}
+										{!isAdmin && (
+											<TableCell>
+												<div className="flex gap-2">
+													{(application.status === 'PENDING' ||
+														application.status === 'REJECTED') && (
+														<Button
+															size="sm"
+															variant="outline"
+															onClick={() => handleEdit(application)}
+														>
+															Düzenle
+														</Button>
+													)}
+													<Button
+														size="sm"
+														variant="outline"
+														className="text-red-600 hover:text-red-700"
+														onClick={() =>
+															handleDeleteClick(application)
+														}
+													>
+														Sil
+													</Button>
 												</div>
 											</TableCell>
 										)}
@@ -370,6 +435,43 @@ export default function ApplicationsPage() {
 					</DialogContent>
 				</Dialog>
 			)}
+			{editApplication && (
+				<ApplicationDialog
+					open={!!editApplication}
+					onOpenChange={() => setEditApplication(null)}
+					periodId={editApplication.periodId}
+					initialData={editApplication}
+					mode="edit"
+					onSubmit={handleSubmit}
+				/>
+			)}
+			<Dialog
+				open={deleteDialogOpen}
+				onOpenChange={setDeleteDialogOpen}
+			>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Başvuru Silme</DialogTitle>
+					</DialogHeader>
+					<div className="space-y-4">
+						<p>Bu başvuruyu silmek istediğinizden emin misiniz?</p>
+						<div className="flex justify-end gap-3">
+							<Button
+								variant="outline"
+								onClick={() => setDeleteDialogOpen(false)}
+							>
+								İptal
+							</Button>
+							<Button
+								variant="destructive"
+								onClick={handleConfirmDelete}
+							>
+								Sil
+							</Button>
+						</div>
+					</div>
+				</DialogContent>
+			</Dialog>
 		</div>
 	)
 }
