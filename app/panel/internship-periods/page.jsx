@@ -39,7 +39,14 @@ export default function InternshipPeriodsPage() {
 	const deletePeriod = useDeleteInternshipPeriod()
 
 	const handleEdit = (period) => {
-		setSelectedPeriod(period)
+		const formattedPeriod = {
+			...period,
+			startDate: new Date(period.startDate),
+			endDate: new Date(period.endDate),
+			internshipStartDate: new Date(period.internshipStartDate),
+			internshipEndDate: new Date(period.internshipEndDate)
+		}
+		setSelectedPeriod(formattedPeriod)
 		setEditDialogOpen(true)
 	}
 

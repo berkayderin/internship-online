@@ -60,17 +60,16 @@ export function PeriodDialog({ open, onOpenChange, period }) {
 				internshipEndDate: new Date(period.internshipEndDate)
 			})
 		} else {
+			const today = new Date()
 			form.reset({
 				name: '',
-				startDate: new Date(),
-				endDate: new Date(),
-				internshipStartDate: new Date(),
-				internshipEndDate: new Date()
+				startDate: today,
+				endDate: today,
+				internshipStartDate: today,
+				internshipEndDate: today
 			})
 		}
 	}, [period, form])
-
-	console.log('period', period)
 
 	const createPeriod = useCreateInternshipPeriod()
 	const updatePeriod = useUpdateInternshipPeriod()
@@ -157,7 +156,6 @@ export function PeriodDialog({ open, onOpenChange, period }) {
 													mode="single"
 													selected={field.value}
 													onSelect={field.onChange}
-													disabled={(date) => date < new Date()}
 													initialFocus
 													locale={tr}
 												/>
@@ -199,7 +197,6 @@ export function PeriodDialog({ open, onOpenChange, period }) {
 													mode="single"
 													selected={field.value}
 													onSelect={field.onChange}
-													disabled={(date) => date < new Date()}
 													initialFocus
 													locale={tr}
 												/>
