@@ -35,15 +35,15 @@ export function AppSidebar({ ...props }) {
 	const role = session?.user?.role || 'USER'
 	const pathname = usePathname()
 
-	const { data: applications } = useQuery({
+	const { data: applications = [] } = useQuery({
 		queryKey: ['applications'],
 		queryFn: () =>
 			fetch('/api/applications').then((res) => res.json())
 	})
 
-	const hasApprovedApplication = applications?.some(
-		(app) => app.status === 'APPROVED'
-	)
+	const hasApprovedApplication = Array.isArray(applications)
+		? applications.some((app) => app.status === 'APPROVED')
+		: false
 
 	const getMenusByRole = (role, pathname, hasApprovedApplication) => {
 		const commonMenus = [
