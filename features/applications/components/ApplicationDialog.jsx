@@ -24,8 +24,7 @@ import { Textarea } from '@/components/ui/textarea'
 import applicationSchema from '../zod/ApplicationSchema'
 import {
 	useCreateApplication,
-	useInternshipPeriod,
-	useUpdateApplicationByUser
+	useInternshipPeriod
 } from '../queries/useApplication'
 import { Calendar } from '@/components/ui/calendar'
 import {
@@ -36,7 +35,6 @@ import {
 import { CalendarIcon } from 'lucide-react'
 import { tr } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
-import { toast } from '@/hooks/use-toast'
 
 export function ApplicationDialog({
 	open,
@@ -46,8 +44,7 @@ export function ApplicationDialog({
 	mode,
 	onSubmit
 }) {
-	const { data: period, isLoading } = useInternshipPeriod(periodId)
-	const updateApplicationByUser = useUpdateApplicationByUser()
+	const { data: period } = useInternshipPeriod(periodId)
 	const createApplication = useCreateApplication()
 
 	const form = useForm({
@@ -123,34 +120,35 @@ export function ApplicationDialog({
 						onSubmit={form.handleSubmit(handleFormSubmit)}
 						className="space-y-4"
 					>
-						<FormField
-							control={form.control}
-							name="companyName"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>İşyeri Adı</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						<div className="flex gap-4">
+							<FormField
+								control={form.control}
+								name="companyName"
+								render={({ field }) => (
+									<FormItem className="flex-1">
+										<FormLabel>İşyeri Adı</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-						<FormField
-							control={form.control}
-							name="companyPhone"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>İşyeri Telefonu</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-
+							<FormField
+								control={form.control}
+								name="companyPhone"
+								render={({ field }) => (
+									<FormItem className="flex-1">
+										<FormLabel>İşyeri Telefonu</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
 						<FormField
 							control={form.control}
 							name="companyWebsite"
@@ -189,7 +187,7 @@ export function ApplicationDialog({
 								name="internshipStartDate"
 								render={({ field }) => (
 									<FormItem className="flex-1">
-										<FormLabel>Başlangıç Tarihi</FormLabel>
+										<FormLabel>Staj Başlangıç Tarihi</FormLabel>
 										<Popover>
 											<PopoverTrigger asChild>
 												<FormControl>
@@ -239,7 +237,7 @@ export function ApplicationDialog({
 								name="internshipEndDate"
 								render={({ field }) => (
 									<FormItem className="flex-1">
-										<FormLabel>Bitiş Tarihi</FormLabel>
+										<FormLabel>Staj Bitiş Tarihi</FormLabel>
 										<Popover>
 											<PopoverTrigger asChild>
 												<FormControl>
@@ -281,47 +279,49 @@ export function ApplicationDialog({
 							/>
 						</div>
 
-						<FormField
-							control={form.control}
-							name="companyEmployeeCount"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Toplam Çalışan Sayısı</FormLabel>
-									<FormControl>
-										<Input
-											type="number"
-											min="1"
-											{...field}
-											onChange={(e) =>
-												field.onChange(Number(e.target.value))
-											}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						<div className="flex gap-4">
+							<FormField
+								control={form.control}
+								name="companyEmployeeCount"
+								render={({ field }) => (
+									<FormItem className="flex-1">
+										<FormLabel>Toplam Çalışan Sayısı</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												min="1"
+												{...field}
+												onChange={(e) =>
+													field.onChange(Number(e.target.value))
+												}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
-						<FormField
-							control={form.control}
-							name="companyEngineerCount"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Toplam Mühendis Sayısı</FormLabel>
-									<FormControl>
-										<Input
-											type="number"
-											min="1"
-											{...field}
-											onChange={(e) =>
-												field.onChange(Number(e.target.value))
-											}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+							<FormField
+								control={form.control}
+								name="companyEngineerCount"
+								render={({ field }) => (
+									<FormItem className="flex-1">
+										<FormLabel>Toplam Mühendis Sayısı</FormLabel>
+										<FormControl>
+											<Input
+												type="number"
+												min="1"
+												{...field}
+												onChange={(e) =>
+													field.onChange(Number(e.target.value))
+												}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						</div>
 
 						<div className="flex justify-end">
 							<Button
