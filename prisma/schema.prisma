@@ -24,6 +24,18 @@ enum ApplicationStatus {
   REJECTED // Reddedilmiş başvuru
 }
 
+enum PublicHolidayType {
+  NEW_YEAR // Yılbaşı
+  RAMADAN // Ramazan Bayramı
+  NATIONAL_SOVEREIGNTY // Ulusal Egemenlik ve Çocuk Bayramı
+  LABOR_DAY // Emek ve Dayanışma Günü
+  COMMEMORATION_YOUTH // Atatürk'ü Anma, Gençlik ve Spor Bayramı
+  SACRIFICE // Kurban Bayramı
+  DEMOCRACY // Demokrasi ve Milli Birlik Günü
+  VICTORY // Zafer Bayramı
+  REPUBLIC // Cumhuriyet Bayramı
+}
+
 model User {
   id                  String          @id @default(auto()) @map("_id") @db.ObjectId
   email               String          @unique
@@ -83,4 +95,13 @@ model DailyActivity {
   user      User           @relation(fields: [userId], references: [id])
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
+}
+
+model PublicHoliday {
+  id        String            @id @default(auto()) @map("_id") @db.ObjectId
+  type      PublicHolidayType
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
 }

@@ -113,6 +113,12 @@ export function AppSidebar({ ...props }) {
 						url: '/panel/applications',
 						icon: ClipboardList,
 						isActive: pathname.startsWith('/panel/applications')
+					},
+					{
+						title: 'Resmi Tatiller',
+						url: '/panel/public-holidays',
+						icon: CalendarDays,
+						isActive: pathname.startsWith('/panel/public-holidays')
 					}
 				]
 			},
