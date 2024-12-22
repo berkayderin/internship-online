@@ -72,17 +72,17 @@ model Application {
   companyEmployeeCount Int // Toplam çalışan sayısı
   companyEngineerCount Int // Mühendis sayısı
   companyAddress       String // Şirket adresi
-  internshipStartDate  DateTime // Yeni eklenen alan
-  internshipEndDate    DateTime // Yeni eklenen alan
+  internshipStartDate  DateTime
+  internshipEndDate    DateTime
   status               ApplicationStatus @default(PENDING) // Başvuru durumu
   feedback             String? // Geri bildirim (opsiyonel)
   userId               String            @db.ObjectId // Başvuru sahibi kullanıcı kimliği
   periodId             String            @db.ObjectId // Staj dönemi kimliği
   user                 User              @relation(fields: [userId], references: [id])
   period               InternshipPeriod  @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  workingSaturday      Boolean           @default(false) // Şirketin cumartesi çalışma durumu
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
-  workingSaturday      Boolean           @default(false) // Şirketin cumartesi çalışma durumu
 }
 
 model DailyActivity {
