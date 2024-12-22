@@ -82,6 +82,7 @@ model Application {
   period               InternshipPeriod  @relation(fields: [periodId], references: [id], onDelete: Cascade)
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt
+  workingSaturday      Boolean           @default(false) // Şirketin cumartesi çalışma durumu
 }
 
 model DailyActivity {

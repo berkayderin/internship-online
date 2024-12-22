@@ -44,7 +44,8 @@ const applicationSchema = z
 		}),
 		internshipEndDate: z.coerce.date({
 			required_error: 'Staj bitiş tarihi gereklidir'
-		})
+		}),
+		workingSaturday: z.boolean().default(false)
 	})
 	.refine(
 		(data) => data.companyEngineerCount <= data.companyEmployeeCount,

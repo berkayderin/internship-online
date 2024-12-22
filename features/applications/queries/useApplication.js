@@ -152,3 +152,10 @@ export const useUpdateApplicationByUser = () => {
 		}
 	})
 }
+
+export const usePublicHolidays = () => {
+	return useQuery({
+		queryKey: ['publicHolidays'],
+		queryFn: () => applicationService.getPublicHolidays()
+	})
+}

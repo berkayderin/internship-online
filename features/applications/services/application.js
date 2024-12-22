@@ -92,5 +92,17 @@ export const applicationService = {
 			)
 			throw error
 		}
+	},
+	getPublicHolidays: async () => {
+		try {
+			const response = await axios.get('/api/public-holidays')
+			return response.data
+		} catch (error) {
+			console.error(
+				'Service error:',
+				error.response?.data || error.message
+			)
+			throw error
+		}
 	}
 }
