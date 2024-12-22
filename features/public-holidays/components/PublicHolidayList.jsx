@@ -17,13 +17,14 @@ import { useState } from 'react'
 import { Edit } from 'lucide-react'
 import { differenceInDays } from 'date-fns'
 import { Badge } from '@/components/ui/badge'
+import { PublicHolidayListSkeleton } from './PublicHolidayListSkeleton'
 
 export function PublicHolidayList() {
 	const { data: holidays, isLoading } = usePublicHolidays()
 	const [selectedHoliday, setSelectedHoliday] = useState(null)
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-	if (isLoading) return <div>Yükleniyor...</div>
+	if (isLoading) return <PublicHolidayListSkeleton />
 
 	return (
 		<div className="space-y-4">
