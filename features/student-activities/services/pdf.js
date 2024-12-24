@@ -43,6 +43,46 @@ const pageStyle = {
 	}
 }
 
+const convertHtmlToPlainText = (html) => {
+	const tempDiv = document.createElement('div')
+	tempDiv.innerHTML = html
+
+	const centeredTexts = tempDiv.querySelectorAll(
+		'p[style*="text-align: center"]'
+	)
+	centeredTexts.forEach((text) => {
+		text.textContent = `\n${text.textContent}\n`
+	})
+
+	const paragraphs = tempDiv.querySelectorAll('p')
+	paragraphs.forEach((p) => {
+		// Boş paragrafları kaldır
+		if (!p.textContent.trim()) {
+			p.remove()
+			return
+		}
+
+		p.textContent = p.textContent.replace(/\s+/g, ' ').trim()
+	})
+
+	const lists = tempDiv.querySelectorAll('ul, ol')
+	lists.forEach((list) => {
+		const items = list.querySelectorAll('li')
+		items.forEach((item, index) => {
+			const bullet = list.tagName === 'UL' ? '• ' : `${index + 1}. `
+			item.textContent = `${bullet}${item.textContent.trim()}`
+		})
+	})
+
+	const text = tempDiv.innerText
+		.split('\n')
+		.filter((line) => line.trim())
+		.join('\n\n')
+		.replace(/\n{3,}/g, '\n\n')
+
+	return text
+}
+
 export const generateActivityReport = (student, activities) => {
 	const docDefinition = {
 		pageSize: {
@@ -101,7 +141,7 @@ export const generateActivityReport = (student, activities) => {
 								style: 'tableCell'
 							},
 							{
-								text: activity.content.replace(/<[^>]*>/g, ''),
+								text: convertHtmlToPlainText(activity.content),
 								style: 'tableCell'
 							}
 						])
@@ -120,6 +160,18 @@ export const generateActivityReport = (student, activities) => {
 }
 
 export const generateSummaryReport = (student, summary) => {
+	const formatSummaryContent = (summary) => {
+		if (!Array.isArray(summary)) return { text: String(summary) }
+
+		return summary.map((part) => {
+			if (typeof part === 'string') return { text: part }
+			return {
+				text: part.text,
+				bold: part.bold || false
+			}
+		})
+	}
+
 	const docDefinition = {
 		pageSize: {
 			width: 595.28, // A4
@@ -161,7 +213,7 @@ export const generateSummaryReport = (student, summary) => {
 			},
 			{ text: 'Yapay Zeka Değerlendirmesi', style: 'subheader' },
 			{
-				text: summary,
+				text: formatSummaryContent(summary),
 				style: 'tableCell',
 				margin: [0, 10, 0, 0]
 			}

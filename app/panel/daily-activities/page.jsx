@@ -151,7 +151,7 @@ const DailyActivitiesPage = () => {
 			/>
 
 			<Dialog open={isFormOpen} onOpenChange={handleModalClose}>
-				<DialogContent className="max-w-4xl">
+				<DialogContent className="max-w-5xl min-h-[600px]">
 					<DialogHeader>
 						<DialogTitle>
 							{selectedActivity

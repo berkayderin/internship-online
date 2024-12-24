@@ -72,16 +72,53 @@ export const summarizeActivities = async (activities) => {
 
 		const chatSession = model.startChat()
 
+		const convertHtmlToText = (html) => {
+			const tempDiv = document.createElement('div')
+			tempDiv.innerHTML = html
+
+			const centeredTexts = tempDiv.querySelectorAll(
+				'p[style*="text-align: center"]'
+			)
+			centeredTexts.forEach((text) => {
+				text.textContent = `\n${text.textContent}\n`
+			})
+
+			const paragraphs = tempDiv.querySelectorAll('p')
+			paragraphs.forEach((p) => {
+				if (!p.textContent.trim()) {
+					p.remove()
+					return
+				}
+				p.textContent = p.textContent.replace(/\s+/g, ' ').trim()
+			})
+
+			const lists = tempDiv.querySelectorAll('ul, ol')
+			lists.forEach((list) => {
+				const items = list.querySelectorAll('li')
+				items.forEach((item, index) => {
+					const bullet =
+						list.tagName === 'UL' ? '• ' : `${index + 1}. `
+					item.textContent = `${bullet}${item.textContent.trim()}`
+				})
+			})
+
+			return tempDiv.innerText
+				.split('\n')
+				.filter((line) => line.trim())
+				.join('\n')
+				.replace(/\n{3,}/g, '\n\n')
+		}
+
 		const activitiesText = activities
 			.map(
 				(activity) =>
 					`Tarih: ${new Date(activity.date).toLocaleDateString(
 						'tr-TR'
-					)}\nİçerik: ${activity.content.replace(/<[^>]*>/g, '')}\n`
+					)}\n` + `İçerik: ${convertHtmlToText(activity.content)}\n`
 			)
 			.join('\n')
 
-		const prompt = `Aşağıdaki staj aktivitelerini analiz et ve iki b��lümden oluşan bir yanıt ver. 
+		const prompt = `Aşağıdaki staj aktivitelerini analiz et ve iki bölümden oluşan bir yanıt ver. 
 Sadece teknoloji isimleri, programlama dilleri, yazılım araçları ve önemli teknik kavramları **kelime** şeklinde belirt. 
 Normal cümle yapısındaki kelimeleri kalınlaştırma.
 
@@ -120,10 +157,9 @@ ${activitiesText}`
 			.split(/(\*\*[^*]+\*\*)/)
 			.map((part) => {
 				if (part.startsWith('**') && part.endsWith('**')) {
-					const boldText = part.slice(2, -2)
-					return { text: boldText, bold: true }
+					return { text: part.slice(2, -2), bold: true }
 				}
-				return part
+				return { text: part }
 			})
 
 		return formattedText

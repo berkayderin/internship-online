@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge'
 import { Textarea } from '@/components/ui/textarea'
 import { format } from 'date-fns'
 import { tr } from 'date-fns/locale'
+import RichTextEditor from '@/components/text-editor'
 
 export const statusText = {
 	PENDING: 'Bekliyor',
@@ -62,7 +63,7 @@ export function ActivityDetailModal({
 
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
-			<DialogContent>
+			<DialogContent className="max-w-5xl">
 				<DialogHeader>
 					<DialogTitle>Aktivite Detayı</DialogTitle>
 				</DialogHeader>
@@ -79,7 +80,9 @@ export function ActivityDetailModal({
 
 					<div>
 						<div className="text-sm font-medium mb-1">İçerik</div>
-						<div>{activity.content}</div>
+						<div
+							dangerouslySetInnerHTML={{ __html: activity.content }}
+						/>
 					</div>
 
 					<div>

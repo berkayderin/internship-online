@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import {
 	format,
 	startOfWeek,
-	endOfWeek,
 	isWithinInterval,
 	isSameWeek
 } from 'date-fns'
@@ -27,8 +26,8 @@ import {
 	PopoverContent,
 	PopoverTrigger
 } from '@/components/ui/popover'
-import { Textarea } from '@/components/ui/textarea'
 import dailyActivitySchema from '../zod/DailyActivitySchema'
+import RichTextEditor from '@/components/text-editor'
 
 export function ActivityForm({
 	defaultValues,
@@ -122,10 +121,9 @@ export function ActivityForm({
 						<FormItem>
 							<FormLabel>Aktivite İçeriği</FormLabel>
 							<FormControl>
-								<Textarea
-									placeholder="Bugün yaptığınız çalışmaları detaylı bir şekilde yazınız..."
-									className="min-h-[200px]"
-									{...field}
+								<RichTextEditor
+									value={field.value}
+									onChange={field.onChange}
 								/>
 							</FormControl>
 							<FormMessage />

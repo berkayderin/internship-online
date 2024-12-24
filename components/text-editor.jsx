@@ -6,17 +6,22 @@ import {
 	Strikethrough,
 	Italic,
 	List,
-	ListOrdered
+	ListOrdered,
+	AlignLeft,
+	AlignCenter,
+	AlignRight,
+	AlignJustify
 } from 'lucide-react'
 import { Toggle } from '@/components/ui/toggle'
 import { Separator } from '@/components/ui/separator'
+import Alignment from '@tiptap/extension-text-align'
 
 const RichTextEditor = ({ value, onChange }) => {
 	const editor = useEditor({
 		editorProps: {
 			attributes: {
 				class:
-					'min-h-[150px] max-h-[150px] w-full rounded-md rounded-br-none rounded-bl-none border border-input bg-transparent px-3 py-2 border-b-0 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 overflow-auto'
+					'min-h-[350px] max-h-[350px] w-full rounded-md rounded-br-none rounded-bl-none border border-input bg-transparent px-3 py-2 border-b-0 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 overflow-auto'
 			}
 		},
 		extensions: [
@@ -31,11 +36,14 @@ const RichTextEditor = ({ value, onChange }) => {
 						class: 'list-disc pl-4'
 					}
 				}
+			}),
+			Alignment.configure({
+				types: ['paragraph', 'heading']
 			})
 		],
-		content: value, // Set the initial content with the provided value
+		content: value,
 		onUpdate: ({ editor }) => {
-			onChange(editor.getHTML()) // Call the onChange callback with the updated HTML content
+			onChange(editor.getHTML())
 		}
 	})
 
@@ -95,6 +103,43 @@ const RichTextEditorToolbar = ({ editor }) => {
 				}
 			>
 				<ListOrdered className="h-4 w-4" />
+			</Toggle>
+			<Separator orientation="vertical" className="w-[1px] h-8" />
+			<Toggle
+				size="sm"
+				pressed={editor.isActive({ textAlign: 'left' })}
+				onPressedChange={() =>
+					editor.chain().focus().setTextAlign('left').run()
+				}
+			>
+				<AlignLeft className="h-4 w-4" />
+			</Toggle>
+			<Toggle
+				size="sm"
+				pressed={editor.isActive({ textAlign: 'center' })}
+				onPressedChange={() =>
+					editor.chain().focus().setTextAlign('center').run()
+				}
+			>
+				<AlignCenter className="h-4 w-4" />
+			</Toggle>
+			<Toggle
+				size="sm"
+				pressed={editor.isActive({ textAlign: 'right' })}
+				onPressedChange={() =>
+					editor.chain().focus().setTextAlign('right').run()
+				}
+			>
+				<AlignRight className="h-4 w-4" />
+			</Toggle>
+			<Toggle
+				size="sm"
+				pressed={editor.isActive({ textAlign: 'justify' })}
+				onPressedChange={() =>
+					editor.chain().focus().setTextAlign('justify').run()
+				}
+			>
+				<AlignJustify className="h-4 w-4" />
 			</Toggle>
 		</div>
 	)
