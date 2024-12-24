@@ -78,7 +78,10 @@ export default function ApplicationsPage() {
 	const updateApplicationByUser = useUpdateApplicationByUser()
 
 	const canManageApplication = (application) => {
-		return application.userId !== session?.user?.id
+		if (!isAdmin) {
+			return application.userId === session?.data?.user?.id
+		}
+		return application.userId !== session?.data?.user?.id
 	}
 
 	const manageableApplications =
@@ -380,26 +383,29 @@ export default function ApplicationsPage() {
 										{!isAdmin && (
 											<TableCell>
 												<div className="flex gap-2">
-													{(application.status === 'PENDING' ||
-														application.status === 'REJECTED') && (
-														<Button
-															size="sm"
-															variant="outline"
-															onClick={() => handleEdit(application)}
-														>
-															Düzenle
-														</Button>
+													{!isAdmin && (
+														<>
+															<Button
+																size="sm"
+																variant="outline"
+																onClick={() =>
+																	handleEdit(application)
+																}
+															>
+																Düzenle
+															</Button>
+															<Button
+																size="sm"
+																variant="outline"
+																className="text-red-600 hover:text-red-700"
+																onClick={() =>
+																	handleDeleteClick(application)
+																}
+															>
+																Sil
+															</Button>
+														</>
 													)}
-													<Button
-														size="sm"
-														variant="outline"
-														className="text-red-600 hover:text-red-700"
-														onClick={() =>
-															handleDeleteClick(application)
-														}
-													>
-														Sil
-													</Button>
 												</div>
 											</TableCell>
 										)}
