@@ -65,35 +65,28 @@ export function AuthForm({
 	}
 
 	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>
-					{type === 'login' ? 'Giriş Yap' : 'Kayıt Ol'}
-				</CardTitle>
-				<CardDescription>
-					{type === 'login'
-						? 'Hesabınıza giriş yapın'
-						: 'Yeni bir hesap oluşturun'}
-				</CardDescription>
-			</CardHeader>
-			<CardContent>
+		<Card className="border border-primary/20 bg-background/30">
+			<CardContent className="p-8">
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(handleSubmit)}
-						className="space-y-4"
+						className="space-y-6"
 					>
 						{type === 'register' && (
-							<>
+							<div className="space-y-6">
 								<FormField
 									control={form.control}
 									name="firstName"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Ad</FormLabel>
+											<FormLabel className="text-foreground/70 font-medium">Ad</FormLabel>
 											<FormControl>
-												<Input {...field} />
+												<Input 
+													{...field} 
+													className="h-11 bg-background/50 border border-primary/20 focus:border-primary rounded-md"
+												/>
 											</FormControl>
-											<FormMessage />
+											<FormMessage className="text-red-400" />
 										</FormItem>
 									)}
 								/>
@@ -102,11 +95,14 @@ export function AuthForm({
 									name="lastName"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Soyad</FormLabel>
+											<FormLabel className="text-foreground/70 font-medium">Soyad</FormLabel>
 											<FormControl>
-												<Input {...field} />
+												<Input 
+													{...field} 
+													className="h-11 bg-background/50 border border-primary/20 focus:border-primary rounded-md"
+												/>
 											</FormControl>
-											<FormMessage />
+											<FormMessage className="text-red-400" />
 										</FormItem>
 									)}
 								/>
@@ -115,44 +111,48 @@ export function AuthForm({
 									name="department"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Bölüm</FormLabel>
+											<FormLabel className="text-foreground/70 font-medium">Bölüm</FormLabel>
 											<Select
 												onValueChange={field.onChange}
 												defaultValue={field.value}
 											>
-												<SelectTrigger>
+												<SelectTrigger 
+													className="h-11 bg-background/50 border border-primary/20 focus:border-primary focus:ring-0 focus:ring-offset-0 rounded-md"
+												>
 													<SelectValue placeholder="Bölüm seçiniz" />
 												</SelectTrigger>
-												<SelectContent>
+												<SelectContent className="bg-background border border-primary/20 rounded-md">
 													{departments.map((department) => (
 														<SelectItem
 															key={department}
 															value={department}
+															className="focus:bg-primary/5 focus:text-foreground"
 														>
 															{department}
 														</SelectItem>
 													))}
 												</SelectContent>
 											</Select>
-											<FormMessage />
+											<FormMessage className="text-red-400" />
 										</FormItem>
 									)}
 								/>
-							</>
+							</div>
 						)}
 						<FormField
 							control={form.control}
 							name="email"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>E-posta</FormLabel>
+									<FormLabel className="text-foreground/70 font-medium">E-posta</FormLabel>
 									<FormControl>
 										<Input
 											placeholder="ornek@ogr.mehmetakif.edu.tr"
 											{...field}
+											className="h-11 bg-background/50 border border-primary/20 focus:border-primary rounded-md"
 										/>
 									</FormControl>
-									<FormMessage />
+									<FormMessage className="text-red-400" />
 								</FormItem>
 							)}
 						/>
@@ -161,33 +161,34 @@ export function AuthForm({
 							name="password"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Şifre</FormLabel>
+									<FormLabel className="text-foreground/70 font-medium">Şifre</FormLabel>
 									<FormControl>
 										<div className="relative">
 											<Input
 												type={showPassword ? 'text' : 'password'}
 												{...field}
+												className="h-11 bg-background/50 border border-primary/20 focus:border-primary rounded-md pr-12"
 											/>
 											<button
 												type="button"
 												onClick={() => setShowPassword(!showPassword)}
-												className="absolute inset-y-0 right-4 pr-1 flex items-center text-gray-400 hover:text-gray-600"
+												className="absolute inset-y-0 right-3 flex items-center text-muted-foreground hover:text-foreground"
 											>
 												{showPassword ? (
-													<EyeOff className="h-5 w-5" />
+													<EyeOff className="h-4 w-4" />
 												) : (
-													<Eye className="h-5 w-5" />
+													<Eye className="h-4 w-4" />
 												)}
 											</button>
 										</div>
 									</FormControl>
-									<FormMessage />
+									<FormMessage className="text-red-400" />
 								</FormItem>
 							)}
 						/>
 						<Button
 							type="submit"
-							className="w-full"
+							className="w-full h-11 bg-primary text-primary-foreground font-medium rounded-md"
 							disabled={isSubmitting}
 						>
 							{isSubmitting
@@ -199,16 +200,26 @@ export function AuthForm({
 					</form>
 				</Form>
 			</CardContent>
-			<CardFooter className="flex justify-center">
+			<CardFooter className="flex justify-center pb-8">
 				{type === 'login' ? (
-					<Link href="/register" className="text-sm hover:underline">
+					<Link 
+						href="/register" 
+						className="text-sm text-muted-foreground hover:text-foreground"
+					>
 						Hesabınız yok mu?{' '}
-						<span className="font-semibold">Kayıt olun</span>
+						<span className="font-semibold text-primary">
+							Kayıt olun
+						</span>
 					</Link>
 				) : (
-					<Link href="/login" className="text-sm hover:underline">
+					<Link 
+						href="/login" 
+						className="text-sm text-muted-foreground hover:text-foreground"
+					>
 						Zaten hesabınız var mı?{' '}
-						<span className="font-semibold">Giriş yapın</span>
+						<span className="font-semibold text-primary">
+							Giriş yapın
+						</span>
 					</Link>
 				)}
 			</CardFooter>
