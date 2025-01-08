@@ -225,7 +225,7 @@ export default function ApplicationsPage() {
 								.length === 0 ? (
 							<TableRow>
 								<TableCell
-									colSpan={isAdmin ? 7 : 5}
+									colSpan="7"
 									className="h-24 text-center text-muted-foreground"
 								>
 									Henüz hiç başvuru bulunmuyor.
