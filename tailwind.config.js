@@ -8,6 +8,37 @@ module.exports = {
 	],
 	theme: {
 		extend: {
+			animation: {
+				'gradient': 'gradient 15s ease infinite',
+				'fade-in': 'fade-in 1s ease-out',
+				'grid-flow': 'grid-flow 20s linear infinite',
+			},
+			keyframes: {
+				'gradient': {
+					'0%, 100%': {
+						'background-size': '200% 200%',
+						'background-position': 'left center'
+					},
+					'50%': {
+						'background-size': '200% 200%',
+						'background-position': 'right center'
+					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(10px)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0)'
+					}
+				},
+				'grid-flow': {
+					'0%': { transform: 'translateY(0)' },
+					'100%': { transform: 'translateY(4rem)' }
+				}
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
