@@ -3,7 +3,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { Eye, Trash2 } from 'lucide-react'
+import { Eye, Trash2, MoreHorizontal } from 'lucide-react'
 import {
 	Table,
 	TableBody,
@@ -26,6 +26,12 @@ import {
 	useDeleteStudent
 } from '@/features/student-activities/queries/useStudentQueries'
 import { StudentsPageSkeleton } from '@/features/student-activities/components/StudentsPageSkeleton'
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 
 const StudentsPage = () => {
 	const router = useRouter()
@@ -82,24 +88,31 @@ const StudentsPage = () => {
 									<TableCell>{student.email}</TableCell>
 									<TableCell>{student.department}</TableCell>
 									<TableCell>
-										<div className="flex gap-2">
-											<Button
-												variant="ghost"
-												size="icon"
-												onClick={() =>
-													handleStudentSelect(student.id)
-												}
-											>
-												<Eye className="h-4 w-4" />
-											</Button>
-											<Button
-												variant="ghost"
-												size="icon"
-												onClick={() => setStudentToDelete(student.id)}
-											>
-												<Trash2 className="h-4 w-4" />
-											</Button>
-										</div>
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button variant="ghost" size="icon">
+													<MoreHorizontal className="h-4 w-4" />
+												</Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent align="end">
+												<DropdownMenuItem
+													onClick={() =>
+														handleStudentSelect(student.id)
+													}
+												>
+													<Eye className="mr-2 h-4 w-4" />
+													Görüntüle
+												</DropdownMenuItem>
+												<DropdownMenuItem
+													onClick={() =>
+														setStudentToDelete(student.id)
+													}
+												>
+													<Trash2 className="mr-2 h-4 w-4" />
+													Sil
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
 									</TableCell>
 								</TableRow>
 							))

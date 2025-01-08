@@ -57,7 +57,7 @@ export default function PanelPage() {
 				)}
 			</div>
 
-			{!isAdmin && periods?.length > 0 ? (
+			{!isAdmin && periods?.length > 0 && (
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
 					{periods.map((period) => (
 						<div
@@ -180,7 +180,9 @@ export default function PanelPage() {
 						</div>
 					))}
 				</div>
-			) : (
+			)}
+
+			{!isAdmin && periods?.length === 0 && (
 				<div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 mt-4">
 					<p className="text-gray-600 dark:text-gray-400 text-center">
 						Başvurulacak staj dönemi bulunmamaktadır.
