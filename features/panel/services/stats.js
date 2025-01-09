@@ -19,12 +19,15 @@ export async function getApplicationStats() {
 
 export async function getStudentStats() {
 	const response = await fetch('/api/students')
-	const students = await response.json()
+	const data = await response.json()
 
-	const stats = students.reduce((acc, student) => {
+	const departments = data.students.reduce((acc, student) => {
 		acc[student.department] = (acc[student.department] || 0) + 1
 		return acc
 	}, {})
 
-	return stats
+	return {
+		total: data.pagination.total,
+		departments
+	}
 }

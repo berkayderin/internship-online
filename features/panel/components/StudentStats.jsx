@@ -47,7 +47,7 @@ export function StudentStats() {
 		return <ChartSkeleton title="Bölümlere Göre Öğrenci Dağılımı" />
 	}
 
-	const chartData = Object.entries(stats).map(
+	const chartData = Object.entries(stats.departments).map(
 		([department, count]) => ({
 			name: department,
 			value: count,
@@ -61,57 +61,74 @@ export function StudentStats() {
 	const hasData = chartData.some((item) => item.value > 0)
 
 	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>Bölümlere Göre Öğrenci Dağılımı</CardTitle>
-			</CardHeader>
-			<CardContent>
-				{hasData ? (
-					<div className="flex flex-col items-center">
-						<div className="h-[300px] w-full max-w-[500px]">
-							<ChartContainer config={studentChartConfig}>
-								<ResponsiveContainer width="100%" height="100%">
-									<PieChart>
-										<Pie
-											data={chartData}
-											cx="50%"
-											cy="50%"
-											outerRadius={120}
-											innerRadius={60}
-											dataKey="value"
-											labelLine={false}
-										>
-											{chartData.map((entry, index) => (
-												<Cell
-													key={`cell-${index}`}
-													fill={entry.fill}
-												/>
-											))}
-										</Pie>
-										<Tooltip content={<CustomTooltip />} />
-									</PieChart>
-								</ResponsiveContainer>
-							</ChartContainer>
-						</div>
-						<div className="mt-8 flex justify-center gap-8">
-							{chartData.map((entry, index) => (
-								<div key={index} className="flex items-center gap-2">
+		<div className="space-y-6">
+			<Card>
+				<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+					<CardTitle className="text-base font-semibold">
+						Toplam Öğrenci Sayısı
+					</CardTitle>
+					<Users className="h-4 w-4 text-muted-foreground" />
+				</CardHeader>
+				<CardContent>
+					<div className="text-2xl font-bold">{stats.total}</div>
+				</CardContent>
+			</Card>
+
+			<Card>
+				<CardHeader>
+					<CardTitle>Bölümlere Göre Öğrenci Dağılımı</CardTitle>
+				</CardHeader>
+				<CardContent>
+					{hasData ? (
+						<div className="flex flex-col items-center">
+							<div className="h-[300px] w-full max-w-[500px]">
+								<ChartContainer config={studentChartConfig}>
+									<ResponsiveContainer width="100%" height="100%">
+										<PieChart>
+											<Pie
+												data={chartData}
+												cx="50%"
+												cy="50%"
+												outerRadius={120}
+												innerRadius={60}
+												dataKey="value"
+												labelLine={false}
+											>
+												{chartData.map((entry, index) => (
+													<Cell
+														key={`cell-${index}`}
+														fill={entry.fill}
+													/>
+												))}
+											</Pie>
+											<Tooltip content={<CustomTooltip />} />
+										</PieChart>
+									</ResponsiveContainer>
+								</ChartContainer>
+							</div>
+							<div className="mt-8 flex justify-center gap-8">
+								{chartData.map((entry, index) => (
 									<div
-										className="h-4 w-4"
-										style={{ backgroundColor: entry.fill }}
-									/>
-									<span className="text-sm">{entry.name}</span>
-								</div>
-							))}
+										key={index}
+										className="flex items-center gap-2"
+									>
+										<div
+											className="h-4 w-4"
+											style={{ backgroundColor: entry.fill }}
+										/>
+										<span className="text-sm">{entry.name}</span>
+									</div>
+								))}
+							</div>
 						</div>
-					</div>
-				) : (
-					<NoDataDisplay
-						icon={Users}
-						message="Henüz öğrenci kaydı bulunmamaktadır"
-					/>
-				)}
-			</CardContent>
-		</Card>
+					) : (
+						<NoDataDisplay
+							icon={Users}
+							message="Henüz öğrenci kaydı bulunmamaktadır"
+						/>
+					)}
+				</CardContent>
+			</Card>
+		</div>
 	)
 }
