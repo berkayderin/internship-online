@@ -103,24 +103,30 @@ const StudentActivities = ({
 			</div>
 
 			<div className="flex flex-col sm:flex-row sm:items-center gap-4">
-				<div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
-					<Input
-						placeholder="Ara..."
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-						className="w-full sm:w-64"
-					/>
-					<Select onValueChange={onStatusFilter} defaultValue="all">
-						<SelectTrigger className="w-full sm:w-[180px]">
-							<SelectValue placeholder="Duruma göre filtrele" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="all">Tümü</SelectItem>
-							<SelectItem value="PENDING">Bekleyenler</SelectItem>
-							<SelectItem value="APPROVED">Onaylananlar</SelectItem>
-							<SelectItem value="REJECTED">Reddedilenler</SelectItem>
-						</SelectContent>
-					</Select>
+				<div className="flex-1 flex flex-col sm:flex-row items-start sm:items-center gap-2">
+					<div className="w-full" style={{ maxWidth: '240px' }}>
+						<Input
+							placeholder="Ara..."
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
+							className="w-full"
+						/>
+					</div>
+					<div className="w-full" style={{ maxWidth: '140px' }}>
+						<Select onValueChange={onStatusFilter} defaultValue="all">
+							<SelectTrigger>
+								<SelectValue placeholder="Duruma göre filtrele" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="all">Tümü</SelectItem>
+								<SelectItem value="PENDING">Bekleyenler</SelectItem>
+								<SelectItem value="APPROVED">Onaylananlar</SelectItem>
+								<SelectItem value="REJECTED">
+									Reddedilenler
+								</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
 				</div>
 				{student && (
 					<div className="flex flex-col sm:flex-row gap-2 ml-auto">
