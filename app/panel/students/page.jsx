@@ -2,8 +2,8 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
-import { Eye, Trash2, MoreHorizontal } from 'lucide-react'
+import { useState, useCallback } from 'react'
+import { Eye, Trash2, MoreHorizontal, Search, X } from 'lucide-react'
 import {
 	Table,
 	TableBody,
@@ -39,6 +39,7 @@ import {
 	SelectTrigger,
 	SelectValue
 } from '@/components/ui/select'
+import { Input } from '@/components/ui/input'
 
 const DEPARTMENTS = [
 	{ value: 'all', label: 'Tüm Bölümler' },
@@ -57,10 +58,13 @@ const StudentsPage = () => {
 	const [page, setPage] = useState(1)
 	const [limit] = useState(10)
 	const [department, setDepartment] = useState('all')
+	const [search, setSearch] = useState('')
+	const [debouncedSearch, setDebouncedSearch] = useState('')
 	const { data, isLoading } = useStudents({
 		page,
 		limit,
-		department: department === 'all' ? '' : department
+		department: department === 'all' ? '' : department,
+		search: debouncedSearch
 	})
 	const students = data?.students || []
 	const pagination = data?.pagination || { total: 0, totalPages: 1 }
@@ -71,6 +75,15 @@ const StudentsPage = () => {
 		setDepartment(value)
 		setPage(1)
 	}
+
+	const handleSearch = useCallback((e) => {
+		setSearch(e.target.value)
+		const timeoutId = setTimeout(() => {
+			setDebouncedSearch(e.target.value)
+			setPage(1)
+		}, 1000)
+		return () => clearTimeout(timeoutId)
+	}, [])
 
 	const handleStudentSelect = (studentId) => {
 		router.push(`/panel/student-activities?studentId=${studentId}`)
@@ -85,29 +98,60 @@ const StudentsPage = () => {
 		handleStudentDelete(studentToDelete)
 	}
 
+	const handleReset = useCallback(() => {
+		setSearch('')
+		setDebouncedSearch('')
+		setDepartment('all')
+		setPage(1)
+	}, [])
+
 	if (isLoading) {
 		return <StudentsPageSkeleton />
 	}
+
+	const hasFilters = search || department !== 'all'
 
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center justify-between gap-4">
 				<h1 className="text-2xl font-bold">Öğrenci Listesi</h1>
-				<Select
-					value={department}
-					onValueChange={handleDepartmentChange}
-				>
-					<SelectTrigger className="w-[280px]">
-						<SelectValue placeholder="Bölüm seçin" />
-					</SelectTrigger>
-					<SelectContent>
-						{DEPARTMENTS.map((dept) => (
-							<SelectItem key={dept.value} value={dept.value}>
-								{dept.label}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
+				<div className="flex items-center gap-4">
+					{hasFilters && (
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={handleReset}
+							className="flex items-center gap-2"
+						>
+							<X className="h-4 w-4" />
+							Filtreleri Temizle
+						</Button>
+					)}
+					<div className="relative">
+						<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+						<Input
+							placeholder="Ad veya soyada göre ara..."
+							value={search}
+							onChange={handleSearch}
+							className="pl-8 w-[280px]"
+						/>
+					</div>
+					<Select
+						value={department}
+						onValueChange={handleDepartmentChange}
+					>
+						<SelectTrigger className="w-[280px]">
+							<SelectValue placeholder="Bölüm seçin" />
+						</SelectTrigger>
+						<SelectContent>
+							{DEPARTMENTS.map((dept) => (
+								<SelectItem key={dept.value} value={dept.value}>
+									{dept.label}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
 			</div>
 			<div className="rounded-md border">
 				<Table className="w-full">

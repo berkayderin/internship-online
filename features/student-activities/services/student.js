@@ -9,7 +9,8 @@ export const studentService = {
 			const queryParams = {
 				page: params.page,
 				limit: params.limit,
-				department: params.department
+				department: params.department,
+				search: params.search
 			}
 			const response = await axios.get(STUDENTS_API_URL, {
 				params: queryParams

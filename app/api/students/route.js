@@ -20,18 +20,25 @@ export async function GET(req) {
 		const limit =
 			parseInt(req.nextUrl.searchParams.get('limit')) || 10
 		const department = req.nextUrl.searchParams.get('department')
+		const search = req.nextUrl.searchParams.get('search')
 		const skip = (page - 1) * limit
 
 		const where = {
 			role: 'USER',
-			...(department && { department })
+			...(department && { department }),
+			...(search && {
+				OR: [
+					{ firstName: { contains: search, mode: 'insensitive' } },
+					{ lastName: { contains: search, mode: 'insensitive' } }
+				]
+			})
 		}
 
 		const [students, total] = await Promise.all([
 			prisma.user.findMany({
 				where,
 				orderBy: {
-					firstName: 'asc'
+					createdAt: 'desc'
 				},
 				skip,
 				take: limit
