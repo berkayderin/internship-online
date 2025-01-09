@@ -117,7 +117,11 @@ export function PeriodDialog({ open, onOpenChange, period }) {
 								<FormItem>
 									<FormLabel>Dönem Adı</FormLabel>
 									<FormControl>
-										<Input placeholder="2024 Yaz Dönemi" {...field} />
+										<Input
+											placeholder="2025 Uzun Dönem Staj"
+											autoComplete="off"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
