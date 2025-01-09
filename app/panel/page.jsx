@@ -11,6 +11,8 @@ import { useApplications } from '@/features/applications/queries/useApplication'
 import { PlusIcon } from 'lucide-react'
 import { CountdownTimer } from '@/components/main/CountdownTimer'
 import { PeriodDialog } from '@/features/internship-periods/components/PeriodDialog'
+import { ApplicationStats } from '@/features/panel/components/ApplicationStats'
+import { StudentStats } from '@/features/panel/components/StudentStats'
 
 const statusText = {
 	PENDING: 'Beklemede',
@@ -41,7 +43,7 @@ export default function PanelPage() {
 	}
 
 	return (
-		<div className="max-w-4xl">
+		<div className="max-w-7xl">
 			<div className="flex flex-col justify-start items-start gap-4">
 				<h1 className="text-2xl font-semibold ">
 					Hoş Geldiniz, {session?.user?.firstName}{' '}
@@ -56,6 +58,13 @@ export default function PanelPage() {
 					</Button>
 				)}
 			</div>
+
+			{isAdmin && (
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 w-full">
+					<ApplicationStats />
+					<StudentStats />
+				</div>
+			)}
 
 			{!isAdmin && periods?.length > 0 && (
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
