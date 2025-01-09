@@ -20,10 +20,11 @@ export const registerUser = async (userData) => {
 		body: JSON.stringify(userData)
 	})
 
+	const data = await response.json()
+
 	if (!response.ok) {
-		const error = await response.json()
-		throw new Error(error.message || 'Kayıt işlemi başarısız oldu')
+		throw new Error(data.message || 'Kayıt işlemi başarısız oldu')
 	}
 
-	return response.json()
+	return data
 }

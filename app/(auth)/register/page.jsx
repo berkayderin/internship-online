@@ -21,7 +21,9 @@ const RegisterPage = () => {
 		} catch (error) {
 			toast({
 				title: 'Hata',
-				description: 'Kayıt oluşturulamadı. Lütfen tekrar deneyin.',
+				description:
+					error.message ||
+					'Kayıt oluşturulamadı. Lütfen tekrar deneyin.',
 				variant: 'destructive'
 			})
 		}
@@ -34,9 +36,9 @@ const RegisterPage = () => {
 				<div className="absolute top-0 -left-4 w-96 h-96 bg-primary/30 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob" />
 				<div className="absolute top-0 -right-4 w-96 h-96 bg-purple-500/30 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000" />
 				<div className="absolute -bottom-8 left-20 w-96 h-96 bg-pink-500/30 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000" />
-				
+
 				<div className="absolute inset-0 bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_50%,#000_40%,transparent_100%)] opacity-[0.02]" />
-				
+
 				<div className="absolute inset-0 bg-background/80 [mask-image:radial-gradient(ellipse_100%_100%_at_50%_50%,transparent_20%,#000_100%)]" />
 			</div>
 
@@ -64,10 +66,18 @@ const RegisterPage = () => {
 
 			<style jsx global>{`
 				@keyframes blob {
-					0% { transform: translate(0px, 0px) scale(1); }
-					33% { transform: translate(30px, -50px) scale(1.1); }
-					66% { transform: translate(-20px, 20px) scale(0.9); }
-					100% { transform: translate(0px, 0px) scale(1); }
+					0% {
+						transform: translate(0px, 0px) scale(1);
+					}
+					33% {
+						transform: translate(30px, -50px) scale(1.1);
+					}
+					66% {
+						transform: translate(-20px, 20px) scale(0.9);
+					}
+					100% {
+						transform: translate(0px, 0px) scale(1);
+					}
 				}
 				.animate-blob {
 					animation: blob 7s infinite;

@@ -15,9 +15,16 @@ const registerSchema = z.object({
 		.min(2, {
 			message: 'Soyad en az 2 karakter olmalıdır'
 		}),
-	department: z.string({
-		required_error: 'Bölüm seçiniz'
-	}),
+	department: z
+		.string({
+			required_error: 'Bölüm seçiniz'
+		})
+		.min(1, {
+			message: 'Bölüm seçiniz'
+		})
+		.refine((val) => val && val.trim().length > 0, {
+			message: 'Bölüm seçiniz'
+		}),
 	email: z
 		.string({
 			required_error: 'E-posta adresi gereklidir'
