@@ -32,12 +32,45 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue
+} from '@/components/ui/select'
+
+const DEPARTMENTS = [
+	{ value: 'all', label: 'Tüm Bölümler' },
+	{
+		value: 'Bilişim Sistemleri Mühendisliği',
+		label: 'Bilişim Sistemleri Mühendisliği'
+	},
+	{
+		value: 'Yazılım Mühendisliği',
+		label: 'Yazılım Mühendisliği'
+	}
+]
 
 const StudentsPage = () => {
 	const router = useRouter()
-	const { data: students, isLoading } = useStudents()
+	const [page, setPage] = useState(1)
+	const [limit] = useState(10)
+	const [department, setDepartment] = useState('all')
+	const { data, isLoading } = useStudents({
+		page,
+		limit,
+		department: department === 'all' ? '' : department
+	})
+	const students = data?.students || []
+	const pagination = data?.pagination || { total: 0, totalPages: 1 }
 	const deleteStudentMutation = useDeleteStudent()
 	const [studentToDelete, setStudentToDelete] = useState(null)
+
+	const handleDepartmentChange = (value) => {
+		setDepartment(value)
+		setPage(1)
+	}
 
 	const handleStudentSelect = (studentId) => {
 		router.push(`/panel/student-activities?studentId=${studentId}`)
@@ -58,7 +91,24 @@ const StudentsPage = () => {
 
 	return (
 		<div className="space-y-6">
-			<h1 className="text-2xl font-bold">Öğrenci Listesi</h1>
+			<div className="flex items-center justify-between gap-4">
+				<h1 className="text-2xl font-bold">Öğrenci Listesi</h1>
+				<Select
+					value={department}
+					onValueChange={handleDepartmentChange}
+				>
+					<SelectTrigger className="w-[280px]">
+						<SelectValue placeholder="Bölüm seçin" />
+					</SelectTrigger>
+					<SelectContent>
+						{DEPARTMENTS.map((dept) => (
+							<SelectItem key={dept.value} value={dept.value}>
+								{dept.label}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			</div>
 			<div className="rounded-md border">
 				<Table className="w-full">
 					<TableHeader>
@@ -120,6 +170,35 @@ const StudentsPage = () => {
 					</TableBody>
 				</Table>
 			</div>
+
+			{pagination.total > 0 && (
+				<div className="flex items-center justify-between">
+					<p className="text-sm text-muted-foreground">
+						Toplam {pagination.total} öğrenci
+					</p>
+					<div className="flex items-center space-x-2">
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => setPage(page - 1)}
+							disabled={page === 1}
+						>
+							Önceki
+						</Button>
+						<p className="text-sm">
+							Sayfa {page} / {pagination.totalPages}
+						</p>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => setPage(page + 1)}
+							disabled={page === pagination.totalPages}
+						>
+							Sonraki
+						</Button>
+					</div>
+				</div>
+			)}
 
 			<Dialog
 				open={!!studentToDelete}

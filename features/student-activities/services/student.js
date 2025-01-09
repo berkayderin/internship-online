@@ -4,9 +4,16 @@ import axios from 'axios'
 const STUDENTS_API_URL = '/api/students'
 
 export const studentService = {
-	getStudents: async () => {
+	getStudents: async (params = {}) => {
 		try {
-			const response = await axios.get(STUDENTS_API_URL)
+			const queryParams = {
+				page: params.page,
+				limit: params.limit,
+				department: params.department
+			}
+			const response = await axios.get(STUDENTS_API_URL, {
+				params: queryParams
+			})
 			return response.data
 		} catch (error) {
 			console.error(

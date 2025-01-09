@@ -7,10 +7,10 @@ import {
 import { studentService } from '../services/student'
 import { toast } from '@/hooks/use-toast'
 
-export function useStudents() {
+export function useStudents(params) {
 	return useQuery({
-		queryKey: ['students'],
-		queryFn: () => studentService.getStudents()
+		queryKey: ['students', params],
+		queryFn: () => studentService.getStudents(params)
 	})
 }
 
