@@ -1,8 +1,9 @@
-import { PublicHolidayList } from '@/features/public-holidays/components/PublicHolidayList'
-import React from 'react'
+import React from 'react';
+
+import { PublicHolidayList } from '@/features/public-holidays/components/PublicHolidayList';
 
 const PublicHolidaysPage = () => {
-	return <PublicHolidayList />
-}
+  return <PublicHolidayList />;
+};
 
-export default PublicHolidaysPage
+export default PublicHolidaysPage;
