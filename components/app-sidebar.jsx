@@ -142,6 +142,19 @@ export function AppSidebar({ ...props }) {
 						isActive: pathname.startsWith('/panel/student-activities')
 					}
 				]
+			},
+			{
+				title: 'Sistem Yönetimi',
+				icon: Settings,
+				isActive: pathname.startsWith('/panel/admins'),
+				items: [
+					{
+						title: 'Yönetici Listesi',
+						url: '/panel/admins',
+						icon: Users,
+						isActive: pathname.startsWith('/panel/admins')
+					}
+				]
 			}
 		]
 
