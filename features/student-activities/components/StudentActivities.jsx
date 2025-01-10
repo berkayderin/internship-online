@@ -176,7 +176,7 @@ const StudentActivities = ({
       </div>
 
       <div className="w-full bg-white">
-        <div className="flex flex-col items-center gap-4 sm:flex-row">
+        <div className="flex flex-row items-center justify-between gap-4 sm:flex-row">
           <div className="text-sm text-muted-foreground">
             Toplam {pagination.total} kayıttan {(pagination.page - 1) * pagination.limit + 1}-
             {Math.min(pagination.page * pagination.limit, pagination.total)} arası gösteriliyor
@@ -190,6 +190,9 @@ const StudentActivities = ({
               <Button variant="outline" size="sm" onClick={() => onPageChange(pagination.page - 1)} disabled={pagination.page === 1}>
                 <ChevronLeft className="h-4 w-4" />
               </Button>
+              <p className="text-sm text-muted-foreground">
+                Sayfa {pagination.page} / {pagination.pageCount}
+              </p>
               <Button
                 variant="outline"
                 size="sm"
