@@ -18,10 +18,13 @@ export async function GET(req) {
 
 		const searchParams = req.nextUrl.searchParams
 		const search = searchParams.get('search')?.toLowerCase() || ''
+		const page = parseInt(searchParams.get('page') || '1')
+		const limit = parseInt(searchParams.get('limit') || '10')
+		const skip = (page - 1) * limit
 
-		const admins = await prisma.user.findMany({
-			where: {
-				role: 'ADMIN',
+		const where = {
+			role: 'ADMIN',
+			...(search && {
 				OR: [
 					{
 						firstName: {
@@ -36,19 +39,32 @@ export async function GET(req) {
 						}
 					}
 				]
-			},
-			select: {
-				id: true,
-				email: true,
-				firstName: true,
-				lastName: true,
-				department: true,
-				createdAt: true,
-				updatedAt: true
-			}
-		})
+			})
+		}
 
-		return NextResponse.json(admins)
+		const [admins, total] = await Promise.all([
+			prisma.user.findMany({
+				where,
+				skip,
+				take: limit,
+				select: {
+					id: true,
+					email: true,
+					firstName: true,
+					lastName: true,
+					department: true,
+					createdAt: true,
+					updatedAt: true
+				}
+			}),
+			prisma.user.count({ where })
+		])
+
+		return NextResponse.json({
+			admins,
+			total,
+			totalPages: Math.ceil(total / limit)
+		})
 	} catch (error) {
 		console.error('Error fetching admins:', error)
 		return NextResponse.json(

@@ -11,10 +11,10 @@ import {
 	deleteAdmin
 } from '../services/admin'
 
-export const useAdmins = (search) => {
+export const useAdmins = ({ search, page, limit } = {}) => {
 	return useQuery({
-		queryKey: ['admins', search],
-		queryFn: () => getAdmins(search)
+		queryKey: ['admins', { search, page, limit }],
+		queryFn: () => getAdmins({ search, page, limit })
 	})
 }
 

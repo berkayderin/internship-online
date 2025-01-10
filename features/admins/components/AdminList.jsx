@@ -7,7 +7,9 @@ import {
 	Pencil,
 	Trash,
 	Search,
-	X
+	X,
+	ChevronLeft,
+	ChevronRight
 } from 'lucide-react'
 import {
 	Table,
@@ -43,16 +45,31 @@ export function AdminList() {
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 	const [searchInput, setSearchInput] = useState('')
 	const [searchQuery, setSearchQuery] = useState('')
+	const [page, setPage] = useState(1)
+	const limit = 10
 
-	const { data: admins = [], isLoading } = useAdmins(searchQuery)
+	const { data, isLoading } = useAdmins({
+		search: searchQuery,
+		page,
+		limit
+	})
+
+	const admins = data?.admins || []
+	const totalPages = data?.totalPages || 1
 
 	const handleSearch = () => {
 		setSearchQuery(searchInput)
+		setPage(1)
 	}
 
 	const handleReset = () => {
 		setSearchInput('')
 		setSearchQuery('')
+		setPage(1)
+	}
+
+	const handlePageChange = (newPage) => {
+		setPage(newPage)
 	}
 
 	const handleKeyDown = (e) => {
@@ -191,6 +208,35 @@ export function AdminList() {
 					</TableBody>
 				</Table>
 			</div>
+
+			{data?.total > 0 && (
+				<div className="flex items-center justify-between">
+					<p className="text-sm text-muted-foreground">
+						Toplam {data?.total} yönetici
+					</p>
+					<div className="flex items-center space-x-2">
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => setPage(page - 1)}
+							disabled={page === 1}
+						>
+							Önceki
+						</Button>
+						<p className="text-sm">
+							Sayfa {page} / {totalPages}
+						</p>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => setPage(page + 1)}
+							disabled={page === totalPages}
+						>
+							Sonraki
+						</Button>
+					</div>
+				</div>
+			)}
 
 			<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
 				<DialogContent>

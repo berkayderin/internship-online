@@ -2,10 +2,16 @@ import axios from 'axios'
 
 const API_URL = '/api/admins'
 
-export const getAdmins = async (search) => {
-	const { data } = await axios.get(
-		API_URL + (search ? `?search=${search}` : '')
-	)
+export const getAdmins = async ({ search, page, limit } = {}) => {
+	const params = new URLSearchParams()
+	if (search) params.append('search', search)
+	if (page) params.append('page', page)
+	if (limit) params.append('limit', limit)
+
+	const url = `${API_URL}${
+		params.toString() ? `?${params.toString()}` : ''
+	}`
+	const { data } = await axios.get(url)
 	return data
 }
 
