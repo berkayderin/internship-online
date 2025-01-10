@@ -16,9 +16,26 @@ export async function GET(req) {
 			)
 		}
 
+		const searchParams = req.nextUrl.searchParams
+		const search = searchParams.get('search')?.toLowerCase() || ''
+
 		const admins = await prisma.user.findMany({
 			where: {
-				role: 'ADMIN'
+				role: 'ADMIN',
+				OR: [
+					{
+						firstName: {
+							contains: search,
+							mode: 'insensitive'
+						}
+					},
+					{
+						lastName: {
+							contains: search,
+							mode: 'insensitive'
+						}
+					}
+				]
 			},
 			select: {
 				id: true,

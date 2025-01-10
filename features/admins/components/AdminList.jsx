@@ -2,7 +2,13 @@
 
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
-import { MoreHorizontal, Pencil, Trash } from 'lucide-react'
+import {
+	MoreHorizontal,
+	Pencil,
+	Trash,
+	Search,
+	X
+} from 'lucide-react'
 import {
 	Table,
 	TableBody,
@@ -12,6 +18,7 @@ import {
 	TableRow
 } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
 	Dialog,
 	DialogContent,
@@ -34,8 +41,25 @@ export function AdminList() {
 	const [selectedAdmin, setSelectedAdmin] = useState(null)
 	const [isDialogOpen, setIsDialogOpen] = useState(false)
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+	const [searchInput, setSearchInput] = useState('')
+	const [searchQuery, setSearchQuery] = useState('')
 
-	const { data: admins = [], isLoading } = useAdmins()
+	const { data: admins = [], isLoading } = useAdmins(searchQuery)
+
+	const handleSearch = () => {
+		setSearchQuery(searchInput)
+	}
+
+	const handleReset = () => {
+		setSearchInput('')
+		setSearchQuery('')
+	}
+
+	const handleKeyDown = (e) => {
+		if (e.key === 'Enter') {
+			handleSearch()
+		}
+	}
 
 	const handleEdit = (admin) => {
 		setSelectedAdmin(admin)
@@ -79,7 +103,37 @@ export function AdminList() {
 
 	return (
 		<div className="space-y-4">
-			<div className="flex justify-end">
+			<div className="flex justify-between items-center">
+				<div className="flex gap-2 items-center">
+					<div className="relative w-72">
+						<Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+						<Input
+							placeholder="Ad soyada göre ara..."
+							value={searchInput}
+							onChange={(e) => setSearchInput(e.target.value)}
+							onKeyDown={handleKeyDown}
+							className="pl-8"
+						/>
+					</div>
+					<Button
+						onClick={handleSearch}
+						variant="secondary"
+						size="sm"
+					>
+						Ara
+					</Button>
+					{searchQuery && (
+						<Button
+							onClick={handleReset}
+							variant="ghost"
+							size="sm"
+							className="gap-2"
+						>
+							<X className="h-4 w-4" />
+							Sıfırla
+						</Button>
+					)}
+				</div>
 				<Button onClick={handleAdd} variant="default">
 					Yönetici Ekle
 				</Button>
