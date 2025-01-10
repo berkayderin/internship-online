@@ -1,15 +1,15 @@
 export const applicationChartConfig = {
   pending: {
     label: 'Beklemede',
-    color: 'hsl(var(--warning))',
+    color: '#FFA500', // Turuncu
   },
   approved: {
     label: 'Onaylandı',
-    color: 'hsl(var(--success))',
+    color: '#22C55E', // Yeşil
   },
   rejected: {
     label: 'Reddedildi',
-    color: 'hsl(var(--destructive))',
+    color: '#EF4444', // Kırmızı
   },
 };
 

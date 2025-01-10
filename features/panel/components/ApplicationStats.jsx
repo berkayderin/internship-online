@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChartContainer } from '@/components/ui/chart';
 
 import { ClipboardList } from 'lucide-react';
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 import { ChartSkeleton } from './ChartSkeleton';
 import { NoDataDisplay } from './NoDataDisplay';
@@ -16,9 +15,7 @@ const CustomTooltip = ({ active, payload }) => {
       <div className="rounded-lg border bg-background p-2 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full" style={{ backgroundColor: payload[0].payload.color }} />
-          <span className="font-medium">
-            {payload[0].name}: {payload[0].value}
-          </span>
+          <span className="font-medium">{payload[0].value} başvuru</span>
         </div>
       </div>
     );
@@ -48,25 +45,28 @@ export function ApplicationStats() {
       </CardHeader>
       <CardContent>
         {hasData ? (
-          <div className="h-[300px]">
-            <ChartContainer config={applicationChartConfig}>
+          <div className="space-y-6">
+            <div style={{ width: '100%', height: 400 }}>
               <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={chartData} cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={2} dataKey="value">
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
+                <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                  <XAxis dataKey="name" tick={{ fill: '#64748b', fontSize: 12, fontWeight: 500 }} tickLine={false} />
+                  <YAxis allowDecimals={false} tick={{ fill: '#64748b', fontSize: 12 }} tickLine={false} axisLine={false} />
                   <Tooltip content={<CustomTooltip />} />
-                </PieChart>
+                  <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={80}>
+                    {chartData.map((entry) => (
+                      <Cell key={entry.name} fill={entry.color} />
+                    ))}
+                  </Bar>
+                </BarChart>
               </ResponsiveContainer>
-            </ChartContainer>
-            <div className="mt-4 flex justify-center gap-4">
+            </div>
+            <div className="flex justify-center gap-6">
               {chartData.map((entry, index) => (
                 <div key={index} className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full" style={{ backgroundColor: entry.color }} />
-                  <span className="text-sm text-muted-foreground">
-                    {entry.name} ({entry.value})
+                  <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                  <span className="text-sm text-muted-foreground">{entry.name}</span>
+                  <span className="font-medium" style={{ color: entry.color }}>
+                    ({entry.value})
                   </span>
                 </div>
               ))}
