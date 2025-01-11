@@ -47,3 +47,18 @@ export function useDeleteStudent() {
     },
   });
 }
+
+export function useBulkUpdateActivities() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ studentId, data }) => studentService.bulkUpdateActivities(studentId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['student-activities'] });
+      toast({
+        title: 'Aktiviteler güncellendi',
+        description: 'Seçili aktiviteler başarıyla güncellendi',
+      });
+    },
+  });
+}

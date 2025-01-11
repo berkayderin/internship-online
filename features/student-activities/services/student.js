@@ -77,4 +77,14 @@ export const studentService = {
       console.error('Delete student error:', error.response?.data || error.message);
     }
   },
+
+  bulkUpdateActivities: async (studentId, data) => {
+    try {
+      const response = await axios.patch(`${STUDENTS_API_URL}/${studentId}/activities/bulk`, data);
+      return response.data;
+    } catch (error) {
+      console.error('Bulk update activities error:', error.response?.data || error.message);
+      throw error;
+    }
+  },
 };

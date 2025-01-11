@@ -48,7 +48,10 @@ const DailyActivitiesPage = () => {
       if (selectedActivity) {
         await updateActivity.mutateAsync({
           id: selectedActivity.id,
-          data: values,
+          data: {
+            ...values,
+            status: 'PENDING',
+          },
         });
       } else {
         await createActivity.mutateAsync(values);

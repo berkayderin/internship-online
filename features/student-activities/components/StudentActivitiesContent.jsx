@@ -8,7 +8,7 @@ import { toast } from '@/hooks/use-toast';
 import { ActivityDetailModal } from './ActivityDetailModal';
 import { StudentActivities } from './StudentActivities';
 
-import { useStudentActivities, useSubmitFeedback } from '../queries/useStudentQueries';
+import { useBulkUpdateActivities, useStudentActivities, useSubmitFeedback } from '../queries/useStudentQueries';
 import { summarizeActivities } from '../services/ai';
 import { generateActivityReport, generateSummaryReport } from '../services/pdf';
 
@@ -24,6 +24,7 @@ export const StudentActivitiesContent = () => {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState(null);
   const [isSummarizing, setIsSummarizing] = useState(false);
+  const [selectedActivities, setSelectedActivities] = useState([]);
 
   const {
     data: activitiesData,
@@ -37,6 +38,7 @@ export const StudentActivitiesContent = () => {
   });
 
   const submitFeedback = useSubmitFeedback();
+  const bulkUpdateActivities = useBulkUpdateActivities();
 
   const handleBack = () => {
     router.push('/panel/students');
@@ -124,9 +126,72 @@ export const StudentActivitiesContent = () => {
     }
   };
 
-  if (error) {
-    return <div className="rounded-md bg-red-50 text-center text-red-500">Hata: {error.message}</div>;
-  }
+  const handleSelectActivity = (activityId, isSelected) => {
+    if (isSelected) {
+      setSelectedActivities([...selectedActivities, activityId]);
+    } else {
+      setSelectedActivities(selectedActivities.filter((id) => id !== activityId));
+    }
+  };
+
+  const handleSelectAll = (isSelected) => {
+    if (isSelected) {
+      const allActivityIds = activitiesData?.data.map((activity) => activity.id) || [];
+      setSelectedActivities(allActivityIds);
+    } else {
+      setSelectedActivities([]);
+    }
+  };
+
+  const handleBulkApprove = async () => {
+    if (selectedActivities.length === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'Hata',
+        description: 'Lütfen en az bir aktivite seçin',
+      });
+      return;
+    }
+
+    try {
+      await bulkUpdateActivities.mutateAsync({
+        studentId,
+        data: {
+          activityIds: selectedActivities,
+          status: 'APPROVED',
+          feedback: '',
+        },
+      });
+      setSelectedActivities([]);
+    } catch (error) {
+      console.error('Error bulk approving activities:', error);
+    }
+  };
+
+  const handleBulkReject = async (feedback) => {
+    if (selectedActivities.length === 0) {
+      toast({
+        variant: 'destructive',
+        title: 'Hata',
+        description: 'Lütfen en az bir aktivite seçin',
+      });
+      return;
+    }
+
+    try {
+      await bulkUpdateActivities.mutateAsync({
+        studentId,
+        data: {
+          activityIds: selectedActivities,
+          status: 'REJECTED',
+          feedback,
+        },
+      });
+      setSelectedActivities([]);
+    } catch (error) {
+      console.error('Error bulk rejecting activities:', error);
+    }
+  };
 
   return (
     <div>
@@ -134,6 +199,11 @@ export const StudentActivitiesContent = () => {
         student={activitiesData?.student}
         activities={activitiesData?.data || []}
         pagination={activitiesData?.pagination}
+        selectedActivities={selectedActivities}
+        onSelectActivity={handleSelectActivity}
+        onSelectAll={handleSelectAll}
+        onBulkApprove={handleBulkApprove}
+        onBulkReject={handleBulkReject}
         onBack={handleBack}
         onViewDetails={handleViewDetails}
         onPageChange={setPage}

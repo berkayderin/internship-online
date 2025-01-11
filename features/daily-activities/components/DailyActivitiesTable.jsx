@@ -117,7 +117,7 @@ export function DailyActivitiesTable({
                     )}
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
-                    {((isAdmin && activity.status === 'PENDING') || (!isAdmin && activity.status === 'PENDING')) && (
+                    {((isAdmin && activity.status === 'PENDING') || (!isAdmin && ['PENDING', 'REJECTED'].includes(activity.status))) && (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">

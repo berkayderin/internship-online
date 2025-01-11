@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,6 +14,7 @@ import { tr } from 'date-fns/locale';
 import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, FileDown, FileText } from 'lucide-react';
 
 import { statusText, statusVariants } from './ActivityDetailModal';
+import { BulkRejectModal } from './BulkRejectModal';
 import { StudentActivitiesSkeleton } from './StudentActivitiesSkeleton';
 
 const defaultPagination = {
@@ -26,6 +28,11 @@ const StudentActivities = ({
   student,
   activities = [],
   pagination = defaultPagination,
+  selectedActivities = [],
+  onSelectActivity,
+  onSelectAll,
+  onBulkApprove,
+  onBulkReject,
   onBack,
   onViewDetails,
   onApprove,
@@ -41,8 +48,8 @@ const StudentActivities = ({
 }) => {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [showRejectModal, setShowRejectModal] = useState(false);
 
-  console.log('student', student);
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -58,6 +65,19 @@ const StudentActivities = ({
   if (isLoading) {
     return <StudentActivitiesSkeleton />;
   }
+
+  const pendingActivities = activities.filter((activity) => activity.status === 'PENDING');
+  const allPendingSelected =
+    pendingActivities.length > 0 && pendingActivities.every((activity) => selectedActivities.includes(activity.id));
+
+  const handleSelectAll = (isSelected) => {
+    if (isSelected) {
+      const pendingActivityIds = activities.filter((activity) => activity.status === 'PENDING').map((activity) => activity.id);
+      setSelectedActivities(pendingActivityIds);
+    } else {
+      setSelectedActivities([]);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -93,25 +113,46 @@ const StudentActivities = ({
               </SelectContent>
             </Select>
           </div>
+          {pendingActivities.length > 0 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" disabled={selectedActivities.length === 0}>
+                  Toplu İşlemler
+                  <ChevronDown className="ml-2 h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={onBulkApprove}>Seçilenleri Onayla</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowRejectModal(true)}>Seçilenleri Reddet</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
-        {student && (
-          <div className="ml-auto flex flex-col gap-2 sm:flex-row">
-            <Button className="w-full sm:w-auto" onClick={onGenerateReport} disabled={isLoading}>
-              <FileDown className="mr-2 h-4 w-4" />
-              Rapor Oluştur
-            </Button>
-            <Button className="w-full sm:w-auto" onClick={onGenerateSummary} disabled={isLoading || isSummarizing}>
-              <FileText className="mr-2 h-4 w-4" />
-              {isSummarizing ? 'Özetleniyor...' : 'Özetle'}
-            </Button>
-          </div>
-        )}
+        <div className="ml-auto flex flex-col gap-2 sm:flex-row">
+          {student && (
+            <>
+              <Button className="w-full sm:w-auto" onClick={onGenerateReport} disabled={isLoading}>
+                <FileDown className="mr-2 h-4 w-4" />
+                Rapor Oluştur
+              </Button>
+              <Button className="w-full sm:w-auto" onClick={onGenerateSummary} disabled={isLoading || isSummarizing}>
+                <FileText className="mr-2 h-4 w-4" />
+                {isSummarizing ? 'Özetleniyor...' : 'Özetle'}
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="rounded-md border">
         <Table className="w-full">
           <TableHeader>
             <TableRow>
+              {pendingActivities.length > 0 && (
+                <TableHead className="w-[40px]">
+                  <Checkbox checked={allPendingSelected} onCheckedChange={onSelectAll} aria-label="Tümünü seç" />
+                </TableHead>
+              )}
               <TableHead className="w-[150px]">Tarih</TableHead>
               <TableHead className="w-[200px]">Öğrenci</TableHead>
               <TableHead>İçerik</TableHead>
@@ -124,13 +165,24 @@ const StudentActivities = ({
           <TableBody>
             {!activities?.length ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                <TableCell colSpan={pendingActivities.length > 0 ? 8 : 7} className="h-24 text-center text-muted-foreground">
                   Henüz hiç aktivite bulunmuyor.
                 </TableCell>
               </TableRow>
             ) : (
               activities?.map((activity) => (
                 <TableRow key={activity.id}>
+                  {pendingActivities.length > 0 && (
+                    <TableCell>
+                      {activity.status === 'PENDING' && (
+                        <Checkbox
+                          checked={selectedActivities.includes(activity.id)}
+                          onCheckedChange={(checked) => onSelectActivity(activity.id, checked)}
+                          aria-label="Aktiviteyi seç"
+                        />
+                      )}
+                    </TableCell>
+                  )}
                   <TableCell className="whitespace-nowrap">
                     {format(new Date(activity.date), 'd MMMM yyyy', {
                       locale: tr,
@@ -224,6 +276,8 @@ const StudentActivities = ({
           </div>
         </div>
       </div>
+
+      <BulkRejectModal open={showRejectModal} onOpenChange={setShowRejectModal} onConfirm={onBulkReject} />
     </div>
   );
 };

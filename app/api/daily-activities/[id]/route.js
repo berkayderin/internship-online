@@ -69,10 +69,10 @@ export async function PATCH(req, { params }) {
       return NextResponse.json({ error: 'Bu aktiviteyi güncelleme yetkiniz yok' }, { status: 403 });
     }
 
-    if (activity.status !== 'PENDING') {
+    if (activity.status === 'APPROVED') {
       return NextResponse.json(
         {
-          error: 'Onaylanmış veya reddedilmiş aktivite güncellenemez',
+          error: 'Onaylanmış aktivite güncellenemez',
         },
         { status: 400 }
       );
@@ -95,7 +95,11 @@ export async function PATCH(req, { params }) {
 
     const updatedActivity = await prisma.dailyActivity.update({
       where: { id },
-      data: validationResult.data,
+      data: {
+        ...validationResult.data,
+        status: 'PENDING',
+        feedback: '',
+      },
       include: {
         user: {
           select: {
