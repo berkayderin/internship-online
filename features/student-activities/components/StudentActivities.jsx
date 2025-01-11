@@ -11,7 +11,18 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
-import { ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Eye, FileDown, FileText } from 'lucide-react';
+import {
+  ArrowLeft,
+  Brain,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Eye,
+  FileDown,
+  FileText,
+} from 'lucide-react';
 
 import { statusText, statusVariants } from './ActivityDetailModal';
 import { BulkRejectModal } from './BulkRejectModal';
@@ -136,8 +147,8 @@ const StudentActivities = ({
                 Rapor Oluştur
               </Button>
               <Button className="w-full sm:w-auto" onClick={onGenerateSummary} disabled={isLoading || isSummarizing}>
-                <FileText className="mr-2 h-4 w-4" />
-                {isSummarizing ? 'Özetleniyor...' : 'Özetle'}
+                <Brain className="mr-2 h-4 w-4" />
+                {isSummarizing ? 'Yapay Zeka ile Özetleniyor...' : 'Özet Oluştur'}
               </Button>
             </>
           )}
