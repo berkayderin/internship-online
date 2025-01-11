@@ -13,6 +13,7 @@ import { ChevronLeft, ChevronRight, MoreHorizontal, Pencil, Search, Trash, X } f
 
 import { AdminDeleteDialog } from './AdminDeleteDialog';
 import { AdminDialog } from './AdminDialog';
+import { AdminSkeletonTable } from './AdminSkeletonTable';
 
 import { useAdmins } from '../queries/useAdmin';
 
@@ -93,7 +94,7 @@ export function AdminList() {
   };
 
   if (isLoading) {
-    return <div>Yükleniyor...</div>;
+    return <AdminSkeletonTable />;
   }
 
   return (

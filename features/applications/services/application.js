@@ -1,4 +1,3 @@
-// features/applications/services/application.js
 import axios from 'axios';
 
 const API_URL = '/api/applications';

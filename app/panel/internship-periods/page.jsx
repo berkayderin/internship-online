@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 import InternshipPeriodsTableSkeleton from '@/features/internship-periods/components/InternshipPeriodsTableSkeleton';
@@ -12,7 +13,7 @@ import { useDeleteInternshipPeriod, useInternshipPeriods } from '@/features/inte
 
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, MoreHorizontal, Trash } from 'lucide-react';
 
 export default function InternshipPeriodsPage() {
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
@@ -100,13 +101,24 @@ export default function InternshipPeriodsPage() {
                       locale: tr,
                     })}
                   </TableCell>
-                  <TableCell className="space-x-2 text-right">
-                    <Button variant="ghost" size="icon" onClick={() => handleEdit(period)}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(period)}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleEdit(period)}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Düzenle
+                        </DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-600" onClick={() => handleDelete(period)}>
+                          <Trash className="mr-2 h-4 w-4" />
+                          Sil
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
               ))

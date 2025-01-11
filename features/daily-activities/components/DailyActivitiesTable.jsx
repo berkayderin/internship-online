@@ -1,4 +1,3 @@
-// features/daily-activities/components/DailyActivitiesTable.jsx
 import React, { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';

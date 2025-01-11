@@ -1,4 +1,3 @@
-// features/daily-activities/components/ActivityForm.jsx
 import { useForm } from 'react-hook-form';
 
 import RichTextEditor from '@/components/text-editor';

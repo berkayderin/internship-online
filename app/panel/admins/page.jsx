@@ -1,4 +1,5 @@
 import { AdminList } from '@/features/admins/components/AdminList';
+import { AdminSkeletonTable } from '@/features/admins/components/AdminSkeletonTable';
 
 export default function AdminsPage() {
   return (

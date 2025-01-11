@@ -1,4 +1,3 @@
-// features/internship-periods/components/PeriodDialog.jsx
 'use client';
 
 import { useEffect } from 'react';
@@ -20,22 +19,6 @@ import { CalendarIcon } from 'lucide-react';
 
 import { useCreateInternshipPeriod, useUpdateInternshipPeriod } from '../queries/useInternshipPeriod';
 import internshipPeriodSchema from '../zod/InternshipPeriodSchema';
-
-// features/internship-periods/components/PeriodDialog.jsx
-
-// features/internship-periods/components/PeriodDialog.jsx
-
-// features/internship-periods/components/PeriodDialog.jsx
-
-// features/internship-periods/components/PeriodDialog.jsx
-
-// features/internship-periods/components/PeriodDialog.jsx
-
-// features/internship-periods/components/PeriodDialog.jsx
-
-// features/internship-periods/components/PeriodDialog.jsx
-
-// features/internship-periods/components/PeriodDialog.jsx
 
 export function PeriodDialog({ open, onOpenChange, period }) {
   const isEditing = !!period;

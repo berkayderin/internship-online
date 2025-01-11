@@ -151,7 +151,7 @@ const StudentsPage = () => {
                           <Eye className="mr-2 h-4 w-4" />
                           Görüntüle
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setStudentToDelete(student.id)}>
+                        <DropdownMenuItem className="text-red-600" onClick={() => setStudentToDelete(student.id)}>
                           <Trash2 className="mr-2 h-4 w-4" />
                           Sil
                         </DropdownMenuItem>

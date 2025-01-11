@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -24,7 +25,7 @@ import { toast } from '@/hooks/use-toast';
 
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
-import { Building, Calendar, CheckCircle, Info, Users2, XCircle } from 'lucide-react';
+import { Building, CheckCircle, MoreHorizontal, Pencil, Trash, Users2, XCircle } from 'lucide-react';
 
 const statusText = {
   PENDING: 'Beklemede',
@@ -268,53 +269,59 @@ export default function ApplicationsPage() {
                       <span className="text-sm text-muted-foreground">-</span>
                     )}
                   </TableCell>
-                  {isAdmin && (
+                  {isAdmin ? (
                     <TableCell>
-                      <div className="flex gap-2">
-                        {application.status === 'PENDING' && (
-                          <>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-green-600 hover:text-green-700"
-                              onClick={() => handleAction(application, 'approve')}
-                            >
-                              <CheckCircle className="mr-1 h-4 w-4" />
-                              Onayla
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-red-600 hover:text-red-700"
-                              onClick={() => handleAction(application, 'reject')}
-                            >
-                              <XCircle className="mr-1 h-4 w-4" />
-                              Reddet
-                            </Button>
-                          </>
-                        )}
-                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {application.status === 'PENDING' && (
+                            <>
+                              <DropdownMenuItem onClick={() => handleAction(application, 'approve')}>
+                                <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
+                                Onayla
+                              </DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleAction(application, 'reject')}>
+                                <XCircle className="mr-2 h-4 w-4 text-red-600" />
+                                Reddet
+                              </DropdownMenuItem>
+                            </>
+                          )}
+                          <DropdownMenuItem onClick={() => handleEdit(application)}>
+                            <Pencil className="mr-2 h-4 w-4" />
+                            Düzenle
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteClick(application)}>
+                            <Trash className="mr-2 h-4 w-4" />
+                            Sil
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
-                  )}
-                  {!isAdmin && (
+                  ) : (
                     <TableCell>
-                      <div className="flex gap-2">
-                        {!isAdmin && (
-                          <>
-                            <Button size="sm" variant="outline" onClick={() => handleEdit(application)}>
+                      {application.status !== 'APPROVED' && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEdit(application)}>
+                              <Pencil className="mr-2 h-4 w-4" />
                               Düzenle
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-red-600 hover:text-red-700"
-                              onClick={() => handleDeleteClick(application)}
-                            >
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteClick(application)}>
+                              <Trash className="mr-2 h-4 w-4" />
                               Sil
-                            </Button>
-                          </>
-                        )}
-                      </div>
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      )}
                     </TableCell>
                   )}
                 </TableRow>
