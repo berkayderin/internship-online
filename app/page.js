@@ -6,6 +6,39 @@ import { Button } from '@/components/ui/button';
 
 import { ArrowRight, Calendar, CheckCircle, ClipboardList, Users2 } from 'lucide-react';
 
+const features = [
+  {
+    title: 'Kullanıcı Yönetimi',
+    description: 'Öğrenci ve yönetici rolleriyle güvenli kimlik doğrulama ve yetkilendirme sistemi',
+    icon: '🔐',
+  },
+  {
+    title: 'Staj Dönemleri',
+    description: 'Staj dönemlerinin oluşturulması, düzenlenmesi ve takibi',
+    icon: '📅',
+  },
+  {
+    title: 'Staj Başvuruları',
+    description: 'Öğrencilerin staj başvurularını yapması ve yöneticilerin başvuruları değerlendirmesi',
+    icon: '📝',
+  },
+  {
+    title: 'Günlük Aktivite Takibi',
+    description: 'Öğrencilerin günlük staj aktivitelerini kaydetmesi ve yöneticilerin onaylaması',
+    icon: '📋',
+  },
+  {
+    title: 'Resmi Tatil Yönetimi',
+    description: 'Resmi tatillerin düzenlenmesi ve staj günlerinin otomatik hesaplanması',
+    icon: '🗓️',
+  },
+  {
+    title: 'Yapay Zeka Destekli Raporlama',
+    description: 'Staj raporlarının yapay zeka ile otomatik özetlenmesi ve değerlendirilmesi, akıllı içgörüler sunma',
+    icon: '🤖',
+  },
+];
+
 export default function HomePage() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">
@@ -22,11 +55,19 @@ export default function HomePage() {
       <div className="relative flex min-h-[90vh] flex-col items-center justify-center">
         <div className="max-w-4xl animate-fade-in space-y-8 px-4 text-center">
           <div className="space-y-4">
+            <div className="flex justify-center">
+              <span className="mb-4 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 px-4 py-1.5 text-sm font-medium text-primary shadow-[0_0_15px_rgba(0,0,0,0.1)] ring-1 ring-primary/30 backdrop-blur-sm transition-all duration-300 hover:shadow-primary/20">
+                <span className="animate-pulse">✨</span>
+                Yapay Zeka Destekli
+                <span className="animate-pulse">✨</span>
+              </span>
+            </div>
             <h1 className="animate-gradient bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text pb-2 text-6xl font-bold text-transparent sm:text-7xl">
-              Staj Takip Sistemi
+              Dijital Staj Yönetimi
             </h1>
             <p className="mx-auto max-w-2xl text-xl leading-relaxed text-muted-foreground sm:text-2xl">
-              Staj sürecinizi kolayca yönetin, günlük aktivitelerinizi kaydedin ve geri bildirimlerinizi takip edin.
+              Yapay zeka destekli staj yönetim platformu ile başvuru sürecinizden raporlamaya kadar tüm staj deneyiminizi dijital ortamda
+              kolayca yönetin.
             </p>
           </div>
 
@@ -63,50 +104,22 @@ export default function HomePage() {
           <h2 className="mb-20 bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-center text-4xl font-bold text-transparent">
             Özellikler
           </h2>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <div className="group relative rounded-2xl border border-white/[0.05] bg-white/[0.02] p-8 backdrop-blur-sm transition-all duration-500 hover:bg-white/[0.05] hover:shadow-2xl hover:shadow-primary/5">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/[0.07] via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-              <div className="relative space-y-4">
-                <div className="w-fit rounded-xl bg-primary/10 p-4 transition-transform duration-500 group-hover:scale-110">
-                  <ClipboardList className="h-7 w-7 text-primary" />
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className="group relative rounded-2xl border border-white/[0.05] bg-white/[0.02] p-8 backdrop-blur-sm transition-all duration-500 hover:bg-white/[0.05] hover:shadow-2xl hover:shadow-primary/5"
+              >
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/[0.07] via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                <div className="relative space-y-4">
+                  <div className="w-fit rounded-xl bg-primary/10 p-4 transition-transform duration-500 group-hover:scale-110">
+                    <div className="mb-4 text-4xl">{feature.icon}</div>
+                  </div>
+                  <h3 className="text-xl font-semibold">{feature.title}</h3>
+                  <p className="text-muted-foreground">{feature.description}</p>
                 </div>
-                <h3 className="text-xl font-semibold">Staj Başvurusu</h3>
-                <p className="text-muted-foreground">Online staj başvurusu yapın ve başvuru durumunuzu takip edin</p>
               </div>
-            </div>
-
-            <div className="group relative rounded-2xl border border-white/[0.05] bg-white/[0.02] p-8 backdrop-blur-sm transition-all duration-500 hover:bg-white/[0.05] hover:shadow-2xl hover:shadow-primary/5">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/[0.07] via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-              <div className="relative space-y-4">
-                <div className="w-fit rounded-xl bg-primary/10 p-4 transition-transform duration-500 group-hover:scale-110">
-                  <Calendar className="h-7 w-7 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold">Günlük Aktiviteler</h3>
-                <p className="text-muted-foreground">Staj günlüğünüzü dijital ortamda tutun ve geri bildirim alın</p>
-              </div>
-            </div>
-
-            <div className="group relative rounded-2xl border border-white/[0.05] bg-white/[0.02] p-8 backdrop-blur-sm transition-all duration-500 hover:bg-white/[0.05] hover:shadow-2xl hover:shadow-primary/5">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/[0.07] via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-              <div className="relative space-y-4">
-                <div className="w-fit rounded-xl bg-primary/10 p-4 transition-transform duration-500 group-hover:scale-110">
-                  <Users2 className="h-7 w-7 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold">Öğrenci Takibi</h3>
-                <p className="text-muted-foreground">Öğrencilerin staj süreçlerini ve aktivitelerini kolayca yönetin</p>
-              </div>
-            </div>
-
-            <div className="group relative rounded-2xl border border-white/[0.05] bg-white/[0.02] p-8 backdrop-blur-sm transition-all duration-500 hover:bg-white/[0.05] hover:shadow-2xl hover:shadow-primary/5">
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/[0.07] via-transparent to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-              <div className="relative space-y-4">
-                <div className="w-fit rounded-xl bg-primary/10 p-4 transition-transform duration-500 group-hover:scale-110">
-                  <CheckCircle className="h-7 w-7 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold">Kolay Onay Süreci</h3>
-                <p className="text-muted-foreground">Başvuru ve aktivite onaylarını hızlıca gerçekleştirin</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
