@@ -56,8 +56,7 @@ export default function HomePage() {
         <div className="max-w-4xl animate-fade-in space-y-8 px-4 text-center">
           <div className="space-y-4">
             <div className="flex justify-center">
-              <span className="mb-4 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary/20 via-primary/10 to-primary/20 px-4 py-1.5 text-sm font-medium text-primary shadow-[0_0_15px_rgba(0,0,0,0.1)] ring-1 ring-primary/30 backdrop-blur-sm transition-all duration-300 hover:shadow-primary/20">
-                <span className="animate-pulse">✨</span>
+              <span className="mb-4 inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-primary/10 via-primary/10 to-primary/20 px-4 py-1.5 text-sm font-medium text-primary ring-1 ring-primary/30 transition-all duration-300">
                 Yapay Zeka Destekli
                 <span className="animate-pulse">✨</span>
               </span>
