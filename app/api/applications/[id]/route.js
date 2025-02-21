@@ -8,7 +8,7 @@ export async function PATCH(req, { params }) {
   try {
     const session = await auth();
 
-    if (!session || session.user.role !== 'ADMIN') {
+    if (!session) {
       return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
     }
 
