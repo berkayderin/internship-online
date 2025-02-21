@@ -84,12 +84,6 @@ export async function DELETE(req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    const session = await auth();
-
-    if (!session) {
-      return NextResponse.json({ error: 'Yetkisiz erişim' }, { status: 401 });
-    }
-
     const { id } = params;
     const data = await req.json();
 
